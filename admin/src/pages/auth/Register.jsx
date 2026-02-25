@@ -178,12 +178,12 @@ const Register = () => {
               {loading ? "Registering..." : "Register"}
             </button>
 
-            <button
+            {/* <button
               onClick={() => setShowmodal(true)}
               className="bg-blue-500 text-white h-11 w-full mt-4 text-lg rounded-md hover:bg-blue-600 transition"
             >
               OTP Verification
-            </button>
+            </button> */}
 
             <p className="mt-4 text-center text-sm text-blue-700">
               Already have an account?
