@@ -1,11 +1,14 @@
-import React from 'react'
+import React from "react";
+import Layout from "../../componets/common/Layout";
 
 const Order = () => {
   return (
-    <div>
-      <h2>Order</h2>
-    </div>
-  )
-}
+    <Layout>
+      <div>
+        <h2>Order</h2>
+      </div>
+    </Layout>
+  );
+};
 
-export default Order
+export default Order;
