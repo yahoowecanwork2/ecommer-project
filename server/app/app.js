@@ -6,6 +6,8 @@ import morgan from "morgan";
 import cookieParser from "cookie-parser";
 import dbConnect from "../config/dbConfig.js";
 import adminRoutes from "../routes/adminRoute.js";
+import categoryRoutes from "../routes/categoryRoutes.js";
+import paymentRoutes from "../routes/paymentRoutes.js";
 
 
 dbConnect();
@@ -32,8 +34,9 @@ app.use(express.urlencoded({ extended: true }));
 
 
 
-
 app.use("/api/v1/admin", adminRoutes);
+app.use("/api/v1/category", categoryRoutes);
+app.use("/api/v1/payment",paymentRoutes);
 // users 
 // products
 // orders 
