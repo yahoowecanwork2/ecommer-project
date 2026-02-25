@@ -15,9 +15,9 @@ import {
 } from "../../redux/userSlice";
 import { clearToken, setToken } from "../../apis/storage";
 import toast from "react-hot-toast";
-import Userheader from "../../components/common/Userheader";
-import { adminApi } from "../../apis/admin";
-import Registerotpverify from "./modal/Registerotpverify";
+// import Userheader from "../../components/common/Userheader";
+import { adminApi } from "../../apis/auth";
+import Registerotpverify from "./modal/Regisetrotpverify";
 
 const Register = () => {
   const navigate = useNavigate();
@@ -55,7 +55,7 @@ const Register = () => {
         toast.success(res?.message);
         setToken(res?.token);
         setLoading(false);
-        setShowmodal(true)
+        setShowmodal(true);
       }
     } catch (error) {
       setLoading(false);
@@ -68,8 +68,6 @@ const Register = () => {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-[#0F172A] to-[#1E3A8A]">
-      <Userheader />
-
       <div className="flex min-h-[90vh]">
         {/* LEFT INFO */}
         <div className="hidden md:flex w-1/2 text-blue-100 flex-col justify-center px-16">

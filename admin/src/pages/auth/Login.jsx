@@ -3,17 +3,17 @@ import { MdOutlineMail, MdOutlineLock } from "react-icons/md";
 import { IoEyeOutline, IoEyeOffOutline } from "react-icons/io5";
 import { useNavigate } from "react-router-dom";
 import toast from "react-hot-toast";
-import Userheader from "../../components/common/Userheader";
-import { adminApi } from "../../apis/admin";
+
 import Forgotpassword from "./modal/Forgotpassword";
-import Loginotpverify from "./modal/Loginotpverify";
 import { setLoginData } from "../../redux/userSlice";
 import { useDispatch } from "react-redux";
 import { clearToken, setToken } from "../../apis/storage";
+import { adminApi } from "../../apis/auth";
+import Loginotpverify from "./modal/Loginotpverifymodal";
 
 const Login = () => {
   const navigate = useNavigate();
-   const dispatch = useDispatch();
+  const dispatch = useDispatch();
   const [loading, setLoading] = useState(false);
   const [formData, setFormData] = useState({
     email: "",
@@ -36,11 +36,11 @@ const Login = () => {
     try {
       setLoading(true);
       const res = await adminApi.login(formData);
-      if(res.success){
-      toast.success(res?.message);
-      setToken(res?.token);
-      setLoading(false);
-      setShowmodal(true)
+      if (res.success) {
+        toast.success(res?.message);
+        setToken(res?.token);
+        setLoading(false);
+        setShowmodal(true);
       }
     } catch (error) {
       setLoading(false);
@@ -50,8 +50,6 @@ const Login = () => {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-[#0F172A] to-[#2d54be]">
-      <Userheader />
-
       <div className="flex min-h-[90vh]">
         {/* LEFT SIDE INFO */}
         <div className="hidden md:flex w-1/2 text-blue-100 flex-col justify-center px-16">
