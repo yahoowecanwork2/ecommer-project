@@ -10,10 +10,16 @@ const Layout = ({ children }) => {
   const location = useLocation();
 
   const paths = [
-    // { id: 1, name: "Dashboard", path: "/", icon: MdDashboard },
-    { id: 1, name: "User", path: "/user", icon: FaUsers },
-    { id: 2, name: "My Orders", path: "/order", icon: BsCartCheckFill },
-    { id: 3, name: "Product", path: "/product", icon: FaBoxOpen },
+    {
+      id: 1,
+      name: "Dashboard",
+      path: "/dashboard",
+
+      icon: MdDashboard,
+    },
+    { id: 2, name: "User", path: "/user", icon: FaUsers },
+    { id: 3, name: "My Orders", path: "/order", icon: BsCartCheckFill },
+    { id: 4, name: "Product", path: "/product", icon: FaBoxOpen },
   ];
 
   return (

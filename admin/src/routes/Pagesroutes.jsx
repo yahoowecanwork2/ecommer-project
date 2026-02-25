@@ -10,6 +10,7 @@ import Resetpassword from "../pages/auth/Resetpassword";
 import Orderdetails from "../pages/order/Orderdetails";
 import Order from "../pages/order/Order";
 import { Route, Routes } from "react-router-dom";
+import Home from "../pages/home/Home";
 
 const Pagesroutes = () => {
   return (
@@ -25,6 +26,7 @@ const Pagesroutes = () => {
         <Route path="/product-detail/:id" element={<Productdetail />} />
         <Route path="/order" element={<Order />} />
         <Route path="/order-detail/:id" element={<Orderdetails />} />
+        <Route path="/dashboard" element={<Home />} />
       </Routes>
     </>
   );
