@@ -1,159 +1,159 @@
 import React, { useEffect, useRef, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
-import { adminApi } from "../../../apis/admin";
 import toast from "react-hot-toast";
 import { clearLoginData, setAuth, setUser } from "../../../redux/userSlice";
-import { clearToken, setToken } from "../../../apis/storage";
+import { clearToken, getToken, setToken } from "../../../apis/storage";
+import { adminApi } from "../../../apis/auth";
 
 const Loginotpverify = ({ setShowmodal }) => {
-    const [timer, setTimer] = useState(30);
-    const [userLoading, setUserLoading] = useState(false);
-      const [canResend, setCanResend] = useState(false);
-      const [resendLoading, setresendLoading] = useState(false);
-      const [loading, setLoading] = useState(false);
-      const [otp, setOtp] = useState(["", "", "", "", "", ""]);
-      const inputsRef = useRef([]);
-      const navigate = useNavigate();
-      const dispatch = useDispatch();
-      const loginData = useSelector((state) => state.user.loginData);
-      console.log(loginData);
-    
-       
-      useEffect(() => {
-        if (timer === 0) {
-          setCanResend(true);
-          return;
-        }
-    
-        const interval = setInterval(() => {
-          setTimer((prev) => prev - 1);
-        }, 1000);
-    
-        return () => clearInterval(interval);
-      }, [timer]);
-    
-      const handleChange = (e, i) => {
-        const value = e.target.value.replace(/\D/, "");
-        if (!value) return;
-        const newOtp = [...otp];
-        newOtp[i] = value;
-        setOtp(newOtp);
-        if (i < otp.length - 1 && value) {
-          inputsRef.current[i + 1]?.focus();
-        }
-      };
-    
-      const handleKeyDown = (e, i) => {
-        if (e.key === "Backspace") {
-          const newOtp = [...otp];
-          if (!otp[i] && i > 0) {
-            newOtp[i - 1] = "";
-            setOtp(newOtp);
-            inputsRef.current[i - 1]?.focus();
-          } else {
-            newOtp[i] = "";
-            setOtp(newOtp);
-          }
-        }
-      };
-    
-      const handlePaste = (e) => {
-        e.preventDefault();
-        const pastedData = e.clipboardData.getData("text").slice(0, 6).split("");
-        const newOtp = [...otp];
-        pastedData.forEach((digit, idx) => (newOtp[idx] = digit));
-        setOtp(newOtp);
-        const lastIndex = pastedData.length - 1;
-        inputsRef.current[lastIndex]?.focus();
-      };
+  const [timer, setTimer] = useState(30);
+  const [userLoading, setUserLoading] = useState(false);
+  const [canResend, setCanResend] = useState(false);
+  const [resendLoading, setresendLoading] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const [otp, setOtp] = useState(["", "", "", "", "", ""]);
+  const inputsRef = useRef([]);
+  const navigate = useNavigate();
+  const dispatch = useDispatch();
+  const loginData = useSelector((state) => state.user.loginData);
+  console.log(loginData);
 
-    // get user profile function 
-    const getProfile = async () => {
+  useEffect(() => {
+    if (timer === 0) {
+      setCanResend(true);
+      return;
+    }
+
+    const interval = setInterval(() => {
+      setTimer((prev) => prev - 1);
+    }, 1000);
+
+    return () => clearInterval(interval);
+  }, [timer]);
+
+  const handleChange = (e, i) => {
+    const value = e.target.value.replace(/\D/, "");
+    if (!value) return;
+    const newOtp = [...otp];
+    newOtp[i] = value;
+    setOtp(newOtp);
+    if (i < otp.length - 1 && value) {
+      inputsRef.current[i + 1]?.focus();
+    }
+  };
+
+  const handleKeyDown = (e, i) => {
+    if (e.key === "Backspace") {
+      const newOtp = [...otp];
+      if (!otp[i] && i > 0) {
+        newOtp[i - 1] = "";
+        setOtp(newOtp);
+        inputsRef.current[i - 1]?.focus();
+      } else {
+        newOtp[i] = "";
+        setOtp(newOtp);
+      }
+    }
+  };
+
+  const handlePaste = (e) => {
+    e.preventDefault();
+    const pastedData = e.clipboardData.getData("text").slice(0, 6).split("");
+    const newOtp = [...otp];
+    pastedData.forEach((digit, idx) => (newOtp[idx] = digit));
+    setOtp(newOtp);
+    const lastIndex = pastedData.length - 1;
+    inputsRef.current[lastIndex]?.focus();
+  };
+
+  // get user profile function
+  const getProfile = async () => {
     try {
       setUserLoading(true);
       const res = await adminApi.profile();
       if (res?.success) {
-        setUserLoading(false)
+        setUserLoading(false);
         dispatch(setUser(res.user));
         dispatch(setAuth(true));
         navigate("/dashboard");
       }
     } catch (error) {
-      setUserLoading(false)
+      setUserLoading(false);
       console.log(error);
     } finally {
       setUserLoading(false);
     }
   };
-     
-    
-      const handleVerification = async (e) => {
-        const token = getToken();
-        console.log({ otp: e, activationToken: token });
-        try {
-          setLoading(true);
-          const res = await adminApi.loginOtpVerify({ otp: e, activationToken: token });
-          console.log(res);
-          if (res?.success) {
-            setToken(res.token)
-            setLoading(false);
-            toast.success(res?.message);
-            dispatch(clearLoginData());
-            setShowmodal(false)
+
+  const handleVerification = async (e) => {
+    const token = getToken();
+    console.log({ otp: e, activationToken: token });
+    try {
+      setLoading(true);
+      const res = await adminApi.loginOtpVerify({
+        otp: e,
+        activationToken: token,
+      });
+      console.log(res);
+      if (res?.success) {
+        setToken(res.token);
+        setLoading(false);
+        toast.success(res?.message);
+        dispatch(clearLoginData());
+        setShowmodal(false);
         setTimeout(() => {
           getProfile();
         }, 500);
-          }
-        } catch (error) {
-          setLoading(false);    
-          console.log(error);
-        }
-      };
-    
-    
-       const handleSubmit = (e) => {
-        e.preventDefault();
-        const enteredOtp = otp.join("");
-        console.log(enteredOtp);
-        if (enteredOtp.length < 6) {
-          return toast.error("Please enter a valid 6-digit OTP");
-        }
-        handleVerification(enteredOtp);
-      };
-    
-      const resendOtp = async () => {
-        if (!canResend) return;
-        setCanResend(false);
-        setTimer(30); 
-        console.log();
-        try {
-          setresendLoading(true)
-          clearToken();
-          console.log(loginData.email, loginData.password);
-          const res = await authAPI.resendOtp({
-            email: loginData.email,
-            password: loginData.password,
-          });
-          console.log(res);
-          if (res.success) {
-            setToken(res?.token);
-            setresendLoading(false)
-            toast.success(res?.message || "OTP resent successfully!");
-          } else {
-            setresendLoading(false)
-            toast.error(res?.message || "Something went wrong");
-            navigate("/");
-          }
-        } catch (error) {
-          setresendLoading(false)
-          toast.error(error?.response?.data?.message || "Server Error Ocurred");
-          console.log(error);
-        }
-        console.log("Resending OTP...");
-      };
+      }
+    } catch (error) {
+      setLoading(false);
+      console.log(error);
+    }
+  };
 
-  if(userLoading) return <div> please wait fetching user detail ....... </div>
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    const enteredOtp = otp.join("");
+    console.log(enteredOtp);
+    if (enteredOtp.length < 6) {
+      return toast.error("Please enter a valid 6-digit OTP");
+    }
+    handleVerification(enteredOtp);
+  };
+
+  const resendOtp = async () => {
+    if (!canResend) return;
+    setCanResend(false);
+    setTimer(30);
+    console.log();
+    try {
+      setresendLoading(true);
+      clearToken();
+      console.log(loginData.email, loginData.password);
+      const res = await adminApi.resendOtp({
+        email: loginData.email,
+        password: loginData.password,
+      });
+      console.log(res);
+      if (res.success) {
+        setToken(res?.token);
+        setresendLoading(false);
+        toast.success(res?.message || "OTP resent successfully!");
+      } else {
+        setresendLoading(false);
+        toast.error(res?.message || "Something went wrong");
+        navigate("/");
+      }
+    } catch (error) {
+      setresendLoading(false);
+      toast.error(error?.response?.data?.message || "Server Error Ocurred");
+      console.log(error);
+    }
+    console.log("Resending OTP...");
+  };
+
+  if (userLoading) return <div> please wait fetching user detail ....... </div>;
   return (
     <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
       <div className="bg-white w-[90%] max-w-md rounded-xl shadow-lg p-6 relative">
@@ -167,13 +167,13 @@ const Loginotpverify = ({ setShowmodal }) => {
 
         {/* Heading */}
         <h2 className="text-2xl font-bold text-center text-blue-600 mb-2">
-         Login OTP Verification
+          Login OTP Verification
         </h2>
         <p className="text-sm text-center text-gray-500 mb-6">
           Enter the 6 digit OTP sent to your email or phone
         </p>
 
-         <form className="flex flex-col items-center space-y-6 w-full">
+        <form className="flex flex-col items-center space-y-6 w-full">
           <div className="flex justify-center gap-3" onPaste={handlePaste}>
             {otp.map((digit, i) => (
               <input

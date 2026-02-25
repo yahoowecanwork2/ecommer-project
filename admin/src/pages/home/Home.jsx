@@ -1,14 +1,12 @@
 import React from "react";
 import Layout from "../../componets/common/Layout";
 
-const Order = () => {
+const Home = () => {
   return (
     <Layout>
-      <div>
-        <h2>Order</h2>
-      </div>
+      <div>Home</div>
     </Layout>
   );
 };
 
-export default Order;
+export default Home;

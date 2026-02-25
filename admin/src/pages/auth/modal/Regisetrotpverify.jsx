@@ -1,13 +1,13 @@
 import React, { useEffect, useRef, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
-import { adminApi } from "../../../apis/admin";
 import toast from "react-hot-toast";
 import { clearRegisterData } from "../../../redux/userSlice";
 import { clearToken, getToken, setToken } from "../../../apis/storage";
+import { adminApi } from "../../../apis/auth";
 
 const Registerotpverify = ({ setShowmodal }) => {
-   const [timer, setTimer] = useState(30);
+  const [timer, setTimer] = useState(30);
   const [canResend, setCanResend] = useState(false);
   const [resendLoading, setresendLoading] = useState(false);
   const [loading, setLoading] = useState(false);
@@ -18,7 +18,6 @@ const Registerotpverify = ({ setShowmodal }) => {
   const registerData = useSelector((state) => state.user.registerData);
   console.log(registerData);
 
-   
   useEffect(() => {
     if (timer === 0) {
       setCanResend(true);
@@ -67,30 +66,30 @@ const Registerotpverify = ({ setShowmodal }) => {
     inputsRef.current[lastIndex]?.focus();
   };
 
- 
-
   const handleVerification = async (e) => {
     const token = getToken();
     console.log({ otp: e, activationToken: token });
     try {
       setLoading(true);
-      const res = await adminApi.registerOtpVerify({ otp: e, activationToken: token });
+      const res = await adminApi.registerOtpVerify({
+        otp: e,
+        activationToken: token,
+      });
       console.log(res);
       if (res?.success === true) {
         setLoading(false);
         toast.success(res?.message);
         dispatch(clearRegisterData());
-        setShowmodal(false)
+        setShowmodal(false);
         navigate("/");
       }
     } catch (error) {
-      setLoading(false)
+      setLoading(false);
       console.log(error);
     }
   };
 
-
-   const handleSubmit = (e) => {
+  const handleSubmit = (e) => {
     e.preventDefault();
     const enteredOtp = otp.join("");
     console.log(enteredOtp);
@@ -100,8 +99,7 @@ const Registerotpverify = ({ setShowmodal }) => {
     handleVerification(enteredOtp);
   };
 
-
-  // resend otp activate on resend btn click and same process as register data get data from redux 
+  // resend otp activate on resend btn click and same process as register data get data from redux
   const resendOtp = async () => {
     if (!canResend) return;
     setCanResend(false);
@@ -120,9 +118,11 @@ const Registerotpverify = ({ setShowmodal }) => {
       if (res.success) {
         toast.success(res?.message || "OTP resent successfully!");
         setToken(res?.token);
-        setresendLoading(false)
+        setresendLoading(false);
       } else {
-        toast.error(res?.message || "Something went wrong plese go to register again");
+        toast.error(
+          res?.message || "Something went wrong plese go to register again",
+        );
         navigate("/register");
       }
     } catch (error) {
@@ -131,7 +131,6 @@ const Registerotpverify = ({ setShowmodal }) => {
     }
     console.log("Resending OTP...");
   };
-
 
   return (
     <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">

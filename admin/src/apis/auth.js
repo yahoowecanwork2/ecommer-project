@@ -1,4 +1,6 @@
-// auth 
+// auth
+
+import { api } from "./index";
 
 export const adminApi = {
   register: async (data) => {
@@ -6,12 +8,12 @@ export const adminApi = {
     return res.data;
   },
 
-   registerOtpResend: async (data) => {
+  registerOtpResend: async (data) => {
     const res = await api.post("/admin/register-resend-otp", data);
     return res.data;
   },
 
-   registerOtpVerify: async (data) => {
+  registerOtpVerify: async (data) => {
     const res = await api.post("/admin/register-otp-verify", data);
     return res.data;
   },
@@ -31,17 +33,15 @@ export const adminApi = {
     return res.data;
   },
 
-   forgotPassword: async (data) => {
+  forgotPassword: async (data) => {
     const res = await api.post("/admin/forgotpassword", data);
     return res.data;
   },
 
-
-   resetPassword: async (data) => {
-    const res = await api.post(`/admin/resetpassword`,data);
+  resetPassword: async (data) => {
+    const res = await api.post(`/admin/resetpassword`, data);
     return res.data;
   },
-
 
   logout: async () => {
     const res = await api.get("/admin/logout");

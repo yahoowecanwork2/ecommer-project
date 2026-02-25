@@ -3,31 +3,29 @@ import { useLocation, useNavigate } from "react-router-dom";
 import { MdOutlineLock } from "react-icons/md";
 import { IoEyeOffOutline, IoEyeOutline } from "react-icons/io5";
 import toast from "react-hot-toast";
-import { adminApi } from "../../apis/admin";
+import { adminApi } from "../../apis/auth";
 
 const Resetpassword = () => {
   const location = useLocation();
   const navigate = useNavigate();
   const queryParams = new URLSearchParams(location.search);
   const token = queryParams.get("token");
-  console.log(token)
+  console.log(token);
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const [showPass1, setShowPass1] = useState(false);
   const [showPass2, setShowPass2] = useState(false);
   const [loading, setLoading] = useState(false);
 
-
-
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (!password || !confirmPassword)
       return toast.error("Please enter both password fields.");
     if (password !== confirmPassword)
-      return toast.error("Passwords do not match!");    
+      return toast.error("Passwords do not match!");
     try {
       setLoading(true);
-      const res = await adminApi.resetPassword({token, password });
+      const res = await adminApi.resetPassword({ token, password });
       console.log(res);
       if (res.success) {
         toast.success(res.message || "Password reset successful!");
