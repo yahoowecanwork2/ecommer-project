@@ -67,22 +67,20 @@ const Register = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-[#0F172A] to-[#1E3A8A]">
+    <div className="min-h-screen bg-gradient-to-br from-blue-100 to-white">
       <div className="flex min-h-[90vh]">
         {/* LEFT INFO */}
-        <div className="hidden md:flex w-1/2 text-blue-100 flex-col justify-center px-16">
-          <h1 className="text-4xl font-bold mb-4 text-white">
-            Study Materials Portal
-          </h1>
-          <p className="text-lg mb-6 text-blue-200">
-            Create your admin account to manage learning resources.
+        <div className="hidden md:flex w-1/2 text-blue-900 flex-col justify-center px-16">
+          <h1 className="text-4xl font-bold mb-4">Create Account</h1>
+          <p className="text-lg mb-6 text-blue-700">
+            Register to access your dashboard and manage your account.
           </p>
 
-          <ul className="space-y-3 text-sm text-blue-200">
-            <li>✔ Upload & Manage Notes</li>
-            <li>✔ Subject-wise Materials</li>
-            <li>✔ PDF & Video Resources</li>
-            <li>✔ Easy Access for Students</li>
+          <ul className="space-y-3 text-sm text-blue-700">
+            <li>✔ Secure Registration</li>
+            <li>✔ Personal Dashboard</li>
+            <li>✔ Easy Profile Management</li>
+            <li>✔ Fast & Simple</li>
           </ul>
         </div>
 
@@ -90,84 +88,84 @@ const Register = () => {
         <div className="w-full md:w-1/2 mt-5 flex justify-center items-center px-4">
           <form
             onSubmit={handleSubmit}
-            className="bg-[#0F172A]/90 w-full max-w-md rounded-2xl shadow-2xl p-8 border border-blue-800"
+            className="bg-white w-full max-w-md rounded-2xl shadow-xl p-8 border border-blue-200"
           >
-            <h1 className="text-2xl font-bold text-center text-white">
+            <h1 className="text-2xl font-bold text-center text-blue-800">
               Admin Register
             </h1>
-            <p className="text-center text-sm text-blue-300 mb-6">
-              Study Materials Management
+            <p className="text-center text-sm text-blue-600 mb-6">
+              Create your account
             </p>
 
             {/* NAME */}
-            <label className="text-sm font-medium text-blue-200">
+            <label className="text-sm font-medium text-blue-700">
               Full Name
             </label>
-            <div className="flex items-center w-full h-11 mb-4 bg-[#1E3A8A] border border-blue-700 px-3 rounded-md mt-1">
-              <MdOutlinePerson className="h-5 w-5 text-blue-300" />
+            <div className="flex items-center w-full h-11 mb-4 bg-blue-50 border border-blue-300 px-3 rounded-md mt-1">
+              <MdOutlinePerson className="h-5 w-5 text-blue-500" />
               <input
                 type="text"
                 placeholder="Your name"
                 name="name"
                 value={formData.name}
                 onChange={handleChange}
-                className="w-full h-full ml-2 bg-transparent outline-none text-white placeholder-blue-300"
+                className="w-full h-full ml-2 bg-transparent outline-none text-blue-800 placeholder-blue-400"
               />
             </div>
 
             {/* EMAIL */}
-            <label className="text-sm font-medium text-blue-200">Email</label>
-            <div className="flex items-center w-full h-11 mb-4 bg-[#1E3A8A] border border-blue-700 px-3 rounded-md mt-1">
-              <MdOutlineMail className="h-5 w-5 text-blue-300" />
+            <label className="text-sm font-medium text-blue-700">Email</label>
+            <div className="flex items-center w-full h-11 mb-4 bg-blue-50 border border-blue-300 px-3 rounded-md mt-1">
+              <MdOutlineMail className="h-5 w-5 text-blue-500" />
               <input
                 type="email"
                 placeholder="admin@gmail.com"
                 name="email"
                 value={formData.email}
                 onChange={handleChange}
-                className="w-full h-full ml-2 bg-transparent outline-none text-white placeholder-blue-300"
+                className="w-full h-full ml-2 bg-transparent outline-none text-blue-800 placeholder-blue-400"
               />
             </div>
 
             {/* PHONE */}
-            <label className="text-sm font-medium text-blue-200">
+            <label className="text-sm font-medium text-blue-700">
               Phone Number
             </label>
-            <div className="flex items-center w-full h-11 mb-4 bg-[#1E3A8A] border border-blue-700 px-3 rounded-md mt-1">
-              <MdPhone className="h-5 w-5 text-blue-300" />
+            <div className="flex items-center w-full h-11 mb-4 bg-blue-50 border border-blue-300 px-3 rounded-md mt-1">
+              <MdPhone className="h-5 w-5 text-blue-500" />
               <input
                 type="text"
                 placeholder="Enter phone number"
                 name="phoneno"
                 value={formData.phoneno}
                 onChange={handleChange}
-                className="w-full h-full ml-2 bg-transparent outline-none text-white placeholder-blue-300"
+                className="w-full h-full ml-2 bg-transparent outline-none text-blue-800 placeholder-blue-400"
               />
             </div>
 
             {/* PASSWORD */}
-            <label className="text-sm font-medium text-blue-200">
+            <label className="text-sm font-medium text-blue-700">
               Password
             </label>
-            <div className="flex items-center w-full h-11 bg-[#1E3A8A] border border-blue-700 px-3 rounded-md mt-1">
-              <MdOutlineLock className="h-5 w-5 text-blue-300" />
+            <div className="flex items-center w-full h-11 bg-blue-50 border border-blue-300 px-3 rounded-md mt-1">
+              <MdOutlineLock className="h-5 w-5 text-blue-500" />
               <input
                 type={showPassword ? "text" : "password"}
                 placeholder="Password"
                 name="password"
                 value={formData.password}
                 onChange={handleChange}
-                className="w-full h-full ml-2 bg-transparent outline-none text-white placeholder-blue-300"
+                className="w-full h-full ml-2 bg-transparent outline-none text-blue-800 placeholder-blue-400"
               />
               {showPassword ? (
                 <IoEyeOffOutline
                   onClick={() => setShowPassword((prev) => !prev)}
-                  className="h-5 w-5 text-blue-300 cursor-pointer"
+                  className="h-5 w-5 text-blue-500 cursor-pointer"
                 />
               ) : (
                 <IoEyeOutline
                   onClick={() => setShowPassword((prev) => !prev)}
-                  className="h-5 w-5 text-blue-300 cursor-pointer"
+                  className="h-5 w-5 text-blue-500 cursor-pointer"
                 />
               )}
             </div>
@@ -179,22 +177,24 @@ const Register = () => {
             >
               {loading ? "Registering..." : "Register"}
             </button>
+
             <button
               onClick={() => setShowmodal(true)}
-              className="bg-blue-600 text-white h-11 w-full mt-6 text-lg rounded-md hover:bg-blue-700 transition"
+              className="bg-blue-500 text-white h-11 w-full mt-4 text-lg rounded-md hover:bg-blue-600 transition"
             >
-              otpverification
+              OTP Verification
             </button>
 
-            <p className="mt-4 text-center text-sm text-blue-200">
+            <p className="mt-4 text-center text-sm text-blue-700">
               Already have an account?
               <span
                 onClick={() => navigate("/")}
-                className="text-blue-400 cursor-pointer ml-1 font-medium hover:text-white"
+                className="text-blue-600 cursor-pointer ml-1 font-medium hover:text-blue-800"
               >
                 Login
               </span>
             </p>
+
             {showmodal && <Registerotpverify setShowmodal={setShowmodal} />}
           </form>
         </div>
