@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { FaTimes, FaTrash } from "react-icons/fa";
 import { productApi } from "../../../apis/product";
+import { categoriesApi } from "../../../apis/categories";
 
 const Create = ({ setShowModal }) => {
   const [formData, setFormData] = useState({
@@ -20,15 +21,24 @@ const Create = ({ setShowModal }) => {
   const [loading, setLoading] = useState(false);
   const [preview, setPreview] = useState([]);
 
-  // 🔹 get categories
-  useEffect(() => {
-    // const getCategories = async () => {
-    //   const res = await api.get("/category/all");
-    //   setCategories(res.data.categories);
-    // };
-    // getCategories();
-  }, []);
+  // get categories
+  const getCategories = async () => {
+    try {
+      const res = await categoriesApi.getByName();
+      console.log("categries", res);
 
+      if (res.success) {
+        setCategories(res.categoriesNames);
+      } else {
+        alert(res.message);
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  };
+  useEffect(() => {
+    getCategories(); // 👈 call here
+  }, []);
   // 🔹 handle input
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });

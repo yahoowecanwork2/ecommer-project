@@ -1,21 +1,21 @@
 import { Category } from "../models/Category.js";
+import { generateSlug } from "../utils/slugGenerate.js";
 
 export const getCategoryNames = async (req, res) => {
-    try{
-    const categoriesNames = await Category.find().select("-image")
-   return res.status(200).json({
-       success:true,
-       categoriesNames
+  try {
+    const categoriesNames = await Category.find().select("-image");
+    return res.status(200).json({
+      success: true,
+      categoriesNames,
     });
-    } catch (error){
+  } catch (error) {
     console.error(error);
     return res.status(500).json({
       success: false,
-      message: "Failed to get categories names"
+      message: "Failed to get categories names",
     });
-    }
-}
-
+  }
+};
 
 export const createCategory = async (req, res) => {
   try {
@@ -47,34 +47,31 @@ export const createCategory = async (req, res) => {
   }
 };
 
-
-
 export const getCategories = async (req, res) => {
-    try{
-    const categories = await Category.find()
-   return res.status(200).json({
-       success:true,
-       categories
+  try {
+    const categories = await Category.find();
+    return res.status(200).json({
+      success: true,
+      categories,
     });
-    } catch (error){
+  } catch (error) {
     console.error(error);
     return res.status(500).json({
       success: false,
-      message: "Failed to get categories names"
+      message: "Failed to get categories names",
     });
-    }
-}
-
+  }
+};
 
 export const updateCategory = async (req, res) => {
   try {
-    const { name} = req.body;
+    const { name } = req.body;
     const slug = generateSlug(name);
     await Category.findByIdAndUpdate(
-            req.params.categoryId,
-            { name,slug },
-            { new: true }
-        );
+      req.params.categoryId,
+      { name, slug },
+      { new: true },
+    );
     return res.status(201).json({
       success: true,
       message: "Product category updated successfully",
