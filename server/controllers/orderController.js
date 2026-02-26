@@ -1,10 +1,36 @@
 import Order from "../models/Order.js";
+import { Payment } from "../models/Payment.js";
 import { generateOrderId } from "../utils/idGenerate.js";
 
 
 
 //------------------------------ user controller ---------------------------
-// contain all order related controller 
+// use rozer pay payment method check out payment
+export const checkoutPayment = async (req, res) => {
+  try{
+    const { price } = req.body;
+  console.log(price)
+  const options = {
+    amount: Number(price * 100),
+    currency: "INR",
+  };
+  const order = await instance.orders.create(options);
+  res.status(201).json({
+    success: true,
+    message: " procedding for payment successfully",
+    order,
+  });
+  }catch (error) {
+    console.error("Create Order Error:", error);
+    return res.status(500).json({
+      success: false,
+      message: "Server Error",
+    });
+  }}
+  
+
+
+
 export const createOrder = async (req, res) => {
   try {
     const {
@@ -18,21 +44,21 @@ export const createOrder = async (req, res) => {
       calculatedamount,
       discount,
       ordertotal,
-      payment,
-      couponAvailable,
-      couponcode
+      paymentType,
+      razorpay_order_id,
+      razorpay_payment_id,
+      razorpay_signature,
     } = req.body;
     if (!items || items.length === 0) {
       return res.status(400).json({
         success: false,
-        message: "Order must contain at least one item",
+        message: "Order items required",
       });
     }
-    const orderno = generateOrderId()
     const order = await Order.create({
       items,
       customerId:req.id,
-      orderno:orderno,
+      orderno:generateOrderId(),
       customername,
       phoneno,
       emailid,
@@ -42,36 +68,42 @@ export const createOrder = async (req, res) => {
       calculatedamount,
       discount,
       ordertotal,
-      payment,
+      paymentType,
+      paymentstatus: paymentType === "online" ? "complete" : "pending",
     });
-    for (const orderItem of items) {
-      const { item, itemModel, quantity } = orderItem;
-      if (itemModel === "Product") {
-        await Product.findByIdAndUpdate(
-          item,
-          { $inc: { buycount: quantity || 1 } },
-          { new: true }
-        );
-      } else if (itemModel === "Project") {
-        await Project.findByIdAndUpdate(
-          item,
-          { $inc: { buycount: quantity || 1 } },
-          { new: true }
-        );
+
+    if (paymentType === "online") {
+      if (!razorpay_order_id || !razorpay_payment_id || !razorpay_signature) {
+        return res.status(400).json({
+          success: false,
+          message: "Razorpay payment details required",
+        });
       }
+
+      const payment = await Payment.create({
+        razorpay_order_id,
+        razorpay_payment_id,
+        razorpay_signature,
+        orderId: order._id,
+        customerId:order.customerId,
+      });
+      order.payment = payment._id;
+      await order.save();
     }
-    res.status(201).json({
+    return res.status(201).json({
       success: true,
-      message: "Order placed successfully",
-      order,
+      message: "Order created successfully",
+      data: order,
     });
+
   } catch (error) {
-    res.status(500).json({
+    console.error("Create Order Error:", error);
+    return res.status(500).json({
       success: false,
-      message: error.message,
+      message: "Server Error",
     });
   }
-};
+};;
 
 
 
@@ -81,13 +113,8 @@ export const getMyOrders = async (req, res) => {
     const userId = req.id;
     const page = parseInt(req.query.page) || 1;
     const limit = parseInt(req.query.limit) || 10;
-
     const skip = (page - 1) * limit;
-
-    // Get total count for frontend pagination
     const totalOrders = await Order.countDocuments(query);
-
-    // Fetch paginated orders
     const orders = await Order.find({ customerId: userId })
       .select(`
         orderno 
@@ -141,7 +168,7 @@ export const getSingleOrder = async (req, res) => {
   .limit(limit)
   .populate({
     path: "items.item",
-    select: "name price image slug" // select only needed fields
+    select: "name price image slug"
   })
       .populate("customerId", "name email")
       .populate("payment").lean();
@@ -163,6 +190,7 @@ export const getSingleOrder = async (req, res) => {
     });
   }
 };
+
 
 
 export const updateOrderCancelStatus = async (req, res) => {

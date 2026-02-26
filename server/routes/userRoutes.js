@@ -16,6 +16,7 @@ const userRoutes = express.Router();
 
 
 
+
 // -------------------------admin routes ---------------------------
 // get all users  
 // user detail 

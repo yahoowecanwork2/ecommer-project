@@ -9,6 +9,7 @@ import adminRoutes from "../routes/adminRoute.js";
 import categoryRoutes from "../routes/categoryRoutes.js";
 import paymentRoutes from "../routes/paymentRoutes.js";
 import productRoutes from "../routes/productRoutes.js";
+import orderRoutes from "../routes/orderRoutes.js";
 
 
 dbConnect();
@@ -39,11 +40,11 @@ app.use("/api/v1/admin", adminRoutes);
 app.use("/api/v1/category", categoryRoutes);
 app.use("/api/v1/payment",paymentRoutes);
 app.use("/api/v1/product", productRoutes);
+app.use("/api/v1/order", orderRoutes);
 
 
 // pending 
 app.use("/api/v1/user", adminRoutes);
-app.use("/api/v1/order", adminRoutes);
 
 
 export default app;

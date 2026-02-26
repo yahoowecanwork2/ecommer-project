@@ -72,10 +72,22 @@ const orderSchema = new mongoose.Schema({
     delivereddate:{
         type:Date
     },
+     paymentType: {
+            type: String,
+            default: "cod",
+            enum: ["online","cod"],
+        },
      payment: {
             type: mongoose.Schema.Types.ObjectId,
             ref: "Payment",
-            required:true
+            required: function() {
+                return this.paymentType === 'online';
+              }
+        },
+         paymentstatus: {
+            type: String,
+            default: "pending",
+            enum: ["pending","complete"],
         },
         status: {
             type: String,
