@@ -5,15 +5,13 @@ import { MdInventory } from "react-icons/md";
 const Cards = ({ item }) => {
   return (
     <div className="bg-white rounded-2xl shadow-md hover:shadow-2xl transition-all duration-300 overflow-hidden border border-gray-100 group">
-      {/* Image */}
       <div className="relative h-44 overflow-hidden">
         <img
-          src={item.image?.url} // ✅ real image url
+          src={item.image?.url}
           alt={item.name}
           className="w-full h-full object-cover group-hover:scale-110 transition duration-500"
         />
 
-        {/* Badge */}
         <span
           className={`absolute top-3 right-3 px-3 py-1 text-xs font-semibold rounded-full 
           ${item.available === "yes" ? "bg-green-100 text-green-700" : "bg-red-100 text-red-700"}`}
@@ -22,7 +20,6 @@ const Cards = ({ item }) => {
         </span>
       </div>
 
-      {/* Content */}
       <div className="p-4 space-y-2">
         <h3 className="font-bold text-gray-800 text-lg truncate">
           {item.name}

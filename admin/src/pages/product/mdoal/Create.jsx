@@ -37,9 +37,9 @@ const Create = ({ setShowModal }) => {
     }
   };
   useEffect(() => {
-    getCategories(); // 👈 call here
+    getCategories();
   }, []);
-  // 🔹 handle input
+
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
@@ -59,13 +59,12 @@ const Create = ({ setShowModal }) => {
     setPreview((prev) => [...prev, ...imgPreview]);
   };
 
-  // 🔹 delete image
   const removeImage = (index) => {
     setImages(images.filter((_, i) => i !== index));
     setPreview(preview.filter((_, i) => i !== index));
   };
 
-  // 🔹 submit form
+  //  submit form
   const handleSubmit = async (e) => {
     e.preventDefault();
 
@@ -183,9 +182,8 @@ const Create = ({ setShowModal }) => {
             className="w-full border p-2 rounded"
           />
 
-          {/* Preview */}
           <div className="grid grid-cols-4 gap-2 mt-2">
-            {preview.map((img, index) => (
+            {preview?.map((img, index) => (
               <div key={index} className="relative">
                 <img
                   src={img}
