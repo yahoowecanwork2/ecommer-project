@@ -8,6 +8,7 @@ import dbConnect from "../config/dbConfig.js";
 import adminRoutes from "../routes/adminRoute.js";
 import categoryRoutes from "../routes/categoryRoutes.js";
 import paymentRoutes from "../routes/paymentRoutes.js";
+import productRoutes from "../routes/productRoutes.js";
 
 
 dbConnect();
@@ -37,11 +38,11 @@ app.use(express.urlencoded({ extended: true }));
 app.use("/api/v1/admin", adminRoutes);
 app.use("/api/v1/category", categoryRoutes);
 app.use("/api/v1/payment",paymentRoutes);
-// users 
-// products
-// orders 
+app.use("/api/v1/product", productRoutes);
+
+
+// pending 
 app.use("/api/v1/user", adminRoutes);
-app.use("/api/v1/product", adminRoutes);
 app.use("/api/v1/order", adminRoutes);
 
 

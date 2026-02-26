@@ -1,6 +1,7 @@
 import express from "express";
 import checkAdmin from "../middleware/checkAdmin.js";
-import { createProduct, getProductBySlug, userGetProducts, userGetProductsByCategoy } from "../controllers/productController.js";
+import { adminGetProducts, adminGetProductsByCategory, adminGetProductsByKeyword, adminGetSingleProduct, createProduct, deleteProduct, filterProduct, getProductBySlug, updateProductFields, updateProductImages, updateProductRefund, updateProductStock, userGetProducts, userGetProductsByCategoy } from "../controllers/productController.js";
+import { uploadProducts } from "../middleware/uploadProducts.js";
 
 
 
@@ -14,6 +15,7 @@ const productRoutes = express.Router();
 // get single 
 productRoutes.get("/all",userGetProducts)
 productRoutes.get("/filter-by-cat/:categoryId",userGetProductsByCategoy)
+productRoutes.get("/filter/:keyword",checkAdmin,filterProduct)
 productRoutes.get("/get-single/:slug",getProductBySlug)
 
 
@@ -29,10 +31,19 @@ productRoutes.get("/get-single/:slug",getProductBySlug)
 // filter by name 
 // filter by availabel status 
 // filter by stock count 
-productRoutes.post("/create",checkAdmin,createProduct)
-productRoutes.post("/create",checkAdmin,)
-productRoutes.post("/create",checkAdmin,)
-productRoutes.post("/create",checkAdmin,)
+productRoutes.post("/create",checkAdmin,uploadProducts,createProduct)
+productRoutes.get("/admin/get-all",checkAdmin,adminGetProducts)
+productRoutes.get("/admin/filter/:keyword",checkAdmin,adminGetProductsByKeyword)
+productRoutes.get("/admin/filter-by-cat/:categoryId",checkAdmin,adminGetProductsByCategory)
+productRoutes.get("/admin/get-single/:productId",checkAdmin,adminGetSingleProduct)
+productRoutes.put("/admin/update-fields/:productId",checkAdmin,updateProductFields)
+productRoutes.put("/admin/update-images/:productId",checkAdmin,updateProductImages)
+productRoutes.put("/admin/update-stock/:productId",checkAdmin,updateProductStock)
+productRoutes.put("/admin/update-refund/:productId",checkAdmin,updateProductRefund)
+productRoutes.delete("/admin/delete/:productId",checkAdmin,deleteProduct)
+
+
+
 
 
 
