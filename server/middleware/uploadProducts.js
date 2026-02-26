@@ -1,6 +1,7 @@
 import multer from 'multer';
 import { rm } from "fs/promises";
-import { generateId } from '../utils/idGenereate.js';
+import { generateId } from '../utils/idGenerate.js';
+
 
 
 
