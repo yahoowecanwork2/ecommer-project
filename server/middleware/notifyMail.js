@@ -15,7 +15,6 @@ export const sendVerifyUser = async (email,subject) => {
   const html = `<body style="font-family: Arial, sans-serif; line-height: 1.4; margin: 10px; padding: 14px; background-color: #f4f4f4; text-align: left; display: flex; justify-content: center; align-items: center; height: fit-content;">
     <div style="max-width: 600px; margin: auto; background: #ffffff; padding: 15px; border-radius: 6px; box-shadow: 0px 0px 8px rgba(0, 0, 0, 0.1);">        
         <h1 style="color: green; font-size: 20px; margin-bottom: 10px;">Email verification complete </h1>
-        // <h3 style="color: #333; font-size: 16px; margin-bottom: 5px;">User id ${id}</h3>
        </div>
 </body>
 `;
