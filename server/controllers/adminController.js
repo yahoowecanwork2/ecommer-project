@@ -139,7 +139,7 @@ export const verifyAdmin = async (req, res) => {
       password: verify.user.password,
     });
 
-    await sendVerifyUser(verify.user.email, "Registered successfully", userId);
+    await sendVerifyUser(verify.user.email, "Registered successfully");
     return res.status(200).json({
       success: true,
       message: "Registered successfully.",
