@@ -1,11 +1,145 @@
-import React from "react";
+import React, { useState } from "react";
 import Layout from "../../componets/common/Layout";
+import {
+  MdAddCircle,
+  MdSearch,
+  MdInventory,
+  MdCheckCircle,
+  MdCancel,
+} from "react-icons/md";
+import { MdCategory, MdFilterList } from "react-icons/md";
+
+import Cards from "./components/Cards";
+import Create from "./mdoal/Create";
+
+const dummyProducts = [
+  {
+    _id: "1",
+    name: "iPhone 15",
+    price: 75000,
+    stock: 10,
+    available: true,
+    image: "https://images.unsplash.com/photo-1695048133142-1a20484d2569",
+  },
+  {
+    _id: "2",
+    name: "Samsung S24",
+    price: 65000,
+    stock: 0,
+    available: false,
+    image: "https://images.unsplash.com/photo-1610945265064-0e34e5519bbf",
+  },
+  {
+    _id: "3",
+    name: "Macbook Air",
+    price: 95000,
+    stock: 5,
+    available: true,
+    image: "https://images.unsplash.com/photo-1517336714731-489689fd1ca8",
+  },
+];
 
 const Product = () => {
+  const [search, setSearch] = useState("");
+  const [showModal, setShowModal] = useState(false);
+
+  const filteredProducts = dummyProducts.filter((p) =>
+    p.name.toLowerCase().includes(search.toLowerCase()),
+  );
+
   return (
     <Layout>
-      <div>
-        <h2>Products</h2>
+      <div className="p-6 bg-slate-100 min-h-screen space-y-6">
+        <div className="flex justify-between items-center">
+          <h2 className="text-3xl font-bold text-blue-700">Products</h2>
+          <button
+            onClick={() => setShowModal(true)}
+            className="bg-gradient-to-r from-blue-600 to-blue-500 text-white px-6 py-2 rounded-xl flex items-center gap-2 shadow hover:scale-105 transition"
+          >
+            <MdAddCircle className="text-xl" /> Create
+          </button>
+        </div>
+
+        {/* STATS ROW */}
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+          <div className="bg-white p-4 rounded-2xl shadow flex items-center gap-3">
+            <MdInventory className="text-3xl text-blue-600" />
+            <div>
+              <p className="text-gray-500 text-sm">Total Products</p>
+              <h3 className="text-xl font-bold">{dummyProducts.length}</h3>
+            </div>
+          </div>
+
+          <div className="bg-white p-4 rounded-2xl shadow flex items-center gap-3">
+            <MdCheckCircle className="text-3xl text-green-600" />
+            <div>
+              <p className="text-gray-500 text-sm">Available</p>
+              <h3 className="text-xl font-bold">
+                {dummyProducts.filter((p) => p.available).length}
+              </h3>
+            </div>
+          </div>
+
+          <div className="bg-white p-4 rounded-2xl shadow flex items-center gap-3">
+            <MdCancel className="text-3xl text-red-600" />
+            <div>
+              <p className="text-gray-500 text-sm">Out of Stock</p>
+              <h3 className="text-xl font-bold">
+                {dummyProducts.filter((p) => !p.available).length}
+              </h3>
+            </div>
+          </div>
+        </div>
+
+        {/* FILTER BAR */}
+        <div className="bg-white px-5 py-3 rounded-2xl shadow flex flex-wrap items-center gap-4">
+          {/* Category */}
+          <div className="flex items-center gap-2 border rounded-xl px-3 py-2 bg-slate-50">
+            <MdCategory className="text-blue-600 text-xl" />
+            <select className="bg-transparent outline-none text-sm">
+              <option>All Categories</option>
+              <option>Electronics</option>
+              <option>Fashion</option>
+            </select>
+          </div>
+
+          {/* Search */}
+          <div className="flex items-center border rounded-xl overflow-hidden bg-slate-50">
+            <span className="px-3 text-blue-600">
+              <MdSearch className="text-xl" />
+            </span>
+            <input
+              type="text"
+              placeholder="Search product..."
+              className="px-3 py-2 outline-none text-sm bg-transparent"
+              value={search}
+              onChange={(e) => setSearch(e.target.value)}
+            />
+          </div>
+
+          {/* Status Buttons */}
+          <div className="flex items-center gap-2 ml-auto">
+            <button className="flex items-center gap-1 px-4 py-2 rounded-xl bg-blue-100 text-blue-700 text-sm font-semibold hover:bg-blue-200 transition">
+              <MdFilterList /> All
+            </button>
+
+            <button className="flex items-center gap-1 px-4 py-2 rounded-xl bg-green-100 text-green-700 text-sm font-semibold hover:bg-green-200 transition">
+              <MdFilterList /> Available
+            </button>
+
+            <button className="flex items-center gap-1 px-4 py-2 rounded-xl bg-red-100 text-red-700 text-sm font-semibold hover:bg-red-200 transition">
+              <MdFilterList /> Other
+            </button>
+          </div>
+        </div>
+
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+          {filteredProducts.map((item) => (
+            <Cards key={item._id} item={item} />
+          ))}
+        </div>
+
+        {showModal && <Create setShowModal={setShowModal} />}
       </div>
     </Layout>
   );
