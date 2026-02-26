@@ -155,7 +155,7 @@ const Register = () => {
                 name="password"
                 value={formData.password}
                 onChange={handleChange}
-                className="w-full h-full ml-2 bg-transparent outline-none text-blue-800 placeholder-blue-400"
+                className="w-full h-full ml-2 bg-transparent outline-none text-blue-700 placeholder-blue-400"
               />
               {showPassword ? (
                 <IoEyeOffOutline
