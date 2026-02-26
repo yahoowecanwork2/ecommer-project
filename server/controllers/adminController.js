@@ -6,7 +6,6 @@ import sendRegisterAndResendOtpMail, {
   loginAndresendOtpEmail,
   sendForgotMail
 } from "../middleware/sendMail.js";
-import { generateUserId } from "../utils/idGenerate.js";
 import { sendMailtoUser, sendVerifyUser } from "../middleware/notifyMail.js";
 
 //-------------------------------------- owner apis ----------------------------------
@@ -131,16 +130,10 @@ export const verifyAdmin = async (req, res) => {
       return res.status(400).json({
         message: "Wrong OTP",
       });
-    const userId = generateUserId(
-      verify.user.email,
-      verify.user.name,
-      verify.user.phoneno,
-    );
 
     await Admin.create({
       name: verify.user.name,
       authenticated: true,
-      userId: userId,
       phoneno: verify.user.phoneno,
       email: verify.user.email,
       password: verify.user.password,

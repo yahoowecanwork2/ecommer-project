@@ -6,11 +6,7 @@ const adminSchema = new mongoose.Schema({
         type:String,
         required:true
     },
-    // use for admin  login 
-    userId:{
-        type:String,
-        required:true
-    },
+ 
     email:{
         type:String,
         unique:true,

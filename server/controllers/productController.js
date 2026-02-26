@@ -1,7 +1,7 @@
 import Product from "../models/Product.js";
 import { generateProducttId } from "../utils/idGenerate.js";
 import { generateSlug } from "../utils/slugGenerate.js";
-
+import { removeFiles } from "../middleware/upload.js";
 
 
 export const userGetProducts = async (req, res) => {
@@ -10,7 +10,48 @@ export const userGetProducts = async (req, res) => {
     const limit = parseInt(req.query.limit) || 10;
     const sortDirection = req.query.sort === "asc" ? 1 : -1;
     const products = await Product.find()
-      .select("-ytvideolink -review -remark -refund -stock -keywords -refundReason")
+      .select("name slug uniqueId description keywords stock image discount price available insale")
+      .sort({ createdAt: sortDirection })
+      .skip(startIndex)
+      .limit(limit);
+     const formattedProducts = products.map((product) => ({
+      _id: product._id,
+      name: product.name,
+      slug: product.slug,
+      uniqueId:product.uniqueId,
+      description:product.description,
+      keywords:product.keywords,
+      stock:product.stock ,
+      discount:product.discount,
+      price:product.price ,
+      available:product.available ,
+      insale:product.insale,
+      image: product.image?.length > 0 ? product.image[0] : null,
+    }));
+
+    return res.status(200).json({
+      success: true,
+      totalProducts: formattedProducts.length,
+      products: formattedProducts,
+    });
+  } catch (error) {
+    console.error(error);
+    return res.status(500).json({
+      success: false,
+      message: "Failed to get all products",
+    });
+  }
+};
+
+
+
+export const userGetProductsByCategoy = async (req, res) => {
+  try {
+    const startIndex = parseInt(req.query.startIndex) || 0;
+    const limit = parseInt(req.query.limit) || 10;
+    const sortDirection = req.query.sort === "asc" ? 1 : -1;
+    const products = await Product.find({category:req.params.categoryId})
+      .select("-ytvideolink -refund -stock -keywords -refundReason")
       .sort({ createdAt: sortDirection })
       .skip(startIndex)
       .limit(limit);
@@ -30,6 +71,7 @@ export const userGetProducts = async (req, res) => {
 
 
 
+
 // product/:slug
 //  get single product by slug
 export const getProductBySlug = async (req, res) => {
@@ -44,6 +86,7 @@ export const getProductBySlug = async (req, res) => {
     }
     res.status(200).json({
       success: true,
+      message:"Product by slug fetched successfully",
       product,
     });
   } catch (error) {
@@ -58,6 +101,8 @@ export const getProductBySlug = async (req, res) => {
 
 
 // --------------------------- admin --------------------------------
+
+
 export const createProduct = async (req, res) => {
   try {
     const {
@@ -66,50 +111,60 @@ export const createProduct = async (req, res) => {
       description,
       keywords,
       stock,
+      price,
       discount,
       available,
       insale,
-      price,
     } = req.body;
 
-    if (!name || !description) {
+    // check required images
+    if (!req.files || req.files.length < 4) {
       return res.status(400).json({
         success: false,
-        message: "Name and description are required",
+        message: "Minimum 4 images required",
       });
     }
-    const slug = await generateSlug(name);
-    const uniqueId = generateProducttId(name)
-    const images =
-      req.files?.map((file, index) => ({
-        url: `/uploads/${file.filename}`,
-        index,
-      })) || [];
+
+    // map uploaded images
+    const imageData = req.files.map((file, index) => ({
+      url: `${req.protocol}://${req.get("host")}/uploads/${file.filename}`,
+      index: index,
+    }));
 
     const product = await Product.create({
       name,
-      slug,
-      uniqueId:uniqueId,
-      description,
-      discount,
       category,
+      slug:generateSlug(name),
+      uniqueId:generateProducttId(name),
+      description,
       keywords,
-      available,
-      insale,
       stock,
       price,
-      image: images,
+      discount,
+      available,
+      insale,
+      image: imageData,
     });
+
     res.status(201).json({
       success: true,
       message: "Product created successfully",
       product,
     });
   } catch (error) {
-    console.error("Error creating product:", error);
+    console.log(error);
+
+    // if error remove uploaded files
+    if (req.files) {
+      req.files.forEach((file) => {
+        removeFiles(`uploads/${file.filename}`);
+      });
+    }
+
     res.status(500).json({
       success: false,
-      message: "Failed to create product",
+      message: "Error creating product",
+      error: error.message,
     });
   }
 };
