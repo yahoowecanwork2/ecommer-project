@@ -8,7 +8,7 @@ const Cards = ({ item }) => {
       {/* Image */}
       <div className="relative h-44 overflow-hidden">
         <img
-          src={item.image}
+          src={item.image?.url} // ✅ real image url
           alt={item.name}
           className="w-full h-full object-cover group-hover:scale-110 transition duration-500"
         />
@@ -16,9 +16,9 @@ const Cards = ({ item }) => {
         {/* Badge */}
         <span
           className={`absolute top-3 right-3 px-3 py-1 text-xs font-semibold rounded-full 
-          ${item.available ? "bg-green-100 text-green-700" : "bg-red-100 text-red-700"}`}
+          ${item.available === "yes" ? "bg-green-100 text-green-700" : "bg-red-100 text-red-700"}`}
         >
-          {item.available ? "Available" : "Out of Stock"}
+          {item.available === "yes" ? "Available" : "Out of Stock"}
         </span>
       </div>
 

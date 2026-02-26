@@ -6,4 +6,8 @@ export const productApi = {
     const res = await api.post("/product/create", data);
     return res.data;
   },
+  get: async () => {
+    const res = await api.get("/product/admin/get-all");
+    return res.data;
+  },
 };

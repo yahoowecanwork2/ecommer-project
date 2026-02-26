@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import Layout from "../../componets/common/Layout";
 import {
   MdAddCircle,
@@ -11,6 +11,7 @@ import { MdCategory, MdFilterList } from "react-icons/md";
 
 import Cards from "./components/Cards";
 import Create from "./mdoal/Create";
+import { productApi } from "../../apis/product";
 
 const dummyProducts = [
   {
@@ -41,11 +42,22 @@ const dummyProducts = [
 
 const Product = () => {
   const [search, setSearch] = useState("");
-  const [showModal, setShowModal] = useState(false);
+  const [products, setProducts] = useState([]);
 
-  const filteredProducts = dummyProducts.filter((p) =>
-    p.name.toLowerCase().includes(search.toLowerCase()),
-  );
+  const [showModal, setShowModal] = useState(false);
+  const fetchProducts = async () => {
+    try {
+      const res = await productApi.get(0, 10);
+      console.log("products", res);
+
+      setProducts(res.products);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+  useEffect(() => {
+    fetchProducts();
+  }, []);
 
   return (
     <Layout>
@@ -66,7 +78,7 @@ const Product = () => {
             <MdInventory className="text-3xl text-blue-600" />
             <div>
               <p className="text-gray-500 text-sm">Total Products</p>
-              <h3 className="text-xl font-bold">{dummyProducts.length}</h3>
+              <h3 className="text-xl font-bold">{dummyProducts?.length}</h3>
             </div>
           </div>
 
@@ -75,7 +87,7 @@ const Product = () => {
             <div>
               <p className="text-gray-500 text-sm">Available</p>
               <h3 className="text-xl font-bold">
-                {dummyProducts.filter((p) => p.available).length}
+                {dummyProducts?.filter((p) => p.available).length}
               </h3>
             </div>
           </div>
@@ -85,7 +97,7 @@ const Product = () => {
             <div>
               <p className="text-gray-500 text-sm">Out of Stock</p>
               <h3 className="text-xl font-bold">
-                {dummyProducts.filter((p) => !p.available).length}
+                {dummyProducts?.filter((p) => !p.available).length}
               </h3>
             </div>
           </div>
@@ -134,7 +146,7 @@ const Product = () => {
         </div>
 
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
-          {filteredProducts.map((item) => (
+          {products?.map((item) => (
             <Cards key={item._id} item={item} />
           ))}
         </div>
