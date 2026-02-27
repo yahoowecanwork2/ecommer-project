@@ -8,7 +8,7 @@ import {
   MdCancel,
 } from "react-icons/md";
 import { MdCategory, MdFilterList } from "react-icons/md";
-
+import { MdKeyboardArrowLeft, MdKeyboardArrowRight } from "react-icons/md";
 import Cards from "./components/Cards";
 import Create from "./mdoal/Create";
 import { productApi } from "../../apis/product";
@@ -211,22 +211,24 @@ const Product = () => {
           {renderCards(products, "all")}
           {renderCards(filterByCategories, "filterbycategories")}
         </div>
-        <div className="flex justify-center gap-4 mt-8">
+        <div className="flex justify-center items-center gap-4 mt-8">
           <button
             disabled={page === 1}
             onClick={() => setPage(page - 1)}
-            className="px-4 py-2 rounded-lg bg-blue-500 text-white disabled:opacity-50"
+            className="p-2 rounded-full bg-white shadow hover:bg-blue-100 text-blue-600 disabled:opacity-40 disabled:cursor-not-allowed transition"
           >
-            Prev
+            <MdKeyboardArrowLeft size={26} />
           </button>
 
-          <span className="px-4 py-2 font-semibold">Page {page}</span>
+          <span className="px-4 py-1 rounded-full bg-blue-100 text-blue-700 font-semibold">
+            {page}
+          </span>
 
           <button
             onClick={() => setPage(page + 1)}
-            className="px-4 py-2 rounded-lg bg-blue-500 text-white"
+            className="p-2 rounded-full bg-white shadow hover:bg-blue-100 text-blue-600 transition"
           >
-            Next
+            <MdKeyboardArrowRight size={26} />
           </button>
         </div>
         {showModal && <Create setShowModal={setShowModal} />}
