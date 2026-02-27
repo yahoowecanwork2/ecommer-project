@@ -8,6 +8,7 @@ import {
   FaTag,
   FaCheckCircle,
   FaTimesCircle,
+  FaTrash,
 } from "react-icons/fa";
 import { MdInventory, MdCategory } from "react-icons/md";
 import { GiTakeMyMoney } from "react-icons/gi";
@@ -23,7 +24,7 @@ const Productdetail = () => {
   const [openEdit, setOpenEdit] = useState(false);
   const [openStock, setOpenStock] = useState(false);
   const [openRefund, setOpenRefund] = useState(false);
-
+  // single
   const getSingleProduct = async () => {
     try {
       const res = await productApi.getSingle(id);
@@ -33,7 +34,20 @@ const Productdetail = () => {
       console.log(error);
     }
   };
+  // delete
+  const handleDelete = async () => {
+    if (!window.confirm("Are you sure you want to delete this product?"))
+      return;
 
+    try {
+      await productApi.delete(product._id);
+      alert("Product deleted successfully");
+      navigate("/product");
+    } catch (error) {
+      console.log(error);
+      alert("Failed to delete product");
+    }
+  };
   useEffect(() => {
     if (id) getSingleProduct();
   }, [id]);
@@ -59,16 +73,24 @@ const Productdetail = () => {
             <FaArrowLeft /> Back
           </button>
 
-          <button
-            onClick={() => setOpenEdit(true)}
-            className="flex items-center gap-2 bg-blue-600 text-white px-5 py-2 rounded-xl shadow hover:bg-blue-700 transition"
-          >
-            <FaEdit /> Edit Product
-          </button>
+          <div className="flex gap-3">
+            <button
+              onClick={() => setOpenEdit(true)}
+              className="flex items-center gap-2 bg-blue-600 text-white px-5 py-2 rounded-xl shadow hover:bg-blue-700 transition"
+            >
+              <FaEdit /> Edit
+            </button>
+
+            <button
+              onClick={handleDelete}
+              className="flex items-center gap-2 bg-red-600 text-white px-5 py-2 rounded-xl shadow hover:bg-red-700 transition"
+            >
+              <FaTrash /> Delete
+            </button>
+          </div>
         </div>
 
         <div className="max-w-6xl mx-auto grid grid-cols-1 lg:grid-cols-2 gap-8">
-          {/* Images */}
           <div className="bg-white rounded-2xl shadow p-5">
             <img
               src={activeImg}
@@ -94,7 +116,6 @@ const Productdetail = () => {
             </div>
           </div>
 
-          {/* Info */}
           <div className="bg-white rounded-2xl shadow p-6 space-y-4">
             <h2 className="text-2xl font-bold">{product?.name}</h2>
 

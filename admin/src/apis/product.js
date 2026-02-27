@@ -32,4 +32,8 @@ export const productApi = {
     );
     return res.data;
   },
+  delete: async (productId) => {
+    const res = await api.delete(`/product/admin/delete/${productId}`);
+    return res.data;
+  },
 };
