@@ -13,6 +13,7 @@ const Updatefields = ({ product, setOpenEdit, refresh }) => {
     remark: product.remark || "",
     averageRating: product.averageRating || "",
   });
+  console.log("product-detail", product);
 
   const handleChange = (e) => {
     setForm({ ...form, [e.target.name]: e.target.value });

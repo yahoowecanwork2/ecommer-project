@@ -2,10 +2,17 @@ import React, { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { productApi } from "../../apis/product";
 import Layout from "../../componets/common/Layout";
-import { FaArrowLeft, FaShoppingCart, FaTag, FaEdit } from "react-icons/fa";
+import {
+  FaArrowLeft,
+  FaEdit,
+  FaTag,
+  FaCheckCircle,
+  FaTimesCircle,
+} from "react-icons/fa";
 import { MdInventory, MdCategory } from "react-icons/md";
 import { GiTakeMyMoney } from "react-icons/gi";
 import Updatefileds from "./mdoal/Updatefileds";
+import Update from "./mdoal/Update";
 
 const Productdetail = () => {
   const { id } = useParams();
@@ -13,12 +20,10 @@ const Productdetail = () => {
   const [product, setProduct] = useState(null);
   const [activeImg, setActiveImg] = useState("");
   const [openEdit, setOpenEdit] = useState(false);
-
+  const [openStock, setOpenStock] = useState(false);
   const getSingleProduct = async () => {
     try {
       const res = await productApi.getSingle(id);
-      console.log("detail", res);
-
       setProduct(res.product);
       setActiveImg(res.product.image[0]?.url);
     } catch (error) {
@@ -41,26 +46,29 @@ const Productdetail = () => {
 
   return (
     <Layout>
-      <div className="p-8 bg-gradient-to-br from-gray-100 to-gray-200 min-h-screen">
+      <div className="min-h-screen bg-gradient-to-br from-blue-50 to-white p-8">
+        {/* Top bar */}
         <div className="flex justify-between items-center mb-6">
           <button
             onClick={() => navigate("/product")}
-            className="flex items-center gap-2 text-sm font-semibold text-blue-600 hover:text-blue-800"
+            className="flex items-center gap-2 text-blue-600 hover:text-blue-800 font-semibold"
           >
-            <FaArrowLeft /> Back to Products
+            <FaArrowLeft /> Back
           </button>
 
           <button
             onClick={() => setOpenEdit(true)}
-            className="flex items-center gap-2 bg-yellow-500 text-white px-4 py-2 rounded-xl hover:bg-yellow-600"
+            className="flex items-center gap-2 bg-blue-600 text-white px-5 py-2 rounded-xl shadow hover:bg-blue-700 transition"
           >
             <FaEdit /> Edit Product
           </button>
         </div>
 
-        <div className="max-w-6xl mx-auto bg-white/80 backdrop-blur-md rounded-3xl shadow-2xl p-8 grid grid-cols-1 md:grid-cols-2 gap-12">
+        {/* Main Card */}
+        <div className="max-w-7xl mx-auto bg-white rounded-3xl shadow-xl p-8 grid grid-cols-1 md:grid-cols-2 gap-10">
+          {/* Left - Images */}
           <div>
-            <div className="border rounded-2xl overflow-hidden mb-4 shadow">
+            <div className="border rounded-2xl overflow-hidden shadow-md">
               <img
                 src={activeImg}
                 alt={product.name}
@@ -68,95 +76,106 @@ const Productdetail = () => {
               />
             </div>
 
-            <div className="flex gap-3">
+            <div className="flex gap-3 mt-4">
               {product?.image?.map((img, i) => (
                 <img
                   key={i}
                   src={img.url}
                   alt=""
                   onClick={() => setActiveImg(img.url)}
-                  className={`w-20 h-20 object-cover rounded-xl cursor-pointer border-2 
+                  className={`w-20 h-20 object-cover rounded-xl cursor-pointer border-2 transition
                   ${
                     activeImg === img.url
                       ? "border-blue-500 scale-105"
-                      : "border-gray-200"
+                      : "border-gray-200 hover:border-blue-300"
                   }`}
                 />
               ))}
             </div>
           </div>
 
+          {/* Right - Info */}
           <div className="space-y-5">
-            <h2 className="text-4xl font-extrabold text-gray-800 tracking-wide">
+            <h2 className="text-4xl font-bold text-gray-800">
               {product?.name}
             </h2>
 
-            <div className="flex items-center gap-3 text-gray-600">
-              <MdCategory className="text-xl text-blue-600" />
+            <div className="flex items-center gap-2 text-gray-600">
+              <MdCategory className="text-blue-600 text-xl" />
               <span className="font-medium">{product?.category?.name}</span>
             </div>
 
             <div className="flex items-center gap-4">
-              <span className="text-3xl font-bold text-blue-600 flex items-center gap-1">
+              <span className="text-3xl font-extrabold text-blue-600 flex items-center gap-1">
                 <GiTakeMyMoney /> ₹{product?.price}
               </span>
 
-              {product.discount > 0 && (
-                <span className="flex items-center gap-1 text-sm bg-green-100 text-green-700 px-3 py-1 rounded-full">
+              {product?.discount > 0 && (
+                <span className="flex items-center gap-1 bg-blue-100 text-blue-700 px-3 py-1 rounded-full text-sm font-semibold">
                   <FaTag /> {product?.discount}% OFF
                 </span>
               )}
             </div>
 
-            <p className="text-gray-700 leading-relaxed text-lg">
+            <p className="text-gray-700 leading-relaxed">
               {product?.description}
             </p>
 
-            <div className="flex gap-6 text-sm">
-              <span className="flex items-center gap-2 bg-gray-100 px-4 py-2 rounded-xl">
-                <MdInventory className="text-blue-600" />
-                Stock: {product?.stock}
-              </span>
+            {/* Status Boxes */}
+            <div className="grid grid-cols-2 md:grid-cols-3 gap-4 text-sm">
+              <div className="flex items-center justify-between bg-blue-50 px-4 py-3 rounded-xl">
+                <div className="flex items-center gap-2">
+                  <MdInventory className="text-blue-600 text-xl" />
+                  <span>Stock: {product?.stock}</span>
+                </div>
 
-              <span
-                className={`px-4 py-2 rounded-xl font-semibold
+                <button
+                  onClick={() => setOpenStock(true)}
+                  className="text-blue-600 hover:text-blue-800"
+                >
+                  <FaEdit />
+                </button>
+              </div>
+
+              <div
+                className={`flex items-center gap-2 px-4 py-3 rounded-xl font-semibold
                 ${
                   product?.available === "yes"
-                    ? "bg-green-100 text-green-700"
-                    : "bg-red-100 text-red-700"
+                    ? "bg-green-50 text-green-700"
+                    : "bg-red-50 text-red-700"
                 }`}
               >
+                {product?.available === "yes" ? (
+                  <FaCheckCircle />
+                ) : (
+                  <FaTimesCircle />
+                )}
                 {product?.available === "yes" ? "Available" : "Out of Stock"}
-              </span>
+              </div>
+
+              <div className="bg-purple-50 text-purple-700 px-4 py-3 rounded-xl font-semibold">
+                Refund: {product?.refund}%
+              </div>
             </div>
 
-            <div className="flex gap-4 mt-6">
-              <button className="flex items-center gap-2 bg-blue-600 text-white px-6 py-3 rounded-xl hover:bg-blue-700 transition shadow-lg">
-                <FaShoppingCart /> Add to Cart
-              </button>
-
-              <button className="flex items-center gap-2 border-2 border-blue-600 text-blue-600 px-6 py-3 rounded-xl hover:bg-blue-50 transition">
-                <GiTakeMyMoney /> Buy Now
-              </button>
-            </div>
-
-            <div className="pt-4 border-t text-sm text-gray-500 space-y-1">
-              <p>
-                <b>Keywords:</b> {product?.keywords}
-              </p>
-              <p>
-                <b>Product ID:</b> {product?.uniqueId}
-              </p>
-              <p>
-                <b>Slug:</b> {product?.slug}
-              </p>
+            {/* Keywords */}
+            <div className="pt-4 border-t text-sm text-gray-500">
+              <b>Keywords:</b> {product?.keywords}
             </div>
           </div>
         </div>
+
         {openEdit && (
           <Updatefileds
             product={product}
             setOpenEdit={setOpenEdit}
+            refresh={getSingleProduct}
+          />
+        )}
+        {openStock && (
+          <Update
+            product={product}
+            setOpenStock={setOpenStock}
             refresh={getSingleProduct}
           />
         )}

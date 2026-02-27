@@ -21,4 +21,15 @@ export const productApi = {
     );
     return res.data;
   },
+  updateStock: async (productId, data) => {
+    const res = await api.put(`/product/admin/update-stock/${productId}`, data);
+    return res.data;
+  },
+  updateRefund: async (productId, data) => {
+    const res = await api.put(
+      `/product/admin/update-refund/${productId}`,
+      data,
+    );
+    return res.data;
+  },
 };
