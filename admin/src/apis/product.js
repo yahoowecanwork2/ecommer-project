@@ -10,4 +10,8 @@ export const productApi = {
     const res = await api.get("/product/admin/get-all");
     return res.data;
   },
+  getSingle: async (productId) => {
+    const res = await api.get(`/product/admin/get-single/${productId}`);
+    return res.data;
+  },
 };
