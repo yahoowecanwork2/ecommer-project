@@ -14,4 +14,11 @@ export const productApi = {
     const res = await api.get(`/product/admin/get-single/${productId}`);
     return res.data;
   },
+  updateFields: async (productId, data) => {
+    const res = await api.put(
+      `/product/admin/update-fields/${productId}`,
+      data,
+    );
+    return res.data;
+  },
 };

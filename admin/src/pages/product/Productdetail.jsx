@@ -2,19 +2,23 @@ import React, { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { productApi } from "../../apis/product";
 import Layout from "../../componets/common/Layout";
-import { FaArrowLeft, FaShoppingCart, FaTag } from "react-icons/fa";
+import { FaArrowLeft, FaShoppingCart, FaTag, FaEdit } from "react-icons/fa";
 import { MdInventory, MdCategory } from "react-icons/md";
 import { GiTakeMyMoney } from "react-icons/gi";
+import Updatefileds from "./mdoal/Updatefileds";
 
 const Productdetail = () => {
   const { id } = useParams();
   const navigate = useNavigate();
   const [product, setProduct] = useState(null);
   const [activeImg, setActiveImg] = useState("");
+  const [openEdit, setOpenEdit] = useState(false);
 
   const getSingleProduct = async () => {
     try {
       const res = await productApi.getSingle(id);
+      console.log("detail", res);
+
       setProduct(res.product);
       setActiveImg(res.product.image[0]?.url);
     } catch (error) {
@@ -38,12 +42,21 @@ const Productdetail = () => {
   return (
     <Layout>
       <div className="p-8 bg-gradient-to-br from-gray-100 to-gray-200 min-h-screen">
-        <button
-          onClick={() => navigate("/product")}
-          className="flex items-center gap-2 mb-6 text-sm font-semibold text-blue-600 hover:text-blue-800"
-        >
-          <FaArrowLeft /> Back to Products
-        </button>
+        <div className="flex justify-between items-center mb-6">
+          <button
+            onClick={() => navigate("/product")}
+            className="flex items-center gap-2 text-sm font-semibold text-blue-600 hover:text-blue-800"
+          >
+            <FaArrowLeft /> Back to Products
+          </button>
+
+          <button
+            onClick={() => setOpenEdit(true)}
+            className="flex items-center gap-2 bg-yellow-500 text-white px-4 py-2 rounded-xl hover:bg-yellow-600"
+          >
+            <FaEdit /> Edit Product
+          </button>
+        </div>
 
         <div className="max-w-6xl mx-auto bg-white/80 backdrop-blur-md rounded-3xl shadow-2xl p-8 grid grid-cols-1 md:grid-cols-2 gap-12">
           <div>
@@ -56,7 +69,7 @@ const Productdetail = () => {
             </div>
 
             <div className="flex gap-3">
-              {product.image.map((img, i) => (
+              {product?.image?.map((img, i) => (
                 <img
                   key={i}
                   src={img.url}
@@ -75,45 +88,45 @@ const Productdetail = () => {
 
           <div className="space-y-5">
             <h2 className="text-4xl font-extrabold text-gray-800 tracking-wide">
-              {product.name}
+              {product?.name}
             </h2>
 
             <div className="flex items-center gap-3 text-gray-600">
               <MdCategory className="text-xl text-blue-600" />
-              <span className="font-medium">{product.category.name}</span>
+              <span className="font-medium">{product?.category?.name}</span>
             </div>
 
             <div className="flex items-center gap-4">
               <span className="text-3xl font-bold text-blue-600 flex items-center gap-1">
-                <GiTakeMyMoney /> ₹{product.price}
+                <GiTakeMyMoney /> ₹{product?.price}
               </span>
 
               {product.discount > 0 && (
                 <span className="flex items-center gap-1 text-sm bg-green-100 text-green-700 px-3 py-1 rounded-full">
-                  <FaTag /> {product.discount}% OFF
+                  <FaTag /> {product?.discount}% OFF
                 </span>
               )}
             </div>
 
             <p className="text-gray-700 leading-relaxed text-lg">
-              {product.description}
+              {product?.description}
             </p>
 
             <div className="flex gap-6 text-sm">
               <span className="flex items-center gap-2 bg-gray-100 px-4 py-2 rounded-xl">
                 <MdInventory className="text-blue-600" />
-                Stock: {product.stock}
+                Stock: {product?.stock}
               </span>
 
               <span
                 className={`px-4 py-2 rounded-xl font-semibold
                 ${
-                  product.available === "yes"
+                  product?.available === "yes"
                     ? "bg-green-100 text-green-700"
                     : "bg-red-100 text-red-700"
                 }`}
               >
-                {product.available === "yes" ? "Available" : "Out of Stock"}
+                {product?.available === "yes" ? "Available" : "Out of Stock"}
               </span>
             </div>
 
@@ -129,17 +142,24 @@ const Productdetail = () => {
 
             <div className="pt-4 border-t text-sm text-gray-500 space-y-1">
               <p>
-                <b>Keywords:</b> {product.keywords}
+                <b>Keywords:</b> {product?.keywords}
               </p>
               <p>
-                <b>Product ID:</b> {product.uniqueId}
+                <b>Product ID:</b> {product?.uniqueId}
               </p>
               <p>
-                <b>Slug:</b> {product.slug}
+                <b>Slug:</b> {product?.slug}
               </p>
             </div>
           </div>
         </div>
+        {openEdit && (
+          <Updatefileds
+            product={product}
+            setOpenEdit={setOpenEdit}
+            refresh={getSingleProduct}
+          />
+        )}
       </div>
     </Layout>
   );
