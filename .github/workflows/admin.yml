@@ -1,0 +1,44 @@
+name: Build & Deploy Admin Panel
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - "admin/**"
+
+jobs:
+  deploy-admin:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Deploy Admin Panel on VPS via SSH
+        uses: appleboy/ssh-action@v1.0.3
+        with:
+          host: ${{ secrets.VPS_HOST }}
+          username: ${{ secrets.VPS_USER }}
+          key: ${{ secrets.VPS_KEY }}
+          port: 8484
+          script: |
+            echo "🚀 Starting admin panel deployment"
+
+            cd /home/deployer/apps/ecommerce-module
+
+            echo "📥 Pulling latest code"
+            git pull origin main
+
+            echo "🐳 Rebuilding admin image"
+            docker compose build admin
+
+            echo "🔄 Restarting admin container"
+            docker compose up -d admin
+
+            echo "✅ Admin panel deployment completed"
+
+            echo "🔄 Nginx reload started"
+            docker restart nginx-proxy
+
+            echo "✅ Nginx reloaded successfully"

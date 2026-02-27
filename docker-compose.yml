@@ -1,0 +1,44 @@
+
+services:
+  backend:
+    build: ./server
+    image: ecommerce-backend
+    restart: always
+    expose:
+      - "8080"
+    env_file:
+      - ./server/.env
+    networks:
+      - proxy-net
+
+  frontend:
+    build:
+      context: ./frontend
+      args:
+        VITE_BACKEND_URL: ${VITE_BACKEND_URL}
+    image: ecommerce-frontend
+    restart: always
+    expose:
+      - "3000"
+    env_file:
+      - ./frontend/.env
+    networks:
+      - proxy-net
+
+  adminpanel:
+    build:
+      context: ./admin
+      args:
+        VITE_BACKEND_URL: ${VITE_BACKEND_URL}
+    image: ecommerce-admin
+    restart: always
+    expose:
+      - "3000"
+    env_file:
+      - ./admin/.env
+    networks:
+      - proxy-net
+
+networks:
+  proxy-net:
+    external: true

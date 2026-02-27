@@ -1,0 +1,44 @@
+name: Build & Deploy Frontend
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - "frontend/**"
+
+jobs:
+  deploy-frontend:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Deploy Frontend on VPS via SSH
+        uses: appleboy/ssh-action@v1.0.3
+        with:
+          host: ${{ secrets.VPS_HOST }}
+          username: ${{ secrets.VPS_USER }}
+          key: ${{ secrets.VPS_KEY }}
+          port: ${{ secrets.VPS_PORT }}
+          script: |
+            echo "🚀 Starting frontend deployment"
+
+            cd /home/deployer/apps/ecommerce-module
+
+            echo "📥 Pulling latest code"
+            git pull origin main
+
+            echo "🐳 Rebuilding frontend image"
+            docker compose build frontend
+
+            echo "🔄 Restarting frontend container"
+            docker compose up -d frontend
+
+            echo "✅ Frontend deployment completed"
+
+            echo "🔄 Nginx reload started"
+            docker restart nginx-proxy
+
+            echo "✅ Nginx reloaded successfully"
