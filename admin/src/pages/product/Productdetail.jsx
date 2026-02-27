@@ -28,6 +28,7 @@ const Productdetail = () => {
   const getSingleProduct = async () => {
     try {
       const res = await productApi.getSingle(id);
+      console.log(res)
       setProduct(res.product);
       setActiveImg(res.product.image[0]?.url);
     } catch (error) {

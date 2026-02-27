@@ -5,6 +5,8 @@ import { useNavigate } from "react-router-dom";
 
 const Cards = ({ item }) => {
   const navigate = useNavigate();
+  // console.log(item)
+  console.log(item?.image?.url)
   return (
     <div className="bg-white rounded-2xl shadow-md hover:shadow-2xl transition-all duration-300 overflow-hidden border border-gray-100 group">
       <div
@@ -12,8 +14,8 @@ const Cards = ({ item }) => {
         className="relative h-44 overflow-hidden"
       >
         <img
-          src={item.image?.url}
-          alt={item.name}
+          src={item?.image?.url}
+    alt={item?.name}
           className="w-full h-full object-cover group-hover:scale-110 transition duration-500"
         />
 
