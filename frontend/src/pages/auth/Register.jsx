@@ -11,25 +11,35 @@ const Register = () => {
   const [confirmationResult, setConfirmationResult] = useState(null);
   const [loading, setLoading] = useState(false);
 
-  // ✅ Initialize Recaptcha (Correct v9+ syntax)
+  // 🔐 Initialize Recaptcha
   useEffect(() => {
-    if (!auth) {
-      console.error("Auth not initialized");
-      return;
-    }
+    if (!auth) return;
 
     if (!window.recaptchaVerifier) {
       window.recaptchaVerifier = new RecaptchaVerifier(
-        auth, // ✅ auth FIRST (important)
+        auth, // ✅ AUTH FIRST (correct for modular)
         "recaptcha-container",
         {
-          size: "invisible",
+          size: "normal",
           callback: () => {
             console.log("Recaptcha solved");
           },
+          "expired-callback": () => {
+            console.log("Recaptcha expired");
+          },
         }
       );
+
+      window.recaptchaVerifier.render().catch(console.error);
     }
+
+    // Cleanup on unmount
+    return () => {
+      if (window.recaptchaVerifier) {
+        window.recaptchaVerifier.clear();
+        window.recaptchaVerifier = null;
+      }
+    };
   }, []);
 
   // 📩 Send OTP
@@ -44,9 +54,15 @@ const Register = () => {
 
       const appVerifier = window.recaptchaVerifier;
 
+      if (!appVerifier) {
+        alert("Recaptcha not ready");
+        return;
+      }
+      console.log("Sending OTP to:", phone);
+
       const result = await signInWithPhoneNumber(
         auth,
-        "+91" + phone,
+        `+91${phone}`,
         appVerifier
       );
 
@@ -61,6 +77,15 @@ const Register = () => {
         window.recaptchaVerifier.clear();
         window.recaptchaVerifier = null;
       }
+
+      // Recreate fresh recaptcha
+      window.recaptchaVerifier = new RecaptchaVerifier(
+        auth,
+        "recaptcha-container",
+        { size: "invisible" }
+      );
+
+      await window.recaptchaVerifier.render();
     } finally {
       setLoading(false);
     }
@@ -142,7 +167,6 @@ const Register = () => {
         </>
       )}
 
-      {/* 🔥 Required for Recaptcha */}
       <div id="recaptcha-container"></div>
     </div>
   );
