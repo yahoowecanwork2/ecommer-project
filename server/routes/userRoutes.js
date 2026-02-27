@@ -1,18 +1,25 @@
 import express from "express";
+import { forgotPassword, getProfile, logout, registerOtpResend, resetPassword, sendEmailToUser, userLogin, userRegister, userResendLoginVerifyOtp, userUpdateProfile, verifyLoginUser, verifyUser } from "../controllers/userController.js";
+import isAuthenticated from "../middleware/isAuthenticated.js";
 
 
 const userRoutes = express.Router();
 
 //--------------------- user routes -------------------
-// register 
-// otp verify 
-// login 
-// otp verify 
-// my-profile 
-// update profile 
-// update image 
-// remove image 
-// send mail to admin  
+
+userRoutes.post("/register",userRegister);  
+userRoutes.post("/register-resend-otp",registerOtpResend );  
+userRoutes.post("/register-otp-verify", verifyUser); 
+userRoutes.post("/forgotpassword", forgotPassword)
+userRoutes.post("/resetpassword", resetPassword)
+userRoutes.post("/login",userLogin);  
+userRoutes.post("/login-otp-resend", userResendLoginVerifyOtp);  
+userRoutes.post("/login-otp-verify", verifyLoginUser);  
+userRoutes.put("/logout",logout);  
+userRoutes.get("/profile",isAuthenticated, getProfile);    
+userRoutes.put("/profile-update",isAuthenticated, );  userUpdateProfile
+userRoutes.put("/send-mail",isAuthenticated, sendEmailToUser);  
+
 
 
 

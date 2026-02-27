@@ -1,4 +1,4 @@
-import bcrypt from "bcryptjs";
+   import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
 import { generateToken } from "../utils/generateUserToken.js";
 import { Admin } from "../models/Admin.js";
@@ -32,7 +32,7 @@ export const adminRegister = async (req, res) => {
       phoneno,
       password: hashedpassword,
     };
-    const otp = Math.floor(100000 +Math.random() * 1000000);
+      const otp = Math.floor(100000 + Math.random() * 900000);
 
     const activationToken = jwt.sign(
       {
@@ -81,8 +81,7 @@ export const registerOtpResend = async (req, res) => {
       phoneno,
       password: hashedpassword,
     };
-    const otp = Math.floor(100000 +Math.random() * 1000000);
-
+      const otp = Math.floor(100000 + Math.random() * 900000);
     const activationToken = jwt.sign(
       {
         user,

@@ -15,8 +15,6 @@ export const generateToken = async (res, user, message) => {
     name:user.name,
     message:`You Login to study material application`,
   };
-  // send login email to user 
-  await sendLoginMailtoUser("Robovation Institute managememnt sysytem", data);
   return res
     .status(200)
     .cookie("token", token, {

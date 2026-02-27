@@ -6,6 +6,7 @@ import isAuthenticated from '../middleware/isAuthenticated.js';
 const adminRoutes = express.Router();
 
 
+
 //----------------------------------------- admin routes ------------------------
 
 adminRoutes.post("/register", adminRegister);  
