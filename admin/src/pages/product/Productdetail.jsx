@@ -23,6 +23,7 @@ const Productdetail = () => {
   const [openEdit, setOpenEdit] = useState(false);
   const [openStock, setOpenStock] = useState(false);
   const [openRefund, setOpenRefund] = useState(false);
+
   const getSingleProduct = async () => {
     try {
       const res = await productApi.getSingle(id);
@@ -40,7 +41,7 @@ const Productdetail = () => {
   if (!product)
     return (
       <Layout>
-        <div className="p-10 text-center text-lg font-semibold">
+        <div className="p-10 text-center text-lg font-semibold animate-pulse">
           Loading product...
         </div>
       </Layout>
@@ -48,12 +49,12 @@ const Productdetail = () => {
 
   return (
     <Layout>
-      <div className="min-h-screen bg-gradient-to-br from-blue-50 to-white p-8">
+      <div className="min-h-screen bg-gray-50 p-6">
         {/* Top bar */}
         <div className="flex justify-between items-center mb-6">
           <button
             onClick={() => navigate("/product")}
-            className="flex items-center gap-2 text-blue-600 hover:text-blue-800 font-semibold"
+            className="flex items-center gap-2 text-gray-600 hover:text-blue-600 font-medium"
           >
             <FaArrowLeft /> Back
           </button>
@@ -66,109 +67,98 @@ const Productdetail = () => {
           </button>
         </div>
 
-        {/* Main Card */}
-        <div className="max-w-7xl mx-auto bg-white rounded-3xl shadow-xl p-8 grid grid-cols-1 md:grid-cols-2 gap-10">
-          {/* Left - Images */}
-          <div>
-            <div className="border rounded-2xl overflow-hidden shadow-md">
-              <img
-                src={activeImg}
-                alt={product.name}
-                className="w-full h-[420px] object-cover hover:scale-105 transition duration-500"
-              />
-            </div>
+        <div className="max-w-6xl mx-auto grid grid-cols-1 lg:grid-cols-2 gap-8">
+          {/* Images */}
+          <div className="bg-white rounded-2xl shadow p-5">
+            <img
+              src={activeImg}
+              alt={product.name}
+              className="w-full h-[400px] object-contain rounded-xl"
+            />
 
-            <div className="flex gap-3 mt-4">
+            <div className="flex gap-3 mt-4 overflow-x-auto">
               {product?.image?.map((img, i) => (
                 <img
                   key={i}
                   src={img.url}
                   alt=""
                   onClick={() => setActiveImg(img.url)}
-                  className={`w-20 h-20 object-cover rounded-xl cursor-pointer border-2 transition
+                  className={`w-20 h-20 object-cover rounded-lg cursor-pointer border
                   ${
                     activeImg === img.url
-                      ? "border-blue-500 scale-105"
-                      : "border-gray-200 hover:border-blue-300"
+                      ? "border-blue-600"
+                      : "border-gray-200 hover:border-blue-400"
                   }`}
                 />
               ))}
             </div>
           </div>
 
-          {/* Right - Info */}
-          <div className="space-y-5">
-            <h2 className="text-4xl font-bold text-gray-800">
-              {product?.name}
-            </h2>
+          {/* Info */}
+          <div className="bg-white rounded-2xl shadow p-6 space-y-4">
+            <h2 className="text-2xl font-bold">{product?.name}</h2>
 
-            <div className="flex items-center gap-2 text-gray-600">
-              <MdCategory className="text-blue-600 text-xl" />
-              <span className="font-medium">{product?.category?.name}</span>
+            <div className="flex items-center gap-2 text-gray-500">
+              <MdCategory /> {product?.category?.name}
             </div>
 
-            <div className="flex items-center gap-4">
-              <span className="text-3xl font-extrabold text-blue-600 flex items-center gap-1">
+            <div className="flex items-center justify-between">
+              <span className="text-2xl font-bold text-blue-600 flex items-center gap-1">
                 <GiTakeMyMoney /> ₹{product?.price}
               </span>
 
               {product?.discount > 0 && (
-                <span className="flex items-center gap-1 bg-blue-100 text-blue-700 px-3 py-1 rounded-full text-sm font-semibold">
+                <span className="flex items-center gap-1 bg-blue-100 text-blue-700 px-3 py-1 rounded-full text-sm">
                   <FaTag /> {product?.discount}% OFF
                 </span>
               )}
             </div>
 
-            <p className="text-gray-700 leading-relaxed">
-              {product?.description}
-            </p>
+            <p className="text-gray-600 text-sm">{product?.description}</p>
 
-            {/* Status Boxes */}
-            <div className="grid grid-cols-2 md:grid-cols-3 gap-4 text-sm">
-              <div className="flex items-center justify-between bg-blue-50 px-4 py-3 rounded-xl">
-                <div className="flex items-center gap-2">
-                  <MdInventory className="text-blue-600 text-xl" />
-                  <span>Stock: {product?.stock}</span>
-                </div>
-
-                <button
-                  onClick={() => setOpenStock(true)}
-                  className="text-blue-600 hover:text-blue-800"
-                >
-                  <FaEdit />
-                </button>
+            {/* Stock */}
+            <div className="flex justify-between items-center bg-gray-100 px-4 py-3 rounded-xl">
+              <div className="flex items-center gap-2">
+                <MdInventory />
+                <span>Stock: {product?.stock}</span>
               </div>
-
-              <div
-                className={`flex items-center gap-2 px-4 py-3 rounded-xl font-semibold
-                ${
-                  product?.available === "yes"
-                    ? "bg-green-50 text-green-700"
-                    : "bg-red-50 text-red-700"
-                }`}
+              <button
+                onClick={() => setOpenStock(true)}
+                className="p-2 bg-white rounded-lg shadow hover:bg-blue-50"
               >
-                {product?.available === "yes" ? (
-                  <FaCheckCircle />
-                ) : (
-                  <FaTimesCircle />
-                )}
-                {product?.available === "yes" ? "Available" : "Out of Stock"}
-              </div>
-
-              <div className="flex items-center justify-between bg-purple-50 text-purple-700 px-4 py-3 rounded-xl font-semibold">
-                <span>Refund: {product?.refund}%</span>
-
-                <button
-                  onClick={() => setOpenRefund(true)}
-                  className="text-purple-700 hover:text-purple-900"
-                >
-                  <FaEdit />
-                </button>
-              </div>
+                <FaEdit />
+              </button>
             </div>
 
-            {/* Keywords */}
-            <div className="pt-4 border-t text-sm text-gray-500">
+            {/* Availability */}
+            <div
+              className={`flex items-center gap-2 px-4 py-3 rounded-xl
+              ${
+                product?.available === "yes"
+                  ? "bg-green-100 text-green-700"
+                  : "bg-red-100 text-red-700"
+              }`}
+            >
+              {product?.available === "yes" ? (
+                <FaCheckCircle />
+              ) : (
+                <FaTimesCircle />
+              )}
+              {product?.available === "yes" ? "Available" : "Out of Stock"}
+            </div>
+
+            {/* Refund */}
+            <div className="flex justify-between items-center bg-purple-100 text-purple-700 px-4 py-3 rounded-xl">
+              <span>Refund: {product?.refund}%</span>
+              <button
+                onClick={() => setOpenRefund(true)}
+                className="p-2 bg-white rounded-lg shadow hover:bg-purple-200"
+              >
+                <FaEdit />
+              </button>
+            </div>
+
+            <div className="pt-3 border-t text-xs text-gray-500">
               <b>Keywords:</b> {product?.keywords}
             </div>
           </div>
