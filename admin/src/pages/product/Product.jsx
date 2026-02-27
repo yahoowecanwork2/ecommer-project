@@ -12,6 +12,7 @@ import { MdCategory, MdFilterList } from "react-icons/md";
 import Cards from "./components/Cards";
 import Create from "./mdoal/Create";
 import { productApi } from "../../apis/product";
+import { categoriesApi } from "../../apis/categories";
 
 const dummyProducts = [
   {
@@ -43,8 +44,29 @@ const dummyProducts = [
 const Product = () => {
   const [search, setSearch] = useState("");
   const [products, setProducts] = useState([]);
-
+  const [categories, setCategories] = useState([]);
+  const [selectedCategory, setSelectedCategory] = useState("");
   const [showModal, setShowModal] = useState(false);
+  const handleChange = (e) => {
+    const value = e.target.value;
+    setSelectedCategory(value);
+  };
+  // get categories
+  const getCategories = async () => {
+    try {
+      const res = await categoriesApi.getByName();
+      console.log("categries", res);
+
+      if (res.success) {
+        setCategories(res.categoriesNames);
+      } else {
+        alert(res.message);
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
   const fetchProducts = async () => {
     try {
       const res = await productApi.get(0, 10);
@@ -57,6 +79,7 @@ const Product = () => {
   };
   useEffect(() => {
     fetchProducts();
+    getCategories();
   }, []);
 
   return (
@@ -108,10 +131,18 @@ const Product = () => {
           {/* Category */}
           <div className="flex items-center gap-2 border rounded-xl px-3 py-2 bg-slate-50">
             <MdCategory className="text-blue-600 text-xl" />
-            <select className="bg-transparent outline-none text-sm">
-              <option>All Categories</option>
-              <option>Electronics</option>
-              <option>Fashion</option>
+            <select
+              name="category"
+              onChange={handleChange}
+              className="w-full border p-2 rounded"
+              required
+            >
+              <option value="">Select Category</option>
+              {categories.map((cat) => (
+                <option key={cat._id} value={cat._id}>
+                  {cat.name}
+                </option>
+              ))}
             </select>
           </div>
 
