@@ -1,11 +1,16 @@
 import React from "react";
 import { FaRupeeSign } from "react-icons/fa";
 import { MdInventory } from "react-icons/md";
+import { useNavigate } from "react-router-dom";
 
 const Cards = ({ item }) => {
+  const navigate = useNavigate();
   return (
     <div className="bg-white rounded-2xl shadow-md hover:shadow-2xl transition-all duration-300 overflow-hidden border border-gray-100 group">
-      <div className="relative h-44 overflow-hidden">
+      <div
+        onClick={() => navigate(`/product-detail/${item._id}`)}
+        className="relative h-44 overflow-hidden"
+      >
         <img
           src={item.image?.url}
           alt={item.name}

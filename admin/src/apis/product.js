@@ -10,4 +10,30 @@ export const productApi = {
     const res = await api.get("/product/admin/get-all");
     return res.data;
   },
+  getSingle: async (productId) => {
+    const res = await api.get(`/product/admin/get-single/${productId}`);
+    return res.data;
+  },
+  updateFields: async (productId, data) => {
+    const res = await api.put(
+      `/product/admin/update-fields/${productId}`,
+      data,
+    );
+    return res.data;
+  },
+  updateStock: async (productId, data) => {
+    const res = await api.put(`/product/admin/update-stock/${productId}`, data);
+    return res.data;
+  },
+  updateRefund: async (productId, data) => {
+    const res = await api.put(
+      `/product/admin/update-refund/${productId}`,
+      data,
+    );
+    return res.data;
+  },
+  delete: async (productId) => {
+    const res = await api.delete(`/product/admin/delete/${productId}`);
+    return res.data;
+  },
 };
