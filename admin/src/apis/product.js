@@ -32,6 +32,13 @@ export const productApi = {
     );
     return res.data;
   },
+  updateImages: async (productId, data) => {
+    const res = await api.put(
+      `/product/admin/update-images/${productId}`,
+      data,
+    );
+    return res.data;
+  },
   delete: async (productId) => {
     const res = await api.delete(`/product/admin/delete/${productId}`);
     return res.data;
