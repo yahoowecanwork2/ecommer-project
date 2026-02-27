@@ -13,6 +13,7 @@ import { MdInventory, MdCategory } from "react-icons/md";
 import { GiTakeMyMoney } from "react-icons/gi";
 import Updatefileds from "./mdoal/Updatefileds";
 import Update from "./mdoal/Update";
+import Updaterefund from "./mdoal/Updaterefund";
 
 const Productdetail = () => {
   const { id } = useParams();
@@ -21,6 +22,7 @@ const Productdetail = () => {
   const [activeImg, setActiveImg] = useState("");
   const [openEdit, setOpenEdit] = useState(false);
   const [openStock, setOpenStock] = useState(false);
+  const [openRefund, setOpenRefund] = useState(false);
   const getSingleProduct = async () => {
     try {
       const res = await productApi.getSingle(id);
@@ -153,8 +155,15 @@ const Productdetail = () => {
                 {product?.available === "yes" ? "Available" : "Out of Stock"}
               </div>
 
-              <div className="bg-purple-50 text-purple-700 px-4 py-3 rounded-xl font-semibold">
-                Refund: {product?.refund}%
+              <div className="flex items-center justify-between bg-purple-50 text-purple-700 px-4 py-3 rounded-xl font-semibold">
+                <span>Refund: {product?.refund}%</span>
+
+                <button
+                  onClick={() => setOpenRefund(true)}
+                  className="text-purple-700 hover:text-purple-900"
+                >
+                  <FaEdit />
+                </button>
               </div>
             </div>
 
@@ -176,6 +185,13 @@ const Productdetail = () => {
           <Update
             product={product}
             setOpenStock={setOpenStock}
+            refresh={getSingleProduct}
+          />
+        )}
+        {openRefund && (
+          <Updaterefund
+            product={product}
+            setOpenRefund={setOpenRefund}
             refresh={getSingleProduct}
           />
         )}
