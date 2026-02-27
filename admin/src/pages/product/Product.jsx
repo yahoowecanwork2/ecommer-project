@@ -43,13 +43,31 @@ const dummyProducts = [
 
 const Product = () => {
   const [search, setSearch] = useState("");
+  const [loading, setLoading] = useState(false);
+
   const [products, setProducts] = useState([]);
+  const [filterByCategories, setFilterByCategories] = useState([]);
   const [categories, setCategories] = useState([]);
   const [selectedCategory, setSelectedCategory] = useState("");
   const [showModal, setShowModal] = useState(false);
-  const handleChange = (e) => {
+  const handleChange = async (e) => {
     const value = e.target.value;
     setSelectedCategory(value);
+    try {
+      if (value === "") {
+        fetchProducts();
+      } else {
+        setProducts([]);
+        setLoading(true);
+        const res = await productApi.filterByCategories(value);
+        console.log("filtered products", res);
+        setFilterByCategories(res.products);
+        setLoading(false);
+      }
+    } catch (error) {
+      setLoading(false);
+      console.log(error);
+    }
   };
   // get categories
   const getCategories = async () => {
@@ -69,11 +87,16 @@ const Product = () => {
 
   const fetchProducts = async () => {
     try {
+      setFilterByCategories([]);
+      setLoading(true);
       const res = await productApi.get(0, 10);
       console.log("products", res);
 
       setProducts(res.products);
+      setLoading(false);
     } catch (error) {
+      setLoading(false);
+
       console.log(error);
     }
   };
@@ -178,6 +201,9 @@ const Product = () => {
 
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
           {products?.map((item) => (
+            <Cards key={item._id} item={item} />
+          ))}
+          {filterByCategories?.map((item) => (
             <Cards key={item._id} item={item} />
           ))}
         </div>
