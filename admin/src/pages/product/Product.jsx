@@ -55,14 +55,15 @@ const Product = () => {
   const handleChange = async (e) => {
     const value = e.target.value;
     setSelectedCategory(value);
+    setPage(1);
+
     try {
       if (value === "") {
         fetchProducts();
       } else {
         setProducts([]);
         setLoading(true);
-        const res = await productApi.filterByCategories(value);
-        console.log("filtered products", res);
+        const res = await productApi.filterByCategories(value, 1, limit);
         setFilterByCategories(res.products);
         setLoading(false);
       }

@@ -12,8 +12,10 @@ export const productApi = {
     );
     return res.data;
   },
-  filterByCategories: async (categoryId) => {
-    const res = await api.get(`/product/admin/filter-by-cat/${categoryId}`);
+  filterByCategories: async (categoryId, page = 1, limit = 4) => {
+    const res = await api.get(
+      `/product/admin/filter-by-cat/${categoryId}?page=${page}&limit=${limit}`,
+    );
     return res.data;
   },
   filterByKeyword: async (keyword) => {
