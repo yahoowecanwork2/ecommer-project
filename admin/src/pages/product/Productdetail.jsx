@@ -10,11 +10,14 @@ import {
   FaTimesCircle,
   FaTrash,
 } from "react-icons/fa";
+import { FaImage } from "react-icons/fa";
+
 import { MdInventory, MdCategory } from "react-icons/md";
 import { GiTakeMyMoney } from "react-icons/gi";
 import Updatefileds from "./mdoal/Updatefileds";
 import Update from "./mdoal/Update";
 import Updaterefund from "./mdoal/Updaterefund";
+import Updateimage from "./mdoal/Updateimage";
 
 const Productdetail = () => {
   const { id } = useParams();
@@ -24,11 +27,12 @@ const Productdetail = () => {
   const [openEdit, setOpenEdit] = useState(false);
   const [openStock, setOpenStock] = useState(false);
   const [openRefund, setOpenRefund] = useState(false);
+  const [openImage, setOpenImage] = useState(false);
   // single
   const getSingleProduct = async () => {
     try {
       const res = await productApi.getSingle(id);
-      console.log(res)
+      console.log(res);
       setProduct(res.product);
       setActiveImg(res.product.image[0]?.url);
     } catch (error) {
@@ -92,7 +96,14 @@ const Productdetail = () => {
         </div>
 
         <div className="max-w-6xl mx-auto grid grid-cols-1 lg:grid-cols-2 gap-8">
-          <div className="bg-white rounded-2xl shadow p-5">
+          <div className="bg-white rounded-2xl shadow p-5 relative">
+            <button
+              onClick={() => setOpenImage(true)}
+              className="absolute top-3 right-3 bg-black/70 text-white p-2 rounded-lg hover:bg-black"
+            >
+              <FaImage />
+            </button>
+
             <img
               src={activeImg}
               alt={product.name}
@@ -104,14 +115,9 @@ const Productdetail = () => {
                 <img
                   key={i}
                   src={img.url}
-                  alt=""
                   onClick={() => setActiveImg(img.url)}
                   className={`w-20 h-20 object-cover rounded-lg cursor-pointer border
-                  ${
-                    activeImg === img.url
-                      ? "border-blue-600"
-                      : "border-gray-200 hover:border-blue-400"
-                  }`}
+        ${activeImg === img.url ? "border-blue-600" : "border-gray-200"}`}
                 />
               ))}
             </div>
@@ -204,6 +210,13 @@ const Productdetail = () => {
           <Updaterefund
             product={product}
             setOpenRefund={setOpenRefund}
+            refresh={getSingleProduct}
+          />
+        )}
+        {openImage && (
+          <Updateimage
+            product={product}
+            setOpenImage={setOpenImage}
             refresh={getSingleProduct}
           />
         )}
