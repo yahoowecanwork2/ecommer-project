@@ -4,29 +4,30 @@ import { generateProducttId } from "../utils/idGenerate.js";
 import { generateSlug } from "../utils/slugGenerate.js";
 import path from "path";
 
-
 export const userGetProducts = async (req, res) => {
   try {
     const startIndex = parseInt(req.query.startIndex) || 0;
     const limit = parseInt(req.query.limit) || 10;
     const sortDirection = req.query.sort === "asc" ? 1 : -1;
     const products = await Product.find()
-      .select("name slug uniqueId description keywords stock image discount price available insale")
+      .select(
+        "name slug uniqueId description keywords stock image discount price available insale",
+      )
       .sort({ createdAt: sortDirection })
       .skip(startIndex)
       .limit(limit);
-     const formattedProducts = products.map((product) => ({
+    const formattedProducts = products.map((product) => ({
       _id: product._id,
       name: product.name,
       slug: product.slug,
-      uniqueId:product.uniqueId,
-      description:product.description,
-      keywords:product.keywords,
-      stock:product.stock ,
-      discount:product.discount,
-      price:product.price ,
-      available:product.available ,
-      insale:product.insale,
+      uniqueId: product.uniqueId,
+      description: product.description,
+      keywords: product.keywords,
+      stock: product.stock,
+      discount: product.discount,
+      price: product.price,
+      available: product.available,
+      insale: product.insale,
       image: product.image?.length > 0 ? product.image[0] : null,
     }));
 
@@ -43,31 +44,31 @@ export const userGetProducts = async (req, res) => {
     });
   }
 };
-
-
 
 export const userGetProductsByCategoy = async (req, res) => {
   try {
     const startIndex = parseInt(req.query.startIndex) || 0;
     const limit = parseInt(req.query.limit) || 10;
     const sortDirection = req.query.sort === "asc" ? 1 : -1;
-    const products = await Product.find({category:req.params.categoryId})
-      .select("name slug uniqueId description keywords stock image discount price available insale")
+    const products = await Product.find({ category: req.params.categoryId })
+      .select(
+        "name slug uniqueId description keywords stock image discount price available insale",
+      )
       .sort({ createdAt: sortDirection })
       .skip(startIndex)
       .limit(limit);
-     const formattedProducts = products.map((product) => ({
+    const formattedProducts = products.map((product) => ({
       _id: product._id,
       name: product.name,
       slug: product.slug,
-      uniqueId:product.uniqueId,
-      description:product.description,
-      keywords:product.keywords,
-      stock:product.stock ,
-      discount:product.discount,
-      price:product.price ,
-      available:product.available ,
-      insale:product.insale,
+      uniqueId: product.uniqueId,
+      description: product.description,
+      keywords: product.keywords,
+      stock: product.stock,
+      discount: product.discount,
+      price: product.price,
+      available: product.available,
+      insale: product.insale,
       image: product.image?.length > 0 ? product.image[0] : null,
     }));
 
@@ -84,8 +85,6 @@ export const userGetProductsByCategoy = async (req, res) => {
     });
   }
 };
-
-
 
 export const filterProduct = async (req, res) => {
   try {
@@ -99,22 +98,24 @@ export const filterProduct = async (req, res) => {
     const products = await Product.find({
       keywords: { $regex: keyword, $options: "i" },
     })
-      .select("name slug uniqueId description keywords stock image discount price available insale")
+      .select(
+        "name slug uniqueId description keywords stock image discount price available insale",
+      )
       .sort({ createdAt: sortDirection })
       .skip(startIndex)
       .limit(limit);
-     const formattedProducts = products.map((product) => ({
+    const formattedProducts = products.map((product) => ({
       _id: product._id,
       name: product.name,
       slug: product.slug,
-      uniqueId:product.uniqueId,
-      description:product.description,
-      keywords:product.keywords,
-      stock:product.stock ,
-      discount:product.discount,
-      price:product.price ,
-      available:product.available ,
-      insale:product.insale,
+      uniqueId: product.uniqueId,
+      description: product.description,
+      keywords: product.keywords,
+      stock: product.stock,
+      discount: product.discount,
+      price: product.price,
+      available: product.available,
+      insale: product.insale,
       image: product.image?.length > 0 ? product.image[0] : null,
     }));
 
@@ -132,15 +133,14 @@ export const filterProduct = async (req, res) => {
   }
 };
 
-
-
-
 // product/:slug
 //  get single product by slug
 export const getProductBySlug = async (req, res) => {
   try {
     const { slug } = req.params;
-    const product = await Product.findOne({ slug }).select("-refund -refundReason");
+    const product = await Product.findOne({ slug }).select(
+      "-refund -refundReason",
+    );
     if (!product) {
       return res.status(404).json({
         success: false,
@@ -149,7 +149,7 @@ export const getProductBySlug = async (req, res) => {
     }
     res.status(200).json({
       success: true,
-      message:"Product by slug fetched successfully",
+      message: "Product by slug fetched successfully",
       product,
     });
   } catch (error) {
@@ -161,12 +161,7 @@ export const getProductBySlug = async (req, res) => {
   }
 };
 
-
-
-
-
 // --------------------------- admin --------------------------------
-
 
 export const createProduct = async (req, res) => {
   try {
@@ -199,8 +194,8 @@ export const createProduct = async (req, res) => {
     const product = await Product.create({
       name,
       category,
-      slug:generateSlug(name),
-      uniqueId:generateProducttId(name),
+      slug: generateSlug(name),
+      uniqueId: generateProducttId(name),
       description,
       keywords,
       stock,
@@ -234,8 +229,6 @@ export const createProduct = async (req, res) => {
   }
 };
 
-
-
 // get all Products
 export const adminGetProducts = async (req, res) => {
   try {
@@ -243,19 +236,19 @@ export const adminGetProducts = async (req, res) => {
     const limit = parseInt(req.query.limit) || 10;
     const sortDirection = req.query.sort === "asc" ? 1 : -1;
     const products = await Product.find()
-     .select("name slug uniqueId stock image price available insale")
+      .select("name slug uniqueId stock image price available insale")
       .sort({ createdAt: sortDirection })
       .skip(startIndex)
       .limit(limit);
-     const formattedProducts = products.map((product) => ({
+    const formattedProducts = products.map((product) => ({
       _id: product._id,
       name: product.name,
       slug: product.slug,
-      uniqueId:product.uniqueId,
-      stock:product.stock ,
-      price:product.price ,
-      available:product.available ,
-      insale:product.insale,
+      uniqueId: product.uniqueId,
+      stock: product.stock,
+      price: product.price,
+      available: product.available,
+      insale: product.insale,
       image: product.image?.length > 0 ? product.image[0] : null,
     }));
 
@@ -273,9 +266,6 @@ export const adminGetProducts = async (req, res) => {
   }
 };
 
-
-
-
 export const adminGetProductsByKeyword = async (req, res) => {
   try {
     const { keyword } = req.params;
@@ -292,15 +282,15 @@ export const adminGetProductsByKeyword = async (req, res) => {
       .sort({ createdAt: sortDirection })
       .skip(startIndex)
       .limit(limit);
-     const formattedProducts = products.map((product) => ({
+    const formattedProducts = products.map((product) => ({
       _id: product._id,
       name: product.name,
       slug: product.slug,
-      uniqueId:product.uniqueId,
-      stock:product.stock ,
-      price:product.price ,
-      available:product.available ,
-      insale:product.insale,
+      uniqueId: product.uniqueId,
+      stock: product.stock,
+      price: product.price,
+      available: product.available,
+      insale: product.insale,
       image: product.image?.length > 0 ? product.image[0] : null,
     }));
 
@@ -318,9 +308,6 @@ export const adminGetProductsByKeyword = async (req, res) => {
   }
 };
 
-
-
-
 export const adminGetProductsByCategory = async (req, res) => {
   try {
     const { categoryId } = req.params;
@@ -330,20 +317,26 @@ export const adminGetProductsByCategory = async (req, res) => {
         message: "Category ID is required",
       });
     }
+    const sort = req.query.sort || "desc";
+
+    const sortDirection = sort === "asc" ? 1 : -1;
+    const page = parseInt(req.query.page) || 1;
+    const limit = parseInt(req.query.limit) || 10;
+    const startIndex = (page - 1) * limit;
     const products = await Product.find({ category: categoryId })
-     .select("name slug uniqueId stock image price available insale")
+      .select("name slug uniqueId stock image price available insale")
       .sort({ createdAt: sortDirection })
       .skip(startIndex)
       .limit(limit);
-     const formattedProducts = products.map((product) => ({
+    const formattedProducts = products.map((product) => ({
       _id: product._id,
       name: product.name,
       slug: product.slug,
-      uniqueId:product.uniqueId,
-      stock:product.stock ,
-      price:product.price ,
-      available:product.available ,
-      insale:product.insale,
+      uniqueId: product.uniqueId,
+      stock: product.stock,
+      price: product.price,
+      available: product.available,
+      insale: product.insale,
       image: product.image?.length > 0 ? product.image[0] : null,
     }));
 
@@ -360,8 +353,6 @@ export const adminGetProductsByCategory = async (req, res) => {
     });
   }
 };
-
-
 
 export const adminGetSingleProduct = async (req, res) => {
   try {
@@ -385,7 +376,6 @@ export const adminGetSingleProduct = async (req, res) => {
       success: true,
       product,
     });
-
   } catch (error) {
     console.error(error);
     return res.status(500).json({
@@ -394,8 +384,6 @@ export const adminGetSingleProduct = async (req, res) => {
     });
   }
 };
-
-
 
 // update product fileds (name,category,slug,description,keywords,ytlink,discount,price,remark,rating)
 
@@ -419,9 +407,7 @@ export const updateProductFields = async (req, res) => {
         message: "Product not found",
       });
     }
-    const slug = name
-      ? await generateSlug(name)
-      : productFound.slug
+    const slug = name ? await generateSlug(name) : productFound.slug;
     const newImages =
       req.files?.map((file, index) => ({
         url: `/uploads/${file.filename}`,
@@ -429,15 +415,12 @@ export const updateProductFields = async (req, res) => {
       })) || [];
     if (newImages.length > 0 && productFound.image?.length > 0) {
       productFound.image.forEach((img) => {
-        const filePath = path.join(
-          process.cwd(),
-          img.url.replace("/", "")
-        );
+        const filePath = path.join(process.cwd(), img.url.replace("/", ""));
         if (fs.existsSync(filePath)) {
           fs.unlinkSync(filePath);
         }
       });
-      productFound.image = newImages; 
+      productFound.image = newImages;
     }
     productFound.name = name || productFound.name;
     productFound.slug = slug;
@@ -454,7 +437,6 @@ export const updateProductFields = async (req, res) => {
       message: "Product fileds updated successfully",
       product: updatedProduct,
     });
-
   } catch (error) {
     console.error(error);
     return res.status(500).json({
@@ -464,12 +446,10 @@ export const updateProductFields = async (req, res) => {
   }
 };
 
-
-
-// update pictures 
+// update pictures
 export const updateProductImages = async (req, res) => {
   try {
-    const {productId} = req.params;
+    const { productId } = req.params;
     const { replacedImages } = req.body;
 
     if (!req.files || req.files.length === 0) {
@@ -515,7 +495,7 @@ export const updateProductImages = async (req, res) => {
       const newImageUrl = `${req.protocol}://${req.get("host")}/uploads/${newFile.filename}`;
       product.image[imageIndex].url = newImageUrl;
     }
-    await product.save()
+    await product.save();
     res.status(200).json({
       success: true,
       message: "Images updated successfully",
@@ -536,19 +516,11 @@ export const updateProductImages = async (req, res) => {
   }
 };
 
-
-
-
-
 // update stocks availability in sale
 export const updateProductStock = async (req, res) => {
   try {
     const { productId } = req.params;
-    const {
-      stock,
-      available,
-      insale
-    } = req.body;
+    const { stock, available, insale } = req.body;
 
     const productFound = await Product.findById(productId);
 
@@ -567,7 +539,6 @@ export const updateProductStock = async (req, res) => {
       message: "Product updated successfully",
       product: updatedProduct,
     });
-
   } catch (error) {
     console.error(error);
     return res.status(500).json({
@@ -577,16 +548,11 @@ export const updateProductStock = async (req, res) => {
   }
 };
 
-
-
-// update refund and refund reason 
+// update refund and refund reason
 export const updateProductRefund = async (req, res) => {
   try {
     const { productId } = req.params;
-    const {
-      refundReason,
-      refund
-    } = req.body;
+    const { refundReason, refund } = req.body;
     const productFound = await Product.findById(productId);
     if (!productFound) {
       return res.status(404).json({
@@ -602,7 +568,6 @@ export const updateProductRefund = async (req, res) => {
       message: "Product refund fileds updated successfully",
       product: updatedProduct,
     });
-
   } catch (error) {
     console.error(error);
     return res.status(500).json({
@@ -611,9 +576,6 @@ export const updateProductRefund = async (req, res) => {
     });
   }
 };
-
-
-
 
 export const deleteProduct = async (req, res) => {
   try {

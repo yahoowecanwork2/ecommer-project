@@ -10,6 +10,14 @@ export const productApi = {
     const res = await api.get("/product/admin/get-all");
     return res.data;
   },
+  filterByCategories: async (categoryId) => {
+    const res = await api.get(`/product/admin/filter-by-cat/${categoryId}`);
+    return res.data;
+  },
+  filterByKeyword: async (keyword) => {
+    const res = await api.get(`/product/filter/${keyword}`);
+    return res.data;
+  },
   getSingle: async (productId) => {
     const res = await api.get(`/product/admin/get-single/${productId}`);
     return res.data;
