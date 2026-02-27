@@ -50,6 +50,8 @@ const Product = () => {
   const [categories, setCategories] = useState([]);
   const [selectedCategory, setSelectedCategory] = useState("");
   const [showModal, setShowModal] = useState(false);
+  const [page, setPage] = useState(1);
+  const limit = 4;
   const handleChange = async (e) => {
     const value = e.target.value;
     setSelectedCategory(value);
@@ -89,7 +91,8 @@ const Product = () => {
     try {
       setFilterByCategories([]);
       setLoading(true);
-      const res = await productApi.get(0, 10);
+      const startIndex = (page - 1) * limit;
+      const res = await productApi.get(startIndex, limit);
       console.log("products", res);
 
       setProducts(res.products);
@@ -101,10 +104,12 @@ const Product = () => {
     }
   };
   useEffect(() => {
-    fetchProducts();
+    fetchProducts(page);
     getCategories();
-  }, []);
-
+  }, [page]);
+  const renderCards = (arr) =>
+    arr.length > 0 &&
+    arr.map((item) => <Cards key={`${item._id}`} item={item} />);
   return (
     <Layout>
       <div className="p-6 bg-slate-100 min-h-screen space-y-6">
@@ -185,7 +190,10 @@ const Product = () => {
 
           {/* Status Buttons */}
           <div className="flex items-center gap-2 ml-auto">
-            <button className="flex items-center gap-1 px-4 py-2 rounded-xl bg-blue-100 text-blue-700 text-sm font-semibold hover:bg-blue-200 transition">
+            <button
+              onClick={fetchProducts}
+              className="flex items-center gap-1 px-4 py-2 rounded-xl bg-blue-100 text-blue-700 text-sm font-semibold hover:bg-blue-200 transition"
+            >
               <MdFilterList /> All
             </button>
 
@@ -200,14 +208,27 @@ const Product = () => {
         </div>
 
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
-          {products?.map((item) => (
-            <Cards key={item._id} item={item} />
-          ))}
-          {filterByCategories?.map((item) => (
-            <Cards key={item._id} item={item} />
-          ))}
+          {renderCards(products, "all")}
+          {renderCards(filterByCategories, "filterbycategories")}
         </div>
+        <div className="flex justify-center gap-4 mt-8">
+          <button
+            disabled={page === 1}
+            onClick={() => setPage(page - 1)}
+            className="px-4 py-2 rounded-lg bg-blue-500 text-white disabled:opacity-50"
+          >
+            Prev
+          </button>
 
+          <span className="px-4 py-2 font-semibold">Page {page}</span>
+
+          <button
+            onClick={() => setPage(page + 1)}
+            className="px-4 py-2 rounded-lg bg-blue-500 text-white"
+          >
+            Next
+          </button>
+        </div>
         {showModal && <Create setShowModal={setShowModal} />}
       </div>
     </Layout>

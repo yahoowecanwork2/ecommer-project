@@ -6,8 +6,10 @@ export const productApi = {
     const res = await api.post("/product/create", data);
     return res.data;
   },
-  get: async () => {
-    const res = await api.get("/product/admin/get-all");
+  get: async (startIndex = 0, limit = 10) => {
+    const res = await api.get(
+      `/product/admin/get-all?startIndex=${startIndex}&limit=${limit}`,
+    );
     return res.data;
   },
   filterByCategories: async (categoryId) => {
