@@ -6,12 +6,16 @@ export const productApi = {
     const res = await api.post("/product/create", data);
     return res.data;
   },
-  get: async () => {
-    const res = await api.get("/product/admin/get-all");
+  get: async (startIndex = 0, limit = 10) => {
+    const res = await api.get(
+      `/product/admin/get-all?startIndex=${startIndex}&limit=${limit}`,
+    );
     return res.data;
   },
-  filterByCategories: async (categoryId) => {
-    const res = await api.get(`/product/admin/filter-by-cat/${categoryId}`);
+  filterByCategories: async (categoryId, page = 1, limit = 4) => {
+    const res = await api.get(
+      `/product/admin/filter-by-cat/${categoryId}?page=${page}&limit=${limit}`,
+    );
     return res.data;
   },
   filterByKeyword: async (keyword) => {

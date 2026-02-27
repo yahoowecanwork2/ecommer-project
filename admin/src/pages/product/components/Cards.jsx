@@ -6,7 +6,7 @@ import { useNavigate } from "react-router-dom";
 const Cards = ({ item }) => {
   const navigate = useNavigate();
   // console.log(item)
-  console.log(item?.image?.url)
+  console.log(item?.image?.url);
   return (
     <div className="bg-white rounded-2xl shadow-md hover:shadow-2xl transition-all duration-300 overflow-hidden border border-gray-100 group">
       <div
@@ -15,7 +15,7 @@ const Cards = ({ item }) => {
       >
         <img
           src={item?.image?.url}
-    alt={item?.name}
+          alt={item?.name}
           className="w-full h-full object-cover group-hover:scale-110 transition duration-500"
         />
 
@@ -44,7 +44,10 @@ const Cards = ({ item }) => {
           </span>
         </div>
 
-        <button className="mt-3 w-full bg-gradient-to-r from-blue-600 to-blue-500 text-white py-2 rounded-lg text-sm font-semibold hover:opacity-90">
+        <button
+          onClick={() => navigate(`/product-detail/${item._id}`)}
+          className="mt-3 w-full bg-gradient-to-r from-blue-600 to-blue-500 text-white py-2 rounded-lg text-sm font-semibold hover:opacity-90"
+        >
           View Product
         </button>
       </div>

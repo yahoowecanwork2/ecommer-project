@@ -343,6 +343,7 @@ export const adminGetProductsByCategory = async (req, res) => {
     return res.status(200).json({
       success: true,
       totalProducts: formattedProducts.length,
+      // totalProducts: total,
       products: formattedProducts,
     });
   } catch (error) {
