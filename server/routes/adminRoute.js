@@ -25,5 +25,4 @@ adminRoutes.put("/send-mail",isAuthenticated, sendEmailToUser);
                  
 
 
-
 export default adminRoutes;
