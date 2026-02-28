@@ -1,8 +1,11 @@
 import React, { useState } from "react";
 import { FaHeart } from "react-icons/fa";
+import { useNavigate } from "react-router-dom";
 
 const Cards = ({ item }) => {
+  const navigate = useNavigate();
   const [wish, setWish] = useState(false);
+  console.log(item);
 
   const discountedPrice =
     item?.discount > 0
@@ -10,7 +13,14 @@ const Cards = ({ item }) => {
       : item?.price;
 
   return (
-    <div className="relative  bg-white rounded-2xl shadow-lg hover:shadow-2xl hover:-translate-y-1 transition-all duration-300 p-4">
+    <div
+      // onClick={() => navigate(`/product-detail/${item.slug}`)}
+      onClick={() => {
+        console.log("slug:", item.slug);
+        navigate(`/product-detail/${item.slug}`);
+      }}
+      className="relative  bg-white rounded-2xl shadow-lg hover:shadow-2xl hover:-translate-y-1 transition-all duration-300 p-4"
+    >
       {item?.discount > 0 && (
         <span className="absolute top-3 left-3 bg-red-600 text-white text-xs px-3 py-1 rounded-full shadow">
           {item.discount}% OFF

@@ -13,7 +13,6 @@ import About from "../pages/static/About";
 import Whishlist from "../pages/whishlist/Whishlist";
 import Cart from "../pages/cart/Cart";
 
-
 const Pagesroutes = () => {
   return (
     <>
@@ -23,7 +22,7 @@ const Pagesroutes = () => {
         <Route path="/user" element={<User />} />
         <Route path="/user-detail/:id" element={<Userdetail />} />
         <Route path="/product" element={<Product />} />
-        <Route path="/product-detail/:id" element={<Productdetail />} />
+        <Route path="/product-detail/:slug" element={<Productdetail />} />
         <Route path="/my-order" element={<Myorders />} />
         <Route path="/order-detail/:id" element={<Orderdetails />} />
         <Route path="/dashboard" element={<Home />} />

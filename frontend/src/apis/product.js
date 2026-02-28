@@ -8,6 +8,10 @@ export const productApi = {
     );
     return res.data;
   },
+  getCategories: async () => {
+    const res = await api.get(`/category/get-all`);
+    return res.data;
+  },
   filterByCategories: async (categoryId, page = 1, limit = 4) => {
     const res = await api.get(
       `/product/filter-by-cat/${categoryId}?page=${page}&limit=${limit}`,
@@ -18,8 +22,8 @@ export const productApi = {
     const res = await api.get(`/product/filter/${keyword}`);
     return res.data;
   },
-  getSingle: async (productId) => {
-    const res = await api.get(`/product/get-single/${productId}`);
+  getSingle: async (slug) => {
+    const res = await api.get(`/product/get-single/${slug}`);
     return res.data;
   },
 };
