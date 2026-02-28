@@ -10,13 +10,36 @@ import User from "../models/User.js";
 
 
 //-------------------------------------- user controlers ----------------------------------
+export const checkUserExist = async (req, res) => {
+  try {
+    const {phoneno} = req.body;
+    console.log(phoneno)
+    const userExists = await User.findOne({phoneno});
+    if (userExists) {
+      return res.status(400).json({
+        success: false,
+        message: "User already exist with this phone no go to login.",
+      });
+    }
+  } catch (error) {
+    console.log(error);
+    return res.status(500).json({
+      success: false,
+      message: "Failed to register",
+    });
+  }
+};
+
+
+
+
 
 // regester user via phone no 
 export const userRegister = async (req, res) => {
   try {
-    const {name,phoneno} = req.body;
+    const {phoneno} = req.body;
     // check user exists
-    const userExists = await User.findOne({ email });
+    const userExists = await User.findOne({ });
     if (userExists) {
       return res.status(400).json({
         success: false,
