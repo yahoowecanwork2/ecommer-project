@@ -155,9 +155,7 @@ const Product = () => {
           </div>
         </div>
 
-        {/* FILTER BAR */}
         <div className="bg-white px-5 py-3 rounded-2xl shadow flex flex-wrap items-center gap-4">
-          {/* Category */}
           <div className="flex items-center gap-2 border rounded-xl px-3 py-2 bg-slate-50">
             <MdCategory className="text-blue-600 text-xl" />
             <select
@@ -189,7 +187,6 @@ const Product = () => {
             />
           </div>
 
-          {/* Status Buttons */}
           <div className="flex items-center gap-2 ml-auto">
             <button
               onClick={fetchProducts}

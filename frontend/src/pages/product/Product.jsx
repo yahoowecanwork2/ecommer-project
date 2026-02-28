@@ -6,24 +6,36 @@ import {
   FaHeadphones,
   FaShoePrints,
 } from "react-icons/fa";
+import { MdKeyboardArrowLeft, MdKeyboardArrowRight } from "react-icons/md";
+
 import Cards from "./components/Cards";
 import HeaderHome from "../common/Headerhome";
 import { productApi } from "../../apis/product";
 
-const categories = [
-  { name: "Mobiles", icon: <FaMobileAlt /> },
-  { name: "Clothes", icon: <FaTshirt /> },
-  { name: "Laptops", icon: <FaLaptop /> },
-  { name: "Headphones", icon: <FaHeadphones /> },
-  { name: "Shoes", icon: <FaShoePrints /> },
-  { name: "More", icon: <FaTshirt /> },
-];
+// const categories = [
+//   { name: "Mobiles", icon: <FaMobileAlt /> },
+//   { name: "Clothes", icon: <FaTshirt /> },
+//   { name: "Laptops", icon: <FaLaptop /> },
+//   { name: "Headphones", icon: <FaHeadphones /> },
+//   { name: "Shoes", icon: <FaShoePrints /> },
+//   { name: "More", icon: <FaTshirt /> },
+// ];
 
 const Product = () => {
   const [products, setProducts] = useState([]);
   const [startIndex, setStartIndex] = useState(0);
   const [loading, setLoading] = useState(false);
+  const [categories, setCategories] = useState([]);
+
   const limit = 8;
+  const categoryIcons = {
+    mobiles: <FaMobileAlt />,
+    clothes: <FaTshirt />,
+    laptops: <FaLaptop />,
+    headphones: <FaHeadphones />,
+    shoes: <FaShoePrints />,
+    books: <FaTshirt />,
+  };
   const getProducts = async () => {
     try {
       setLoading(true);
@@ -39,9 +51,19 @@ const Product = () => {
       console.log("Error fetching products", error);
     }
   };
+  const fetchCategories = async () => {
+    try {
+      const res = await productApi.getCategories();
+      console.log("categories", res);
 
+      setCategories(res.categories);
+    } catch (error) {
+      console.log("Category fetch error", error);
+    }
+  };
   useEffect(() => {
     getProducts();
+    fetchCategories();
   }, [startIndex]);
   const renderCards = (arr) =>
     arr.length > 0 &&
@@ -67,18 +89,35 @@ const Product = () => {
             Categories
           </h3>
 
-          <div className="flex gap-6 overflow-x-auto pb-2">
-            {categories.map((cat, index) => (
+          {/* <div className="flex gap-6 overflow-x-auto pb-2">
+            {categories?.map((cat) => (
               <div
-                key={index}
+                key={cat._id}
                 className="flex flex-col items-center cursor-pointer group"
               >
                 <div className="w-16 h-16 bg-[#160059]/10 text-[#160059] rounded-full flex items-center justify-center text-xl shadow-md group-hover:bg-[#160059] group-hover:text-white transition">
-                  {cat.icon}
+                  {categoryIcons[cat?.slug?.toLowerCase()] || <FaTshirt />}{" "}
                 </div>
                 <p className="text-sm mt-2 text-gray-700">{cat.name}</p>
               </div>
             ))}
+          </div> */}
+          <div className="flex gap-6 overflow-x-auto pb-2">
+            {categories?.map((cat) => {
+              const key = cat?.slug?.toLowerCase();
+
+              return (
+                <div
+                  key={cat._id}
+                  className="flex flex-col items-center cursor-pointer group"
+                >
+                  <div className="w-16 h-16 bg-[#160059]/10 text-[#160059] rounded-full flex items-center justify-center text-2xl shadow-md group-hover:bg-[#160059] group-hover:text-white transition">
+                    {categoryIcons[key] || <FaTshirt />}
+                  </div>
+                  <p className="text-sm mt-2 text-gray-700">{cat.name}</p>
+                </div>
+              );
+            })}
           </div>
         </div>
 
@@ -89,6 +128,27 @@ const Product = () => {
 
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-8">
             {renderCards(products, "all")}
+          </div>
+          <div className="flex justify-center items-center gap-4 mt-8">
+            <button
+              disabled={startIndex === 0}
+              onClick={() => setStartIndex((prev) => Math.max(prev - limit, 0))}
+              className="p-2 rounded-full bg-white shadow hover:bg-blue-100 text-blue-600 disabled:opacity-40 disabled:cursor-not-allowed transition"
+            >
+              <MdKeyboardArrowLeft size={26} />
+            </button>
+
+            <span className="px-4 py-1 rounded-full bg-blue-100 text-blue-700 font-semibold">
+              Page {startIndex / limit + 1}
+            </span>
+
+            <button
+              disabled={products.length < limit}
+              onClick={() => setStartIndex((prev) => prev + limit)}
+              className="p-2 rounded-full bg-white shadow hover:bg-blue-100 text-blue-600 disabled:opacity-40 disabled:cursor-not-allowed transition"
+            >
+              <MdKeyboardArrowRight size={26} />
+            </button>
           </div>
         </div>
       </div>
