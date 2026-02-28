@@ -19,18 +19,8 @@ productRoutes.get("/filter/:keyword",checkAdmin,filterProduct)
 productRoutes.get("/get-single/:slug",getProductBySlug)
 
 
-// ------------------ admin routes -------------------------
-// create 
-// get all 
-// get single 
-// update all fileds 
-// update limited fileds 
-// delete product 
 
-// filter by category 
-// filter by name 
-// filter by availabel status 
-// filter by stock count 
+// ------------------ admin routes -------------------------
 productRoutes.post("/create",checkAdmin,uploadProducts,createProduct)
 productRoutes.get("/admin/get-all",checkAdmin,adminGetProducts)
 productRoutes.get("/admin/filter/:keyword",checkAdmin,adminGetProductsByKeyword)
