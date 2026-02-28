@@ -32,7 +32,7 @@ const Pagesroutes = () => {
         <Route path="/dashboard" element={<Home />} />
         <Route path="/about" element={<About />} />
         <Route path="/whishlist" element={<Whishlist />} />
-        <Route path="/Cart" element={<Cart />} />
+        <Route path="/cart" element={<Cart />} />
       </Routes>
     </>
   );
