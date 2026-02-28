@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import {
   FaMobileAlt,
   FaTshirt,
@@ -8,6 +8,7 @@ import {
 } from "react-icons/fa";
 import Cards from "./components/Cards";
 import HeaderHome from "../common/Headerhome";
+import { productApi } from "../../apis/product";
 
 const categories = [
   { name: "Mobiles", icon: <FaMobileAlt /> },
@@ -19,6 +20,32 @@ const categories = [
 ];
 
 const Product = () => {
+  const [products, setProducts] = useState([]);
+  const [startIndex, setStartIndex] = useState(0);
+  const [loading, setLoading] = useState(false);
+  const limit = 8;
+  const getProducts = async () => {
+    try {
+      setLoading(true);
+
+      const res = await productApi.get(startIndex, limit);
+      console.log("all-products", res);
+
+      setLoading(false);
+
+      setProducts(res.products);
+    } catch (error) {
+      setLoading(false);
+      console.log("Error fetching products", error);
+    }
+  };
+
+  useEffect(() => {
+    getProducts();
+  }, [startIndex]);
+  const renderCards = (arr) =>
+    arr.length > 0 &&
+    arr.map((item) => <Cards key={`${item._id}`} item={item} />);
   return (
     <div className="w-full bg-white min-h-screen">
       <HeaderHome />
@@ -61,12 +88,7 @@ const Product = () => {
           </h3>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-8">
-            <Cards />
-            <Cards />
-            <Cards />
-            <Cards />
-            <Cards />
-            <Cards />
+            {renderCards(products, "all")}
           </div>
         </div>
       </div>
