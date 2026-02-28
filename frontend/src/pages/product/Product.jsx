@@ -28,15 +28,15 @@ const Product = () => {
           <input
             type="text"
             placeholder="Search products..."
-            className="w-full p-3 rounded-xl border border-blue-200 focus:ring-2 focus:ring-blue-400 outline-none"
+            className="w-full p-3 rounded-xl border border-[#160059] focus:ring-2 focus:ring-[#160059] outline-none"
           />
-          <button className="bg-blue-600 text-white px-6 rounded-xl hover:bg-blue-700 transition">
+          <button className="bg-[#160059] text-white px-6 rounded-xl hover:bg-[#2a1380] transition">
             Search
           </button>
         </div>
 
         <div className="mb-10">
-          <h3 className="text-xl font-semibold text-blue-700 mb-4">
+          <h3 className="text-xl font-semibold text-[#160059] mb-4">
             Categories
           </h3>
 
@@ -46,7 +46,7 @@ const Product = () => {
                 key={index}
                 className="flex flex-col items-center cursor-pointer group"
               >
-                <div className="w-16 h-16 bg-blue-50 text-blue-600 rounded-full flex items-center justify-center text-xl shadow-md group-hover:bg-blue-600 group-hover:text-white transition">
+                <div className="w-16 h-16 bg-[#160059]/10 text-[#160059] rounded-full flex items-center justify-center text-xl shadow-md group-hover:bg-[#160059] group-hover:text-white transition">
                   {cat.icon}
                 </div>
                 <p className="text-sm mt-2 text-gray-700">{cat.name}</p>
@@ -56,7 +56,9 @@ const Product = () => {
         </div>
 
         <div>
-          <h3 className="text-xl font-semibold text-blue-700 mb-4">Products</h3>
+          <h3 className="text-xl font-semibold text-[#160059] mb-4">
+            Products
+          </h3>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-8">
             <Cards />
