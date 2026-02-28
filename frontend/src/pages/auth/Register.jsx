@@ -6,18 +6,19 @@ import {
 } from "firebase/auth";
 
 const Register = () => {
+  const [loading, setLoading] = useState(false);
+  const [userExistLoading, setUserExistLoading] = useState(false);
+  const [registrationLoading, setRegistrationLoading] = useState(false);
   const [phone, setPhone] = useState("");
   const [otp, setOtp] = useState("");
   const [confirmationResult, setConfirmationResult] = useState(null);
-  const [loading, setLoading] = useState(false);
 
-  // 🔐 Initialize Recaptcha
+ 
   useEffect(() => {
     if (!auth) return;
-
     if (!window.recaptchaVerifier) {
       window.recaptchaVerifier = new RecaptchaVerifier(
-        auth, // ✅ AUTH FIRST (correct for modular)
+        auth,
         "recaptcha-container",
         {
           size: "normal",
@@ -29,7 +30,6 @@ const Register = () => {
           },
         }
       );
-
       window.recaptchaVerifier.render().catch(console.error);
     }
 
@@ -42,18 +42,20 @@ const Register = () => {
     };
   }, []);
 
-  // 📩 Send OTP
+  //  check phone no exist from backned 
+
+
+
+
+
   const sendOtp = async () => {
     if (!phone) {
       alert("Enter phone number");
       return;
     }
-
     try {
       setLoading(true);
-
       const appVerifier = window.recaptchaVerifier;
-
       if (!appVerifier) {
         alert("Recaptcha not ready");
         return;
@@ -71,37 +73,33 @@ const Register = () => {
     } catch (error) {
       console.error("OTP Error:", error);
       alert(error.message);
-
-      // Reset recaptcha on error
       if (window.recaptchaVerifier) {
         window.recaptchaVerifier.clear();
         window.recaptchaVerifier = null;
       }
-
-      // Recreate fresh recaptcha
       window.recaptchaVerifier = new RecaptchaVerifier(
         auth,
         "recaptcha-container",
         { size: "invisible" }
       );
-
       await window.recaptchaVerifier.render();
     } finally {
       setLoading(false);
     }
   };
 
-  // ✅ Verify OTP
+
   const verifyOtp = async () => {
     if (!otp) {
       alert("Enter OTP");
       return;
     }
-
     try {
       setLoading(true);
-      await confirmationResult.confirm(otp);
-      alert("Phone number verified successfully!");
+     const res =  await confirmationResult.confirm(otp);
+     console.log(res.user.phoneNumber)
+    //  call backend function here 
+      toast("Phone number verified successfully!");
     } catch (error) {
       console.error("Verify Error:", error);
       alert("Invalid OTP");
