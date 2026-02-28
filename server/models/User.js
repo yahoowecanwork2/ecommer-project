@@ -5,15 +5,18 @@ const Schema = mongoose.Schema;
 const UserSchema = new Schema({
     name: {
         type: String,
-        required: true,
+        required: false,
+        default:""
     },
     email: {
         type: String,
+        default:"",
         required: false,
     },
-    phone: {
+    phoneno: {
         type: String,
         require: true,
+        unique:true
     },
     image: {
         type: String,     
@@ -40,16 +43,20 @@ const UserSchema = new Schema({
     ],
     address: {
         locality: {
-            type: String
+            type: String,
+            default:""
         },
         city: {
-            type: String
+            type: String,
+            default:""
         },
         pinCode: {
-            type: String
+            type: String,
+            default:""
         },
         state: {
-            type: String
+            type: String,
+            default:""
         },
     },
 },

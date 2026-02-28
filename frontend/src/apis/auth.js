@@ -8,33 +8,14 @@ export const authApi = {
     return res.data;
   },
 
-  register: async (data) => {
-    const res = await api.post("/user/register", data);
+  register: async (phone) => {
+    const res = await api.post("/user/register", {phone});
     return res.data;
   },
 
-  registerOtpResend: async (data) => {
-    const res = await api.post("/user/register-resend-otp", data);
-    return res.data;
-  },
 
-  registerOtpVerify: async (data) => {
-    const res = await api.post("/user/register-otp-verify", data);
-    return res.data;
-  },
-
-  login: async (data) => {
-    const res = await api.post("/user/login", data);
-    return res.data;
-  },
-
-  loginOtpResend: async (data) => {
-    const res = await api.post("/user/login-otp-resend", data);
-    return res.data;
-  },
-
-  loginOtpVerify: async (data) => {
-    const res = await api.post("/user/login-otp-verify", data);
+  login: async (phone) => {
+    const res = await api.post("/user/login",{phone});
     return res.data;
   },
 

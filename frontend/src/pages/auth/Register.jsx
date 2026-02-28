@@ -1,44 +1,52 @@
 import React, { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
 import { auth } from "../../firebase";
 import {
   RecaptchaVerifier,
   signInWithPhoneNumber,
 } from "firebase/auth";
 import { authApi } from "../../apis/auth";
-import {toast} from "react-hot-toast"
-
+import { toast } from "react-hot-toast";
+import Registerotpverify from "./modal/Regisetrotpverify";
+import Loginotpverifymodal from "./modal/Loginotpverifymodal";
 
 const Register = () => {
-  const [loading, setLoading] = useState(false);
   const [showmodal, setShowmodal] = useState(false);
+  const [showLoginmodal, setShowLoginmodal] = useState(false);
   const [userExistLoading, setUserExistLoading] = useState(false);
   const [registrationLoading, setRegistrationLoading] = useState(false);
   const [phone, setPhone] = useState("");
-  const [otp, setOtp] = useState("");
   const [confirmationResult, setConfirmationResult] = useState(null);
-  const navigate = useNavigate();
- 
+
+  // ---------------- Invisible Recaptcha Setup ----------------
   useEffect(() => {
     if (!auth) return;
-    if (!window.recaptchaVerifier) {
-      window.recaptchaVerifier = new RecaptchaVerifier(
-        auth,
-        "recaptcha-container",
-        {
-          size: "normal",
-          callback: () => {
-            console.log("Recaptcha solved");
-          },
-          "expired-callback": () => {
-            console.log("Recaptcha expired");
-          },
-        }
-      );
-      window.recaptchaVerifier.render().catch(console.error);
-    }
 
-    // Cleanup on unmount
+    const initializeRecaptcha = () => {
+      try {
+        if (window.recaptchaVerifier) {
+          window.recaptchaVerifier.clear();
+          window.recaptchaVerifier = null;
+        }
+
+        window.recaptchaVerifier = new RecaptchaVerifier(
+          auth,
+          "recaptcha-container",
+          {
+            size: "invisible",
+            callback: () => {
+              console.log("Recaptcha solved");
+            },
+          }
+        );
+
+        window.recaptchaVerifier.render();
+      } catch (error) {
+        console.log("Recaptcha Init Error:", error);
+      }
+    };
+
+    initializeRecaptcha();
+
     return () => {
       if (window.recaptchaVerifier) {
         window.recaptchaVerifier.clear();
@@ -47,90 +55,64 @@ const Register = () => {
     };
   }, []);
 
-  //  check phone no exist from backned 
-   const checkUserExist = async (e) => {
+  // ---------------- Send OTP (Common for Register & Login) ----------------
+  const sendOtp = async (type) => {
     try {
-      setUserExistLoading(true);
-      const res = await authApi.checkUserExist(phone);
-      console.log(res)
-      if (res.success === false) {
-        toast.success(res?.message);
-        setUserExistLoading(res.success)
-        navigate("/")
-      } else {
-    sendOtp()
-      }
-    } catch (error) {
-      setLoading(false);
-      toast.error(error?.response?.data?.message || "Server Error");
-    }
-  };
-
-
-
-
-
-  const sendOtp = async () => {
-    if (!phone) {
-      alert("Enter phone number");
-      return;
-    }
-    try {
-      setLoading(true);
-      const appVerifier = window.recaptchaVerifier;
-      if (!appVerifier) {
-        alert("Recaptcha not ready");
+      if (!window.recaptchaVerifier) {
+        toast.error("Recaptcha not ready. Refresh page.");
         return;
       }
-      console.log("Sending OTP to:", phone);
+
+      setRegistrationLoading(true);
 
       const result = await signInWithPhoneNumber(
         auth,
         `+91${phone}`,
-        appVerifier
+        window.recaptchaVerifier
       );
-       console.log("Otp send result message",result)
-      setConfirmationResult(result);
-      // if(result){
-      //   setShowmodal(true);
-      // }
-      // open otp verify modal  accordin gto response 
-      alert("OTP sent successfully!");
-    } catch (error) {
-      console.error("OTP Error:", error);
-      alert(error.message);
-      if (window.recaptchaVerifier) {
-        window.recaptchaVerifier.clear();
-        window.recaptchaVerifier = null;
+
+      if (result) {
+        setConfirmationResult(result);
+
+        if (type === "register") {
+          setShowmodal(true);
+        } else {
+          setShowLoginmodal(true);
+        }
+
+        toast.success("OTP sent successfully!");
       }
-      window.recaptchaVerifier = new RecaptchaVerifier(
-        auth,
-        "recaptcha-container",
-        { size: "invisible" }
-      );
-      await window.recaptchaVerifier.render();
+    } catch (error) {
+      toast.error(error.message);
+      console.error("OTP Error:", error);
     } finally {
-      setLoading(false);
+      setRegistrationLoading(false);
     }
   };
 
-
-  const verifyOtp = async () => {
-    if (!otp) {
-      alert("Enter OTP");
-      return;
-    }
+  // ---------------- Check user exist ----------------
+  const checkUserExist = async () => {
     try {
-      setLoading(true);
-     const res =  await confirmationResult.confirm(otp);
-     console.log(res.user.phoneNumber)
-    //  call backend function here 
-      toast("Phone number verified successfully!");
+      if (!phone) {
+        toast.error("Enter phone number");
+        return;
+      }
+      setUserExistLoading(true);
+      const res = await authApi.checkUserExist(phone);
+      if (res?.success) {
+        toast.success(res?.message);
+        sendOtp("register");
+      }
     } catch (error) {
-      console.error("Verify Error:", error);
-      alert("Invalid OTP");
+      if (error?.response?.status === 400) {
+        toast.success(error?.response?.data?.message);
+        sendOtp("login"); 
+      } else {
+        toast.error("Server Error");
+      }
+
     } finally {
-      setLoading(false);
+      setUserExistLoading(false);
     }
   };
 
@@ -148,7 +130,7 @@ const Register = () => {
 
       <button
         onClick={checkUserExist}
-        disabled={loading}
+        disabled={userExistLoading || registrationLoading}
         style={{
           width: "100%",
           padding: "10px",
@@ -157,41 +139,33 @@ const Register = () => {
           border: "none",
         }}
       >
-        {loading ? "Sending..." : "Send OTP"}
+        {registrationLoading
+          ? "Sending..."
+          : userExistLoading
+          ? "Checking..."
+          : "Send OTP"}
       </button>
 
-      {confirmationResult && (
-        <>
-          <input
-            type="text"
-            placeholder="Enter OTP"
-            value={otp}
-            onChange={(e) => setOtp(e.target.value)}
-            style={{
-              width: "100%",
-              padding: "10px",
-              marginTop: "15px",
-              marginBottom: "10px",
-            }}
-          />
+      {/* Invisible Recaptcha */}
+      <div id="recaptcha-container" style={{ display: "none" }}></div>
 
-          <button
-            onClick={verifyOtp}
-            disabled={loading}
-            style={{
-              width: "100%",
-              padding: "10px",
-              background: "blue",
-              color: "white",
-              border: "none",
-            }}
-          >
-            {loading ? "Verifying..." : "Verify OTP"}
-          </button>
-        </>
+      {/* Register OTP Modal */}
+      {showmodal && confirmationResult && (
+        <Registerotpverify
+          confirmationResult={confirmationResult}
+          phone={phone}
+          setShowmodal={setShowmodal}
+        />
       )}
 
-      <div id="recaptcha-container"></div>
+      {/* Login OTP Modal */}
+      {showLoginmodal && confirmationResult && (
+        <Loginotpverifymodal
+          confirmationResult={confirmationResult}
+          phone={phone}
+          setShowLoginmodal={setShowLoginmodal}
+        />
+      )}
     </div>
   );
 };
