@@ -11,6 +11,9 @@ import Orderdetails from "../pages/order/Orderdetails";
 import { Route, Routes } from "react-router-dom";
 import Home from "../pages/home/Home";
 import Myorders from "../pages/order/Myorders";
+import About from "../pages/static/About";
+import Whishlist from "../pages/whishlist/Whishlist";
+import Cart from "../pages/cart/Cart";
 
 const Pagesroutes = () => {
   return (
@@ -24,9 +27,12 @@ const Pagesroutes = () => {
         <Route path="/user-detail/:id" element={<Userdetail />} />
         <Route path="/product" element={<Product />} />
         <Route path="/product-detail/:id" element={<Productdetail />} />
-        <Route path="/my-order" element={<Myorders/>} />
+        <Route path="/my-order" element={<Myorders />} />
         <Route path="/order-detail/:id" element={<Orderdetails />} />
         <Route path="/dashboard" element={<Home />} />
+        <Route path="/about" element={<About />} />
+        <Route path="/whishlist" element={<Whishlist />} />
+        <Route path="/Cart" element={<Cart />} />
       </Routes>
     </>
   );
