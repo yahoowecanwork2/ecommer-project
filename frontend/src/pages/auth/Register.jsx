@@ -1,18 +1,23 @@
 import React, { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { auth } from "../../firebase";
 import {
   RecaptchaVerifier,
   signInWithPhoneNumber,
 } from "firebase/auth";
+import { authApi } from "../../apis/auth";
+import {toast} from "react-hot-toast"
+
 
 const Register = () => {
   const [loading, setLoading] = useState(false);
+  const [showmodal, setShowmodal] = useState(false);
   const [userExistLoading, setUserExistLoading] = useState(false);
   const [registrationLoading, setRegistrationLoading] = useState(false);
   const [phone, setPhone] = useState("");
   const [otp, setOtp] = useState("");
   const [confirmationResult, setConfirmationResult] = useState(null);
-
+  const navigate = useNavigate();
  
   useEffect(() => {
     if (!auth) return;
@@ -43,6 +48,23 @@ const Register = () => {
   }, []);
 
   //  check phone no exist from backned 
+   const checkUserExist = async (e) => {
+    try {
+      setUserExistLoading(true);
+      const res = await authApi.checkUserExist(phone);
+      console.log(res)
+      if (res.success === false) {
+        toast.success(res?.message);
+        setUserExistLoading(res.success)
+        navigate("/")
+      } else {
+    sendOtp()
+      }
+    } catch (error) {
+      setLoading(false);
+      toast.error(error?.response?.data?.message || "Server Error");
+    }
+  };
 
 
 
@@ -67,8 +89,12 @@ const Register = () => {
         `+91${phone}`,
         appVerifier
       );
-
+       console.log("Otp send result message",result)
       setConfirmationResult(result);
+      // if(result){
+      //   setShowmodal(true);
+      // }
+      // open otp verify modal  accordin gto response 
       alert("OTP sent successfully!");
     } catch (error) {
       console.error("OTP Error:", error);
@@ -121,7 +147,7 @@ const Register = () => {
       />
 
       <button
-        onClick={sendOtp}
+        onClick={checkUserExist}
         disabled={loading}
         style={{
           width: "100%",

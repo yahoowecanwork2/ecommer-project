@@ -6,7 +6,6 @@ import Product from "../pages/product/Product";
 import Productdetail from "../pages/product/Productdetail";
 import User from "../pages/users/User";
 import Userdetail from "../pages/users/Userdetail";
-import Resetpassword from "../pages/auth/Resetpassword";
 import Orderdetails from "../pages/order/Orderdetails";
 import { Route, Routes } from "react-router-dom";
 import Home from "../pages/home/Home";
@@ -15,6 +14,7 @@ import About from "../pages/static/About";
 import Whishlist from "../pages/whishlist/Whishlist";
 import Cart from "../pages/cart/Cart";
 
+
 const Pagesroutes = () => {
   return (
     <>
@@ -22,7 +22,6 @@ const Pagesroutes = () => {
       <Routes>
         <Route path="/" element={<Login />} />
         <Route path="/register" element={<Register />} />
-        <Route path="/resetpassword" element={<Resetpassword />} />
         <Route path="/user" element={<User />} />
         <Route path="/user-detail/:id" element={<Userdetail />} />
         <Route path="/product" element={<Product />} />

@@ -12,9 +12,10 @@ import User from "../models/User.js";
 //-------------------------------------- user controlers ----------------------------------
 export const checkUserExist = async (req, res) => {
   try {
-    const {phoneno} = req.body;
-    console.log(phoneno)
-    const userExists = await User.findOne({phoneno});
+    const {phone} = req.body;
+    console.log(phone)
+    const userExists = await User.findOne({phone});
+    console.log(userExists)
     if (userExists) {
       return res.status(400).json({
         success: false,

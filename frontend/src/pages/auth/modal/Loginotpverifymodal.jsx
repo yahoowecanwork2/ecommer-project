@@ -4,7 +4,8 @@ import { useNavigate } from "react-router-dom";
 import toast from "react-hot-toast";
 import { clearLoginData, setAuth, setUser } from "../../../redux/userSlice";
 import { clearToken, getToken, setToken } from "../../../apis/storage";
-import { adminApi } from "../../../apis/auth";
+import { authApi } from "../../../apis/auth";
+
 
 const Loginotpverify = ({ setShowmodal }) => {
   const [timer, setTimer] = useState(30);
@@ -71,7 +72,7 @@ const Loginotpverify = ({ setShowmodal }) => {
   const getProfile = async () => {
     try {
       setUserLoading(true);
-      const res = await adminApi.profile();
+      const res = await authApi.profile();
       if (res?.success) {
         setUserLoading(false);
         dispatch(setUser(res.user));
@@ -131,7 +132,7 @@ const Loginotpverify = ({ setShowmodal }) => {
       setresendLoading(true);
       clearToken();
       console.log(loginData.email, loginData.password);
-      const res = await adminApi.resendOtp({
+      const res = await authApi.resendOtp({
         email: loginData.email,
         password: loginData.password,
       });

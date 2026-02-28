@@ -3,8 +3,8 @@
 import { api } from "./index";
 
 export const authApi = {
-  checkUserExist: async (data) => {
-    const res = await api.post("/user/check-user-exist", data);
+  checkUserExist: async (phone) => {
+    const res = await api.post("/user/check-user-exist",{phone});
     return res.data;
   },
 

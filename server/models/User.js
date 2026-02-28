@@ -11,7 +11,7 @@ const UserSchema = new Schema({
         type: String,
         required: false,
     },
-    phoneno: {
+    phone: {
         type: String,
         require: true,
     },

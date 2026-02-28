@@ -1,13 +1,12 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import toast from "react-hot-toast";
-
-import Forgotpassword from "./modal/Forgotpassword";
 import { setLoginData } from "../../redux/userSlice";
 import { useDispatch } from "react-redux";
 import { clearToken, setToken } from "../../apis/storage";
-import { adminApi } from "../../apis/auth";
 import Loginotpverify from "./modal/Loginotpverifymodal";
+import { authApi } from "../../apis/auth";
+
 
 const Login = () => {
   const navigate = useNavigate();
@@ -17,7 +16,6 @@ const Login = () => {
     phoneno: "",
   });
 
-  const [showPassword, setShowPassword] = useState(false);
   const [forgotPassword, setForgotPassword] = useState(false);
   const [showmodal, setShowmodal] = useState(false);
 
@@ -32,7 +30,7 @@ const Login = () => {
     clearToken();
     try {
       setLoading(true);
-      const res = await adminApi.login(formData);
+      const res = await authApi.login(formData);
       if (res.success) {
         toast.success(res?.message);
         setToken(res?.token);
@@ -115,10 +113,6 @@ const Login = () => {
           </form>
         </div>
       </div>
-
-      {forgotPassword && (
-        <Forgotpassword setForgotPassword={setForgotPassword} />
-      )}
       {showmodal && <Loginotpverify setShowmodal={setShowmodal} />}
     </div>
   );
