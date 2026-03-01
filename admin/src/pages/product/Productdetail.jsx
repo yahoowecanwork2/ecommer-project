@@ -9,8 +9,8 @@ import {
   FaCheckCircle,
   FaTimesCircle,
   FaTrash,
+  FaImage,
 } from "react-icons/fa";
-import { FaImage } from "react-icons/fa";
 
 import { MdInventory, MdCategory } from "react-icons/md";
 import { GiTakeMyMoney } from "react-icons/gi";
@@ -28,22 +28,20 @@ const Productdetail = () => {
   const [openStock, setOpenStock] = useState(false);
   const [openRefund, setOpenRefund] = useState(false);
   const [openImage, setOpenImage] = useState(false);
-  // single
+
   const getSingleProduct = async () => {
     try {
       const res = await productApi.getSingle(id);
-      console.log(res);
       setProduct(res.product);
       setActiveImg(res.product.image[0]?.url);
     } catch (error) {
       console.log(error);
     }
   };
-  // delete
+
   const handleDelete = async () => {
     if (!window.confirm("Are you sure you want to delete this product?"))
       return;
-
     try {
       await productApi.delete(product._id);
       alert("Product deleted successfully");
@@ -53,6 +51,7 @@ const Productdetail = () => {
       alert("Failed to delete product");
     }
   };
+
   useEffect(() => {
     if (id) getSingleProduct();
   }, [id]);
@@ -60,7 +59,7 @@ const Productdetail = () => {
   if (!product)
     return (
       <Layout>
-        <div className="p-10 text-center text-lg font-semibold animate-pulse">
+        <div className="p-10 text-center text-lg font-semibold animate-pulse text-[#160059]">
           Loading product...
         </div>
       </Layout>
@@ -68,12 +67,12 @@ const Productdetail = () => {
 
   return (
     <Layout>
-      <div className="min-h-screen bg-gray-50 p-6">
+      <div className="min-h-screen bg-white p-6">
         {/* Top bar */}
         <div className="flex justify-between items-center mb-6">
           <button
             onClick={() => navigate("/product")}
-            className="flex items-center gap-2 text-gray-600 hover:text-blue-600 font-medium"
+            className="flex items-center gap-2 text-[#160059] font-medium hover:underline"
           >
             <FaArrowLeft /> Back
           </button>
@@ -81,25 +80,26 @@ const Productdetail = () => {
           <div className="flex gap-3">
             <button
               onClick={() => setOpenEdit(true)}
-              className="flex items-center gap-2 bg-blue-600 text-white px-5 py-2 rounded-xl shadow hover:bg-blue-700 transition"
+              className="flex items-center gap-2 bg-[#160059] text-white px-5 py-2 rounded-lg shadow hover:opacity-90"
             >
               <FaEdit /> Edit
             </button>
 
             <button
               onClick={handleDelete}
-              className="flex items-center gap-2 bg-red-600 text-white px-5 py-2 rounded-xl shadow hover:bg-red-700 transition"
+              className="flex items-center gap-2 border border-[#160059] text-[#160059] px-5 py-2 rounded-lg hover:bg-[#160059]/10"
             >
               <FaTrash /> Delete
             </button>
           </div>
         </div>
 
-        <div className="max-w-6xl mx-auto grid grid-cols-1 lg:grid-cols-2 gap-8">
-          <div className="bg-white rounded-2xl shadow p-5 relative">
+        <div className="max-w-6xl mx-auto grid grid-cols-1 lg:grid-cols-2 gap-10">
+          {/* Image Section */}
+          <div className="bg-white border rounded-xl shadow-sm p-4 relative">
             <button
               onClick={() => setOpenImage(true)}
-              className="absolute top-3 right-3 bg-black/70 text-white p-2 rounded-lg hover:bg-black"
+              className="absolute top-3 right-3 bg-[#160059] text-white p-2 rounded-md"
             >
               <FaImage />
             </button>
@@ -107,7 +107,7 @@ const Productdetail = () => {
             <img
               src={activeImg}
               alt={product.name}
-              className="w-full h-[400px] object-contain rounded-xl"
+              className="w-full h-[380px] object-contain"
             />
 
             <div className="flex gap-3 mt-4 overflow-x-auto">
@@ -116,43 +116,51 @@ const Productdetail = () => {
                   key={i}
                   src={img.url}
                   onClick={() => setActiveImg(img.url)}
-                  className={`w-20 h-20 object-cover rounded-lg cursor-pointer border
-        ${activeImg === img.url ? "border-blue-600" : "border-gray-200"}`}
+                  className={`w-20 h-20 object-cover rounded-md cursor-pointer border
+                  ${
+                    activeImg === img.url
+                      ? "border-[#160059]"
+                      : "border-gray-200"
+                  }`}
                 />
               ))}
             </div>
           </div>
 
-          <div className="bg-white rounded-2xl shadow p-6 space-y-4">
+          {/* Details Section */}
+          <div className="bg-white border rounded-xl shadow-sm p-6 space-y-5 text-[#160059]">
             <h2 className="text-2xl font-bold">{product?.name}</h2>
 
-            <div className="flex items-center gap-2 text-gray-500">
-              <MdCategory /> {product?.category?.name}
+            <div className="flex items-center gap-2 text-gray-600">
+              <MdCategory className="text-[#160059]" />{" "}
+              {product?.category?.name}
             </div>
 
             <div className="flex items-center justify-between">
-              <span className="text-2xl font-bold text-blue-600 flex items-center gap-1">
+              <span className="text-3xl font-bold flex items-center gap-1">
                 <GiTakeMyMoney /> ₹{product?.price}
               </span>
 
               {product?.discount > 0 && (
-                <span className="flex items-center gap-1 bg-blue-100 text-blue-700 px-3 py-1 rounded-full text-sm">
+                <span className="flex items-center gap-1 bg-[#160059]/10 text-[#160059] px-3 py-1 rounded-full text-sm">
                   <FaTag /> {product?.discount}% OFF
                 </span>
               )}
             </div>
 
-            <p className="text-gray-600 text-sm">{product?.description}</p>
+            <p className="text-gray-600 text-sm leading-relaxed">
+              {product?.description}
+            </p>
 
             {/* Stock */}
-            <div className="flex justify-between items-center bg-gray-100 px-4 py-3 rounded-xl">
+            <div className="flex justify-between items-center bg-gray-50 px-4 py-3 rounded-lg border">
               <div className="flex items-center gap-2">
-                <MdInventory />
+                <MdInventory className="text-[#160059]" />
                 <span>Stock: {product?.stock}</span>
               </div>
               <button
                 onClick={() => setOpenStock(true)}
-                className="p-2 bg-white rounded-lg shadow hover:bg-blue-50"
+                className="p-2 border border-[#160059] text-[#160059] rounded-md hover:bg-[#160059]/10"
               >
                 <FaEdit />
               </button>
@@ -160,11 +168,11 @@ const Productdetail = () => {
 
             {/* Availability */}
             <div
-              className={`flex items-center gap-2 px-4 py-3 rounded-xl
+              className={`flex items-center gap-2 px-4 py-3 rounded-lg border
               ${
                 product?.available === "yes"
-                  ? "bg-green-100 text-green-700"
-                  : "bg-red-100 text-red-700"
+                  ? "bg-green-50 text-green-700 border-green-200"
+                  : "bg-red-50 text-red-700 border-red-200"
               }`}
             >
               {product?.available === "yes" ? (
@@ -176,11 +184,11 @@ const Productdetail = () => {
             </div>
 
             {/* Refund */}
-            <div className="flex justify-between items-center bg-purple-100 text-purple-700 px-4 py-3 rounded-xl">
+            <div className="flex justify-between items-center bg-gray-50 px-4 py-3 rounded-lg border">
               <span>Refund: {product?.refund}%</span>
               <button
                 onClick={() => setOpenRefund(true)}
-                className="p-2 bg-white rounded-lg shadow hover:bg-purple-200"
+                className="p-2 border border-[#160059] text-[#160059] rounded-md hover:bg-[#160059]/10"
               >
                 <FaEdit />
               </button>
