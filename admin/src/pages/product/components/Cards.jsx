@@ -5,13 +5,12 @@ import { useNavigate } from "react-router-dom";
 
 const Cards = ({ item }) => {
   const navigate = useNavigate();
-  // console.log(item)
-  console.log(item?.image?.url);
+
   return (
-    <div className="bg-white rounded-2xl shadow-md hover:shadow-2xl transition-all duration-300 overflow-hidden border border-gray-100 group">
+    <div className="relative bg-white/70 backdrop-blur-xl rounded-2xl shadow-lg hover:shadow-2xl transition-all duration-300 overflow-hidden border border-[#160059]/10 group">
       <div
         onClick={() => navigate(`/product-detail/${item._id}`)}
-        className="relative h-44 overflow-hidden"
+        className="relative h-44 overflow-hidden cursor-pointer"
       >
         <img
           src={item?.image?.url}
@@ -20,33 +19,38 @@ const Cards = ({ item }) => {
         />
 
         <span
-          className={`absolute top-3 right-3 px-3 py-1 text-xs font-semibold rounded-full 
-          ${item.available === "yes" ? "bg-green-100 text-green-700" : "bg-red-100 text-red-700"}`}
+          className={`absolute top-3 right-3 px-3 py-1 text-xs font-semibold rounded-full backdrop-blur-md
+          ${
+            item.available === "yes"
+              ? "bg-green-100/80 text-green-700"
+              : "bg-red-100/80 text-red-700"
+          }`}
         >
-          {item.available === "yes" ? "Available" : "Out of Stock"}
+          {item?.available === "yes" ? "Available" : "Out of Stock"}
         </span>
       </div>
 
-      <div className="p-4 space-y-2">
-        <h3 className="font-bold text-gray-800 text-lg truncate">
-          {item.name}
+      <div className="p-4 space-y-3">
+        <h3 className="font-semibold text-[#160059] text-lg truncate">
+          {item?.name}
         </h3>
 
-        <div className="flex justify-between items-center text-sm text-gray-600">
-          <span className="flex items-center gap-1">
-            <FaRupeeSign className="text-blue-600" />
-            {item.price}
+        <div className="flex justify-between items-center text-sm text-[#160059]/80">
+          <span className="flex items-center gap-1 font-medium">
+            <FaRupeeSign className="text-[#160059]" />
+            {item?.price}
           </span>
 
-          <span className="flex items-center gap-1">
-            <MdInventory className="text-blue-600" />
-            Stock: {item.stock}
+          <span className="flex items-center gap-1 font-medium">
+            <MdInventory className="text-[#160059]" />
+            Stock: {item?.stock}
           </span>
         </div>
 
         <button
           onClick={() => navigate(`/product-detail/${item._id}`)}
-          className="mt-3 w-full bg-gradient-to-r from-blue-600 to-blue-500 text-white py-2 rounded-lg text-sm font-semibold hover:opacity-90"
+          className="mt-3 w-full bg-[#160059] text-white py-2 rounded-xl text-sm font-semibold tracking-wide 
+          hover:bg-[#0f003d] transition-all duration-300 shadow-md hover:shadow-lg"
         >
           View Product
         </button>
