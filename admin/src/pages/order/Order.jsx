@@ -7,6 +7,7 @@ import {
   FaTimesCircle,
   FaUndoAlt,
   FaCalendarAlt,
+  FaList,
 } from "react-icons/fa";
 import Card from "./components/Card";
 
@@ -52,8 +53,10 @@ const Order = () => {
 
   return (
     <Layout>
-      <div className="p-6 min-h-screen bg-gradient-to-br from-gray-100 to-gray-200">
-        <h1 className="text-3xl font-bold mb-6 text-gray-800">Order</h1>
+      <div className="p-6 min-h-screen bg-white">
+        <h1 className="text-3xl font-bold mb-6 text-[#160059]">
+          Order Dashboard
+        </h1>
 
         <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-6 gap-4 mb-6">
           <StatCard
@@ -88,36 +91,40 @@ const Order = () => {
           />
         </div>
 
-        <div className="bg-white/40 backdrop-blur-xl rounded-2xl p-4 shadow-lg flex flex-col md:flex-row gap-4 items-center mb-6">
-          <div className="flex items-center gap-2">
+        <div
+          className="bg-white/70 backdrop-blur-xl border border-gray-200 
+        rounded-2xl p-4 shadow-lg flex flex-col md:flex-row items-center justify-between mb-6 gap-4"
+        >
+          <div className="flex items-center gap-2 text-[#160059]">
             <FaCalendarAlt />
             <input
               type="date"
               value={date}
               onChange={(e) => setDate(e.target.value)}
-              className="px-3 py-2 rounded-lg bg-white/70 outline-none"
+              className="px-3 py-2 rounded-lg bg-white border border-gray-300 text-[#160059] outline-none"
             />
           </div>
 
           <div className="flex gap-3">
-            <button onClick={() => setFilter("all")} className="filter-btn">
-              All
-            </button>
-            <button
+            <FilterBtn
+              onClick={() => setFilter("all")}
+              icon={<FaList />}
+              text="All"
+            />
+            <FilterBtn
               onClick={() => setFilter("returned")}
-              className="filter-btn"
-            >
-              Returned
-            </button>
-            <button
+              icon={<FaUndoAlt />}
+              text="Returned"
+            />
+            <FilterBtn
               onClick={() => setFilter("canceled")}
-              className="filter-btn"
-            >
-              Canceled
-            </button>
+              icon={<FaTimesCircle />}
+              text="Canceled"
+            />
           </div>
         </div>
 
+        {/* Cards */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
           {dummyOrders.map((order) => (
             <Card key={order.id} order={order} />
@@ -128,11 +135,26 @@ const Order = () => {
   );
 };
 
+const FilterBtn = ({ icon, text, onClick }) => {
+  return (
+    <button
+      onClick={onClick}
+      className="flex items-center gap-2 px-4 py-2 rounded-xl 
+      bg-[#160059] text-white hover:bg-[#1f007a] transition shadow-md"
+    >
+      {icon} {text}
+    </button>
+  );
+};
+
 const StatCard = ({ icon, label, value }) => {
   return (
-    <div className="bg-white/40 backdrop-blur-xl rounded-2xl p-4 shadow-lg flex flex-col items-center">
-      <div className="text-2xl text-indigo-600 mb-2">{icon}</div>
-      <h3 className="text-gray-700">{label}</h3>
+    <div
+      className="bg-white/70 backdrop-blur-xl border border-gray-200 
+    rounded-2xl p-4 shadow-lg flex flex-col items-center text-[#160059]"
+    >
+      <div className="text-2xl mb-2">{icon}</div>
+      <h3 className="text-sm opacity-80">{label}</h3>
       <p className="text-xl font-bold">{value}</p>
     </div>
   );

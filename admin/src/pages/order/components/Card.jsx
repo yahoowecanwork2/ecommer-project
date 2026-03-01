@@ -3,27 +3,27 @@ import { FaUser, FaRupeeSign, FaClock } from "react-icons/fa";
 
 const Card = ({ order }) => {
   return (
-    <div className="bg-white/40 backdrop-blur-xl rounded-2xl p-4 shadow-lg hover:scale-[1.02] transition-all">
+    <div
+      className="bg-white/70 backdrop-blur-xl border border-gray-200 
+    rounded-2xl p-4 shadow-lg hover:scale-[1.02] transition-all text-[#160059]"
+    >
       <h2 className="text-lg font-semibold mb-2">Order: {order.orderno}</h2>
 
       <p className="flex items-center gap-2 text-sm">
-        <FaUser /> {order.customername}
+        <FaUser className="text-[#160059]" /> {order.customername}
       </p>
 
       <p className="flex items-center gap-2 text-sm">
-        <FaRupeeSign /> {order.ordertotal}
+        <FaRupeeSign className="text-[#160059]" /> {order.ordertotal}
       </p>
 
       <p className="flex items-center gap-2 text-sm">
-        <FaClock /> {order.createdAt}
+        <FaClock className="text-[#160059]" /> {order.createdAt}
       </p>
 
       <span
-        className={`inline-block mt-3 px-3 py-1 rounded-full text-xs font-semibold
-          ${order.status === "pending" && "bg-yellow-200 text-yellow-800"}
-          ${order.status === "delivered" && "bg-green-200 text-green-800"}
-          ${order.status === "canceled" && "bg-red-200 text-red-800"}
-        `}
+        className="inline-block mt-3 px-3 py-1 rounded-full text-xs font-semibold 
+      bg-[#160059]/10 text-[#160059]"
       >
         {order.status}
       </span>
