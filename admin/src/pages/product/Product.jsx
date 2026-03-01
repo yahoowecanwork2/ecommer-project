@@ -15,6 +15,7 @@ import Cards from "./components/Cards";
 import Create from "./mdoal/Create";
 import { productApi } from "../../apis/product";
 import { categoriesApi } from "../../apis/categories";
+import CreateCategories from "./mdoal/CreateCategories";
 
 const dummyProducts = [
   {
@@ -51,6 +52,7 @@ const Product = () => {
   const [categories, setCategories] = useState([]);
   const [selectedCategory, setSelectedCategory] = useState("");
   const [showModal, setShowModal] = useState(false);
+  const [createCategories, setCreateCategories] = useState(false);
   const [page, setPage] = useState(1);
   const limit = 4;
 
@@ -126,6 +128,7 @@ const Product = () => {
             </button>
 
             <button
+              onClick={() => setCreateCategories(true)}
               className="bg-[#160059]/10 text-[#160059] px-5 py-2 rounded-xl 
               flex items-center gap-2 border border-[#160059] 
               hover:bg-[#160059]/20 transition"
@@ -254,6 +257,7 @@ const Product = () => {
         </div>
 
         {showModal && <Create setShowModal={setShowModal} />}
+        {createCategories && <CreateCategories setOpen={setCreateCategories} />}
       </div>
     </Layout>
   );
