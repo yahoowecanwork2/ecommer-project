@@ -124,7 +124,6 @@ const Product = () => {
           </button>
         </div>
 
-        {/* STATS ROW */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
           <div className="bg-white p-4 rounded-2xl shadow flex items-center gap-3">
             <MdInventory className="text-3xl text-blue-600" />
@@ -173,7 +172,6 @@ const Product = () => {
             </select>
           </div>
 
-          {/* Search */}
           <div className="flex items-center border rounded-xl overflow-hidden bg-slate-50">
             <span className="px-3 text-blue-600">
               <MdSearch className="text-xl" />

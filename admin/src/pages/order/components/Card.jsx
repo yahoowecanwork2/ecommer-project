@@ -1,9 +1,13 @@
 import React from "react";
 import { FaUser, FaRupeeSign, FaClock } from "react-icons/fa";
+import { useNavigate } from "react-router-dom";
 
 const Card = ({ order }) => {
+  const navigate = useNavigate();
+
   return (
     <div
+      onClick={() => navigate(`/order-detail/${order._id}`)}
       className="bg-white/70 backdrop-blur-xl border border-gray-200 
     rounded-2xl p-4 shadow-lg hover:scale-[1.02] transition-all text-[#160059]"
     >
