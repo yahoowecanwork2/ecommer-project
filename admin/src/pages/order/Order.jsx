@@ -1,13 +1,140 @@
-import React from "react";
+import React, { useState } from "react";
 import Layout from "../../componets/common/Layout";
+import {
+  FaShoppingCart,
+  FaTruck,
+  FaCheckCircle,
+  FaTimesCircle,
+  FaUndoAlt,
+  FaCalendarAlt,
+} from "react-icons/fa";
+import Card from "./components/Card";
+
+const dummyStats = {
+  totalOrders: 120,
+  lastMonthOrders: 35,
+  pending: 20,
+  delivered: 60,
+  canceled: 10,
+  returned: 5,
+};
+
+const dummyOrders = [
+  {
+    id: 1,
+    orderno: "ORD123",
+    customername: "Rahul Sharma",
+    status: "pending",
+    ordertotal: "1499",
+    createdAt: "2026-02-20",
+  },
+  {
+    id: 2,
+    orderno: "ORD124",
+    customername: "Neha Yadav",
+    status: "delivered",
+    ordertotal: "999",
+    createdAt: "2026-02-22",
+  },
+  {
+    id: 3,
+    orderno: "ORD125",
+    customername: "Amit Verma",
+    status: "canceled",
+    ordertotal: "1999",
+    createdAt: "2026-02-25",
+  },
+];
 
 const Order = () => {
+  const [date, setDate] = useState("");
+  const [filter, setFilter] = useState("all");
+
   return (
     <Layout>
-      <div>
-        <h2>Order</h2>
+      <div className="p-6 min-h-screen bg-gradient-to-br from-gray-100 to-gray-200">
+        <h1 className="text-3xl font-bold mb-6 text-gray-800">Order</h1>
+
+        <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-6 gap-4 mb-6">
+          <StatCard
+            icon={<FaShoppingCart />}
+            label="Total"
+            value={dummyStats.totalOrders}
+          />
+          <StatCard
+            icon={<FaTruck />}
+            label="Pending"
+            value={dummyStats.pending}
+          />
+          <StatCard
+            icon={<FaCheckCircle />}
+            label="Delivered"
+            value={dummyStats.delivered}
+          />
+          <StatCard
+            icon={<FaTimesCircle />}
+            label="Canceled"
+            value={dummyStats.canceled}
+          />
+          <StatCard
+            icon={<FaUndoAlt />}
+            label="Returned"
+            value={dummyStats.returned}
+          />
+          <StatCard
+            icon={<FaCalendarAlt />}
+            label="Last Month"
+            value={dummyStats.lastMonthOrders}
+          />
+        </div>
+
+        <div className="bg-white/40 backdrop-blur-xl rounded-2xl p-4 shadow-lg flex flex-col md:flex-row gap-4 items-center mb-6">
+          <div className="flex items-center gap-2">
+            <FaCalendarAlt />
+            <input
+              type="date"
+              value={date}
+              onChange={(e) => setDate(e.target.value)}
+              className="px-3 py-2 rounded-lg bg-white/70 outline-none"
+            />
+          </div>
+
+          <div className="flex gap-3">
+            <button onClick={() => setFilter("all")} className="filter-btn">
+              All
+            </button>
+            <button
+              onClick={() => setFilter("returned")}
+              className="filter-btn"
+            >
+              Returned
+            </button>
+            <button
+              onClick={() => setFilter("canceled")}
+              className="filter-btn"
+            >
+              Canceled
+            </button>
+          </div>
+        </div>
+
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+          {dummyOrders.map((order) => (
+            <Card key={order.id} order={order} />
+          ))}
+        </div>
       </div>
     </Layout>
+  );
+};
+
+const StatCard = ({ icon, label, value }) => {
+  return (
+    <div className="bg-white/40 backdrop-blur-xl rounded-2xl p-4 shadow-lg flex flex-col items-center">
+      <div className="text-2xl text-indigo-600 mb-2">{icon}</div>
+      <h3 className="text-gray-700">{label}</h3>
+      <p className="text-xl font-bold">{value}</p>
+    </div>
   );
 };
 
