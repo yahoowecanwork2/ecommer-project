@@ -6,12 +6,13 @@ import {
 } from "../../redux/wishlistSlice";
 import { authApi } from "../../apis/auth";
 import { addOrIncrementInCart } from "../../redux/cartSlice";
+import HeaderHome from "../common/Headerhome";
+import { FaTimes } from "react-icons/fa";
 
 const Whishlist = () => {
   const dispatch = useDispatch();
   const wishlistItems = useSelector((state) => state.wishlist.items);
 
-  // ✅ fetch wishlist
   useEffect(() => {
     const fetchWishlist = async () => {
       try {
@@ -31,7 +32,6 @@ const Whishlist = () => {
     }
   }, [dispatch, wishlistItems.length]);
 
-  // ✅ ADD TO CART (FIXED)
   const addToCart = async (item) => {
     const payload = {
       productId: item.productId,
@@ -51,23 +51,18 @@ const Whishlist = () => {
     }
   };
 
-  // ✅ MOVE TO CART (FIXED PROPERLY)
   const handleAddToCart = async (item) => {
     try {
-      // 1️⃣ remove from wishlist (redux)
       dispatch(removeItemInWishlist(item.productId));
 
-      // 2️⃣ remove from backend wishlist
       await authApi.removeItemFromWishlist(item.productId);
 
-      // 3️⃣ add to cart
       await addToCart(item);
     } catch (err) {
       console.error("Move to cart error:", err);
     }
   };
 
-  // ✅ REMOVE FROM WISHLIST (FIXED)
   const handleRemove = async (productId) => {
     try {
       dispatch(removeItemInWishlist(productId));
@@ -77,61 +72,64 @@ const Whishlist = () => {
     }
   };
 
-  // ✅ empty state
   if (!wishlistItems.length) {
     return (
-      <div className="min-h-[60vh] flex items-center justify-center text-gray-500">
-        No items in wishlist
+      <div>
+        <HeaderHome />
+        <div className="min-h-[60vh] flex items-center justify-center text-gray-500">
+          No items in wishlist
+        </div>
       </div>
     );
   }
 
   return (
-    <div className="p-6 grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
-      {wishlistItems.map((item) => (
-        <div
-          key={item.productId}
-          className="bg-white rounded-2xl shadow-md p-4 hover:shadow-xl transition"
-        >
-          {/* image */}
-          <div className="h-48 bg-[#160059]/10 rounded-xl mb-3 overflow-hidden flex items-center justify-center">
-            {item?.imageUrl ? (
-              <img
-                src={item.imageUrl}
-                alt={item.name}
-                className="w-full h-full object-cover"
-              />
-            ) : (
-              <span className="text-gray-400 text-sm">No Image</span>
-            )}
-          </div>
+    <div>
+      <HeaderHome />
+      <h2 className="text-2xl font-bold text-[#160059] mb-6 mt-20 text-center">
+        My Wishlist
+      </h2>
 
-          {/* title */}
-          <h4 className="font-semibold text-gray-800 truncate">
-            {item.name}
-          </h4>
-
-          {/* price */}
-          <p className="font-bold text-[#160059] mt-1">₹{item.price}</p>
-
-          {/* buttons */}
-          <div className="flex gap-2 mt-4">
+      <div className="p-6 grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-6">
+        {wishlistItems?.map((item) => (
+          <div
+            key={item?.productId}
+            className="relative bg-white rounded-2xl border border-gray-200 shadow-sm hover:shadow-lg transition p-3"
+          >
             <button
-              onClick={() => handleAddToCart(item)}
-              className="flex-1 bg-[#160059] text-white py-1.5 rounded-lg text-sm hover:bg-[#2a1380] transition"
+              onClick={() => handleRemove(item?.productId)}
+              className="absolute -top-3 -right-3 w-9 h-9 flex items-center justify-center rounded-full bg-white border border-[#160059] text-[#160059] hover:bg-[#160059] hover:text-white transition shadow"
             >
-              Add to Cart
+              <FaTimes size={16} />
             </button>
 
-            <button
-              onClick={() => handleRemove(item.productId)}
-              className="flex-1 border border-red-500 text-red-500 py-1.5 rounded-lg text-sm hover:bg-red-50 transition"
-            >
-              Remove
-            </button>
+            <div className="h-70 bg-[#160059]/5 rounded-xl mb-3 overflow-hidden flex items-center justify-center">
+              {item?.imageUrl ? (
+                <img
+                  src={item?.imageUrl}
+                  alt={item?.name}
+                  className="w-full h-full object-contain"
+                />
+              ) : (
+                <span className="text-gray-400 text-sm">No Image</span>
+              )}
+            </div>
+
+            <h4 className="font-medium text-gray-800 truncate">{item?.name}</h4>
+
+            <p className="font-semibold text-[#160059] mt-1">₹{item?.price}</p>
+
+            <div className="flex mt-4">
+              <button
+                onClick={() => handleAddToCart(item)}
+                className="w-full bg-[#160059] text-white py-2 rounded-lg text-sm hover:bg-[#2a1380] transition"
+              >
+                Add to Cart
+              </button>
+            </div>
           </div>
-        </div>
-      ))}
+        ))}
+      </div>
     </div>
   );
 };

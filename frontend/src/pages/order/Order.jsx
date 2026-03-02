@@ -3,6 +3,7 @@ import { useSelector, useDispatch } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import { authApi } from "../../apis/auth";
 import { addOrIncrementInCart } from "../../redux/cartSlice";
+import HeaderHome from "../common/Headerhome";
 const Order = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
@@ -56,49 +57,57 @@ const Order = () => {
   }
 
   return (
-    <div className="p-6 max-w-6xl mx-auto">
-      <h1 className="text-2xl font-bold text-[#160059] mb-6">Order Summary</h1>
-      <div className="grid gap-5 md:grid-cols-2 lg:grid-cols-3">
-        {items.map((item) => (
-          <div key={item.productId} className="bg-white rounded-2xl shadow p-4">
-            <div className="h-40 bg-gray-100 rounded-lg overflow-hidden mb-3 flex items-center justify-center">
-              {item.imageUrl ? (
-                <img
-                  src={item.imageUrl}
-                  alt={item.name}
-                  className="w-full h-full object-cover"
-                />
-              ) : (
-                <span className="text-gray-400 text-sm">No Image</span>
-              )}
+    <div>
+      <HeaderHome />
+      <div className="p-6 mt-20 max-w-6xl mx-auto">
+        <h1 className="text-2xl font-bold text-[#160059] mb-6">
+          Order Summary
+        </h1>
+        <div className="grid gap-5 md:grid-cols-2 lg:grid-cols-3">
+          {items.map((item) => (
+            <div
+              key={item.productId}
+              className="bg-white rounded-2xl shadow p-4"
+            >
+              <div className="h-40 bg-gray-100 rounded-lg overflow-hidden mb-3 flex items-center justify-center">
+                {item.imageUrl ? (
+                  <img
+                    src={item.imageUrl}
+                    alt={item.name}
+                    className="w-full h-full object-cover"
+                  />
+                ) : (
+                  <span className="text-gray-400 text-sm">No Image</span>
+                )}
+              </div>
+
+              <h3 className="font-semibold text-gray-800">{item.name}</h3>
+              <p className="text-sm text-gray-500 line-clamp-2">
+                {item.description}
+              </p>
+
+              <div className="flex justify-between mt-3">
+                <span className="font-bold text-[#160059]">₹{item.price}</span>
+                <span className="text-sm text-gray-600">
+                  Qty: {item.quantity}
+                </span>
+              </div>
             </div>
+          ))}
+        </div>
 
-            <h3 className="font-semibold text-gray-800">{item.name}</h3>
-            <p className="text-sm text-gray-500 line-clamp-2">
-              {item.description}
-            </p>
+        <div className="mt-8 bg-white rounded-2xl shadow p-6 flex flex-col md:flex-row justify-between items-center gap-4">
+          <h2 className="text-xl font-bold text-gray-800">
+            Subtotal: ₹{subtotal}
+          </h2>
 
-            <div className="flex justify-between mt-3">
-              <span className="font-bold text-[#160059]">₹{item.price}</span>
-              <span className="text-sm text-gray-600">
-                Qty: {item.quantity}
-              </span>
-            </div>
-          </div>
-        ))}
-      </div>
-
-      <div className="mt-8 bg-white rounded-2xl shadow p-6 flex flex-col md:flex-row justify-between items-center gap-4">
-        <h2 className="text-xl font-bold text-gray-800">
-          Subtotal: ₹{subtotal}
-        </h2>
-
-        <button
-          onClick={handleProceedOrder}
-          className="bg-[#160059] hover:bg-[#2a1380] text-white px-8 py-3 rounded-xl font-semibold transition"
-        >
-          Proceed to Order
-        </button>
+          <button
+            onClick={handleProceedOrder}
+            className="bg-[#160059] hover:bg-[#2a1380] text-white px-8 py-3 rounded-xl font-semibold transition"
+          >
+            Proceed to Order
+          </button>
+        </div>
       </div>
     </div>
   );
