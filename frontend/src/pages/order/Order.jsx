@@ -1,9 +1,8 @@
 import React, { useEffect, useState } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { useNavigate } from "react-router-dom";
-import authApi from "../../api/authApi";
-import { addOrIncrement } from "../../redux/cartSlice"
-
+import { authApi } from "../../apis/auth";
+import { addOrIncrementInCart } from "../../redux/cartSlice";
 const Order = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
@@ -18,7 +17,7 @@ const Order = () => {
         const res = await authApi.myCart();
         if (res?.cart?.length) {
           res.cart.forEach((item) => {
-            dispatch(addOrIncrement(item));
+            dispatch(addOrIncrementInCart(item));
           });
         }
       } catch (err) {
@@ -33,7 +32,7 @@ const Order = () => {
 
   const handleProceedOrder = async () => {
     try {
-      navigate("/checkout"); 
+      navigate("/checkout");
     } catch (err) {
       console.error("Order error:", err);
     }
@@ -58,15 +57,10 @@ const Order = () => {
 
   return (
     <div className="p-6 max-w-6xl mx-auto">
-      <h1 className="text-2xl font-bold text-[#160059] mb-6">
-        Order Summary
-      </h1>
+      <h1 className="text-2xl font-bold text-[#160059] mb-6">Order Summary</h1>
       <div className="grid gap-5 md:grid-cols-2 lg:grid-cols-3">
         {items.map((item) => (
-          <div
-            key={item.productId}
-            className="bg-white rounded-2xl shadow p-4"
-          >
+          <div key={item.productId} className="bg-white rounded-2xl shadow p-4">
             <div className="h-40 bg-gray-100 rounded-lg overflow-hidden mb-3 flex items-center justify-center">
               {item.imageUrl ? (
                 <img
@@ -85,9 +79,7 @@ const Order = () => {
             </p>
 
             <div className="flex justify-between mt-3">
-              <span className="font-bold text-[#160059]">
-                ₹{item.price}
-              </span>
+              <span className="font-bold text-[#160059]">₹{item.price}</span>
               <span className="text-sm text-gray-600">
                 Qty: {item.quantity}
               </span>
@@ -96,7 +88,6 @@ const Order = () => {
         ))}
       </div>
 
-  
       <div className="mt-8 bg-white rounded-2xl shadow p-6 flex flex-col md:flex-row justify-between items-center gap-4">
         <h2 className="text-xl font-bold text-gray-800">
           Subtotal: ₹{subtotal}
