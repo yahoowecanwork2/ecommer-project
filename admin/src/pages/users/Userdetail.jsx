@@ -17,12 +17,21 @@ const Userdetail = () => {
   const { id } = useParams();
   const navigate = useNavigate();
   const [user, setUser] = useState(null);
+  const [loading, setLoading] = useState(false);
 
   const fetchUser = async () => {
-    const res = await userApi.getSingleUser(id);
-    console.log("detail", res);
+    try {
+      setLoading(true);
+      const res = await userApi.getSingleUser(id);
+      console.log("detail", res);
 
-    if (res.success) setUser(res.data);
+      setUser(res.data);
+      setLoading(false);
+    } catch (error) {
+      setLoading(false);
+
+      console.log(error);
+    }
   };
 
   useEffect(() => {
