@@ -581,6 +581,7 @@ export const removeFromWishlist = async (req, res) => {
   try {
     const userId = req.id;
     const { productId } = req.body;
+    console.log(productId)
     if (!productId) {
       return res.status(400).json({
         success: false,

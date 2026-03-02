@@ -77,7 +77,8 @@ export const authApi = {
   },
 
   removeItemFromWishlist: async (productId) => {
-    const res = await api.put("/user/wishlist/remove-item", productId);
+    console.log(productId)
+    const res = await api.put("/user/wishlist/remove-item",{productId});
     return res.data;
   },
 

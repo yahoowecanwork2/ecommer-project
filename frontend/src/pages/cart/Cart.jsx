@@ -37,17 +37,26 @@ const Cart = () => {
 
   const increaseQty = async (item) => {
     try {
+      const currentItem = cartItems.find(
+        (cartItem) => cartItem.productId === item.productId
+      );
+      if (!currentItem) return;
+
+      const newQty = currentItem.quantity + 1;
+
       const payload = {
         productId: item.productId,
-        quantity: item.quantity + 1,
+        quantity: newQty,
       };
+
       const res = await authApi.updateQuantity(payload);
       console.log(res);
+
       dispatch(
         addOrIncrementInCart({
           productId: item.productId,
-          quantity: item.quantity + 1,
-        }),
+          quantity: newQty,
+        })
       );
     } catch (error) {
       console.error("Increase qty error:", error);
@@ -55,21 +64,24 @@ const Cart = () => {
   };
 
   const decreaseQty = async (item) => {
-    if (item.quantity <= 1) return;
     try {
+      const currentItem = cartItems.find(
+        (cartItem) => cartItem.productId === item.productId
+      );
+      if (!currentItem || currentItem.quantity <= 1) return;
+
+      const newQty = currentItem.quantity - 1;
+
       const payload = {
         productId: item.productId,
-        quantity: item.quantity - 1,
+        quantity: newQty,
       };
 
       const res = await authApi.updateQuantity(payload);
       console.log(res);
-      dispatch(
-        decrementOrRemoveInCart({
-          productId: item.productId,
-          quantity: item.quantity - 1,
-        }),
-      );
+
+      // ✅ FIXED DISPATCH
+      dispatch(decrementOrRemoveInCart({ productId: item.productId }));
     } catch (error) {
       console.error("Decrease qty error:", error);
     }
@@ -77,6 +89,7 @@ const Cart = () => {
 
   const handleRemoveItem = async (productId) => {
     try {
+      console.log(productId);
       const res = await authApi.removeItemFromCart(productId);
       console.log(res);
       dispatch(removeItemInCart(productId));
@@ -122,7 +135,7 @@ const Cart = () => {
         </button>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 pl-9 pr-5  gap-6">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 pl-9 pr-5 gap-6">
         {cartItems?.map((item) => (
           <div
             key={item?.productId}
@@ -138,7 +151,9 @@ const Cart = () => {
               {item?.name}
             </h3>
 
-            <p className="text-[#160059] font-medium mb-2">₹{item?.price}</p>
+            <p className="text-[#160059] font-medium mb-2">
+              ₹{item?.price}
+            </p>
 
             <div className="flex items-center justify-between mb-4 bg-gray-50 rounded-xl p-2">
               <button
@@ -161,13 +176,6 @@ const Cart = () => {
             </div>
 
             <button
-              onClick={() => navigate(`/order`)}
-              className="w-full bg-[#160059] text-white py-2 rounded-xl mb-2 hover:bg-blue-800 transition"
-            >
-              Proceed to Checkout
-            </button>
-
-            <button
               onClick={() => handleRemoveItem(item?.productId)}
               className="w-full border border-red-500 text-red-500 py-2 rounded-xl flex items-center justify-center gap-2 hover:bg-red-500 hover:text-white transition"
             >
@@ -176,6 +184,13 @@ const Cart = () => {
           </div>
         ))}
       </div>
+
+      <button
+        onClick={() => navigate(`/order`)}
+        className="w-auto bg-[#160059] text-white py-2 rounded-xl mb-2 mt-3.5 p-3 hover:bg-blue-800 transition self-center-safe"
+      >
+        Proceed to Checkout
+      </button>
     </div>
   );
 };

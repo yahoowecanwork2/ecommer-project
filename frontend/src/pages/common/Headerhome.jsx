@@ -15,7 +15,7 @@ const HeaderHome = () => {
         <div className="flex items-center gap-4">
           <IoMenu className="text-2xl cursor-pointer lg:hidden" />
 
-          <Link to="/">
+          <Link to="/product">
             <h1 className="text-xl font-bold">Ecommerce</h1>
           </Link>
         </div>
@@ -32,7 +32,7 @@ const HeaderHome = () => {
             <IoCartOutline className="text-2xl" />
           </Link>
 
-          <Link to="/auth" className="flex items-center gap-1">
+          <Link to="/" className="flex items-center gap-1">
             <IoPerson />
             Login
           </Link>

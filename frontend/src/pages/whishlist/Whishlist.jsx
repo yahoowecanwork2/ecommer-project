@@ -4,66 +4,60 @@ import {
   addOrIncrementInWishlist,
   removeItemInWishlist,
 } from "../../redux/wishlistSlice";
-import { authApi } from "../../apis/auth";
 import { addOrIncrementInCart } from "../../redux/cartSlice";
 import HeaderHome from "../common/Headerhome";
 import { FaTimes } from "react-icons/fa";
+import { authApi } from "../../apis/auth";
 
 const Whishlist = () => {
   const dispatch = useDispatch();
   const wishlistItems = useSelector((state) => state.wishlist.items);
-
-  useEffect(() => {
-    const fetchWishlist = async () => {
-      try {
-        const res = await authApi.myWishlist();
-        const items = res?.data?.wishlist || [];
-
-        items.forEach((item) => {
-          dispatch(addOrIncrementInWishlist(item));
-        });
-      } catch (err) {
-        console.error("Fetch wishlist error:", err);
-      }
-    };
-
-    if (!wishlistItems.length) {
-      fetchWishlist();
-    }
-  }, [dispatch, wishlistItems.length]);
+  
 
   const addToCart = async (item) => {
-    const payload = {
-      productId: item.productId,
-      slug: item.slug,
-      price: item.price,
-      name: item.name,
-      description: item.description,
-      imageUrl: item.imageUrl || "",
-      quantity: 1,
-    };
+  // console.log(item);
+  console.log("Add to cart function call");
 
-    try {
-      dispatch(addOrIncrementInCart(payload));
-      await authApi.addToCart(payload);
-    } catch (err) {
-      console.error("Add to cart error:", err);
-    }
+  const discountedPrice =
+    item?.discount > 0
+      ? Math.round(item.price - (item.price * item.discount) / 100)
+      : item?.price;
+
+  const payload = {
+    productId: item.productId || item._id,
+    slug: item.slug,
+    price: discountedPrice,
+    name: item.name,
+    description: item.description,
+    imageUrl: item?.image?.url || item?.imageUrl || "",
   };
 
-  const handleAddToCart = async (item) => {
-    try {
-      dispatch(removeItemInWishlist(item.productId));
+  try {
+    dispatch(addOrIncrementInCart(payload));
+    const res = await authApi.addToCart(payload);
+    // console.log(res);
+    return true; 
+  } catch (err) {
+    console.error("Add to cart error:", err);
+    return false;
+  }
+};
 
-      await authApi.removeItemFromWishlist(item.productId);
 
-      await addToCart(item);
-    } catch (err) {
-      console.error("Move to cart error:", err);
-    }
-  };
+const handleAddToCart = async (item) => {
+  try {
+    // console.log(item);
+    const success = await addToCart(item);
+    if (!success) return;
+    const id = item.productId || item._id;
+    dispatch(removeItemInWishlist(id));
+    await authApi.removeItemFromWishlist(id);
+  } catch (err) {
+    console.error("Move to cart error:", err);
+  }
+};
 
-  const handleRemove = async (productId) => {
+const handleRemove = async (productId) => {
     try {
       dispatch(removeItemInWishlist(productId));
       await authApi.removeItemFromWishlist(productId);
@@ -71,6 +65,26 @@ const Whishlist = () => {
       console.error("Remove wishlist error:", err);
     }
   };
+
+
+   useEffect(() => {
+    const fetchWishlist = async () => {
+      try {
+        const res = await authApi.myWishlist();
+        const items = res?.data?.wishlist || [];
+        items.forEach((item) => {
+          dispatch(addOrIncrementInWishlist(item));
+        });
+      } catch (err) {
+        console.error("Fetch wishlist error:", err);
+      }
+    };
+    if (!wishlistItems.length) {
+      fetchWishlist();
+    }
+  }, [dispatch, wishlistItems.length]);
+
+
 
   if (!wishlistItems.length) {
     return (

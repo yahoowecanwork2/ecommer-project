@@ -47,21 +47,23 @@ export const cartSlice = createSlice({
     
 
     // decrease quantity if exist if not exist remove item
-    decrementOrRemoveInCart: (state, action) => {
-      const productId = action.payload;
-      const item = state.items.find((i) => i.productId === productId);
-      if (!item) return;
-      if (item.quantity > 1) {
-        item.quantity -= 1;
-      } else {
-        state.items = state.items.filter((i) => i.productId !== productId);
-      }
-      state.subtotal = state.items.reduce(
-        (acc, item) =>
-          acc + Number(item.price || 0) * Number(item.quantity || 0),
-        0,
-      );
-    },
+decrementOrRemoveInCart: (state, action) => {
+  const { productId } = action.payload;
+  const item = state.items.find((i) => i.productId === productId);
+  if (!item) return;
+  if (item.quantity > 1) {
+    item.quantity -= 1;
+  } else {
+    state.items = state.items.filter((i) => i.productId !== productId);
+  }
+  state.subtotal = state.items.reduce(
+    (acc, item) =>
+      acc + Number(item.price || 0) * Number(item.quantity || 0),
+    0
+  );
+},  
+
+
 
     removeItemInCart: (state, action) => {
       const productId = action.payload;

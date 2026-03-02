@@ -11,7 +11,7 @@ const Cards = ({ item }) => {
   const dispatch = useDispatch();
   const [wish, setWish] = useState(false);
 
-  console.log(item);
+  // console.log(item);
 
   const discountedPrice =
     item?.discount > 0
@@ -32,7 +32,7 @@ const Cards = ({ item }) => {
     try {
       dispatch(addOrIncrementInCart(payload));
      const res =  await authApi.addToCart(payload);
-     console.log(res)
+    //  console.log(res)
     } catch (err) {
       console.error("Add to cart error:", err);
     }
@@ -52,7 +52,7 @@ const Cards = ({ item }) => {
     try {
       dispatch(addOrIncrementInWishlist(payload));
      const res = await authApi.addToWishlist(payload);
-     console.log(res)
+    //  console.log(res)
       setWish(true);
     } catch (err) {
       console.error("Add to wishlist error:", err);
