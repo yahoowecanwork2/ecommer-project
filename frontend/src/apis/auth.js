@@ -46,22 +46,22 @@ export const authApi = {
   },
 
   addToCart: async (data) => {
-    const res = await api.put("/user/cart/add-item", { data });
+    const res = await api.put("/user/cart/add-item",data);
     return res.data;
   },
 
   removeItemFromCart: async (productId) => {
-    const res = await api.put("/user/cart/remove-item", { productId });
+    const res = await api.put("/user/cart/remove-item",{productId});
     return res.data;
   },
 
   updateQuantity: async (data) => {
-    const res = await api.put("/user/cart/update-quantity", { data });
+    const res = await api.put("/user/cart/update-quantity",data);
     return res.data;
   },
 
   clearCart: async () => {
-    const res = await api.get("/user/cart/clear");
+    const res = await api.put("/user/cart/clear");
     return res.data;
   },
 
@@ -72,17 +72,17 @@ export const authApi = {
   },
 
   addToWishlist: async (data) => {
-    const res = await api.put("/user/wishlist/add-item", { data });
+    const res = await api.put("/user/wishlist/add-item",data);
     return res.data;
   },
 
   removeItemFromWishlist: async (productId) => {
-    const res = await api.put("/user/wishlist/remove-item", { productId });
+    const res = await api.put("/user/wishlist/remove-item", productId);
     return res.data;
   },
 
   clearWishlist: async () => {
-    const res = await api.get("/user/wishlist/clear");
+    const res = await api.put("/user/wishlist/clear");
     return res.data;
   },
 };

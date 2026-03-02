@@ -8,7 +8,16 @@ export const wishlistSlice = createSlice({
   },
 
   reducers: {
-   
+    // set wishlist items comes with api 
+    setWishlistItems: (state, action) => {
+      state.items = action.payload || [];
+
+      state.subtotal = state.items.reduce(
+        (acc, item) =>
+          acc + Number(item.price || 0) * Number(item.quantity || 0),
+        0
+      );
+    },
     addOrIncrementInWishlist: (state, action) => {
       const { productId,slug,price,name,description,imageUrl} = action.payload;
       const item = state.items.find((i) => i.productId === productId);
@@ -56,5 +65,5 @@ export const wishlistSlice = createSlice({
   },
 });
 
-export const { addOrIncrementInWishlist, decrementOrRemoveInWishlist, removeItemInWishlist,clearWishlist } =
+export const { addOrIncrementInWishlist, decrementOrRemoveInWishlist, removeItemInWishlist,clearWishlist,setWishlistItems } =
   wishlistSlice.actions;

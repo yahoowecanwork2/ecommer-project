@@ -291,7 +291,6 @@ export const getMyCartItems = async (req, res) => {
 export const addItemToCart = async (req, res) => {
   try {
     const userId = req.id;
-
     const {
       productId,
       imageUrl,
@@ -301,7 +300,8 @@ export const addItemToCart = async (req, res) => {
       name,
       description,
     } = req.body;
-
+   console.log(userId)
+   console.log(req.body)
     if (!productId) {
       return res.status(400).json({
         success: false,
@@ -329,7 +329,6 @@ export const addItemToCart = async (req, res) => {
         slug,
         name,
         description,
-        quantity: 1,
       });
     }
     await user.save();
@@ -357,6 +356,7 @@ export const removeFromCart = async (req, res) => {
   try {
     const userId = req.id;
     const { productId } = req.body;
+    console.log(req.body)
     if (!productId) {
       return res.status(400).json({
         success: false,
@@ -521,7 +521,6 @@ export const getMyWishlistItems = async (req, res) => {
 export const addItemToWishlist = async (req, res) => {
   try {
     const userId = req.id;
-
     const {
       productId,
       imageUrl,
@@ -530,7 +529,6 @@ export const addItemToWishlist = async (req, res) => {
       name,
       description,
     } = req.body;
-
     if (!productId) {
       return res.status(400).json({
         success: false,
@@ -544,36 +542,35 @@ export const addItemToWishlist = async (req, res) => {
         message: "User not found",
       });
     }
-    const existingItem = user.cart.find(
-      (item) => item.slug.toString() === slug
+    const existingItem = user.wishlist.find(
+      (item) => item.productId.toString() === productId
     );
     if (existingItem) {
-      existingItem.quantity += 1;
-    } else {
-      user.cart.push({
-        productId,
-        imageUrl,
-        quantity,
-        price,
-        slug,
-        name,
-        description,
+      return res.status(200).json({
+        success: true,
+        message: "Item already in wishlist",
+        wishlist: user.wishlist,
       });
     }
+    user.wishlist.push({
+      productId,
+      imageUrl,
+      price,
+      slug,
+      name,
+      description,
+    });
     await user.save();
     return res.status(200).json({
       success: true,
-      message: existingItem
-        ? "Cart item quantity updated"
-        : "Item added to wishlist",
-       wishlist: user. wishlist,
+      message: "Item added to wishlist",
+      wishlist: user.wishlist,
     });
-
   } catch (error) {
     console.error("Add to wishlist error:", error);
     return res.status(500).json({
       success: false,
-      message: "Failed to add item to  wishlist",
+      message: "Failed to add item to wishlist",
     });
   }
 };

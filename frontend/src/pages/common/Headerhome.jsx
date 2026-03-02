@@ -25,7 +25,7 @@ const HeaderHome = () => {
           <Link to="/about">About</Link>
           <Link to="/product">Product</Link>
 
-          <Link to="/wishlist">
+          <Link to="/whishlist">
             <IoHeartOutline className="text-2xl" />
           </Link>
           <Link to="/cart">

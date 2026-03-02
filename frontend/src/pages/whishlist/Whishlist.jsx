@@ -5,16 +5,19 @@ import {
   removeItemInWishlist,
 } from "../../redux/wishlistSlice";
 import { authApi } from "../../apis/auth";
+import { addOrIncrementInCart } from "../../redux/cartSlice";
 
 const Whishlist = () => {
   const dispatch = useDispatch();
   const wishlistItems = useSelector((state) => state.wishlist.items);
 
+  // ✅ fetch wishlist
   useEffect(() => {
     const fetchWishlist = async () => {
       try {
         const res = await authApi.myWishlist();
         const items = res?.data?.wishlist || [];
+
         items.forEach((item) => {
           dispatch(addOrIncrementInWishlist(item));
         });
@@ -28,30 +31,47 @@ const Whishlist = () => {
     }
   }, [dispatch, wishlistItems.length]);
 
- 
+  // ✅ ADD TO CART (FIXED)
+  const addToCart = async (item) => {
+    const payload = {
+      productId: item.productId,
+      slug: item.slug,
+      price: item.price,
+      name: item.name,
+      description: item.description,
+      imageUrl: item.imageUrl || "",
+      quantity: 1,
+    };
+
+    try {
+      dispatch(addOrIncrementInCart(payload));
+      await authApi.addToCart(payload);
+    } catch (err) {
+      console.error("Add to cart error:", err);
+    }
+  };
+
+  // ✅ MOVE TO CART (FIXED PROPERLY)
   const handleAddToCart = async (item) => {
     try {
-      const payload = {
-        productId: item.productId,
-        slug: item.slug,
-        price: item.price,
-        name: item.name,
-        description: item.description,
-        imageUrl: item.imageUrl,
-      };
+      // 1️⃣ remove from wishlist (redux)
       dispatch(removeItemInWishlist(item.productId));
-     const res= await authApi.removeItemFromWishlist(item.productId);
-     console.log(res)
+
+      // 2️⃣ remove from backend wishlist
+      await authApi.removeItemFromWishlist(item.productId);
+
+      // 3️⃣ add to cart
+      await addToCart(item);
     } catch (err) {
       console.error("Move to cart error:", err);
     }
   };
 
+  // ✅ REMOVE FROM WISHLIST (FIXED)
   const handleRemove = async (productId) => {
     try {
       dispatch(removeItemInWishlist(productId));
-      const res =  await authApi.removeItemFromWishlist(item.productId);
-      console.log(res)
+      await authApi.removeItemFromWishlist(productId);
     } catch (err) {
       console.error("Remove wishlist error:", err);
     }

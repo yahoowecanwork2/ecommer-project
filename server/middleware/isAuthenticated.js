@@ -8,7 +8,7 @@ const isAuthenticated = async (req,res,next) => {
              let token = req.cookie?.token;
     if (!token && req.headers.authorization?.startsWith("Bearer ")) {
       token = req.headers.authorization.split(" ")[1];
-      console.log(token)
+    //   console.log(token)
     }
               if(!token){
                   return res.status(401).json({
@@ -23,15 +23,7 @@ const isAuthenticated = async (req,res,next) => {
                       success:false
                   })
               }
-    //   const user = await User.findById(decode.userId);
-    //   if (!user) {
-    //   return res.status(400).json({
-    //             success:false,
-    //             message:"User not found please login again"
-    //         })
-    //   }
        req.id = decode.userId;
-        //   req.role = role;
               next();   
           } catch (error){
               console.log(error)

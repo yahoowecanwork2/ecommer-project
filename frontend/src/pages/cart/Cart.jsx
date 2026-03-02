@@ -1,7 +1,8 @@
 import React, { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { authApi } from "../../apis/auth";
-import { addOrIncrementInCart, clearCart, decrementOrRemoveInCart, removeItemInCart } from "../../redux/cartSlice";
+import { addOrIncrementInCart, clearCart, decrementOrRemoveInCart, removeItemInCart,setCartItems } from "../../redux/cartSlice";
+
 
 
 
@@ -16,7 +17,7 @@ const Cart = () => {
       const res = await authApi.myCart();
       console.log(res)
       if (res?.cart) {
-        dispatch(setCart(res.cart));
+        dispatch(setCartItems(res.cart));
       }
     } catch (error) {
       console.error("Fetch cart error:", error);
@@ -36,7 +37,8 @@ const Cart = () => {
         productId: item.productId,
         quantity: item.quantity + 1,
       };
-      await authApi.updateQuantity(payload);
+      const res = await authApi.updateQuantity(payload);
+      console.log(res)
       dispatch(
       addOrIncrementInCart({
           productId: item.productId,
@@ -47,7 +49,6 @@ const Cart = () => {
       console.error("Increase qty error:", error);
     }
   };
-
 
   const decreaseQty = async (item) => {
     if (item.quantity <= 1) return;

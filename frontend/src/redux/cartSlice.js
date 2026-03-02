@@ -8,6 +8,16 @@ export const cartSlice = createSlice({
   },
 
   reducers: {
+    // this function store cart daat come with api 
+    setCartItems: (state, action) => {
+      state.items = action.payload || [];
+
+      state.subtotal = state.items.reduce(
+        (acc, item) =>
+          acc + Number(item.price || 0) * Number(item.quantity || 0),
+        0
+      );
+    },
     // add or increase item quantity if exist
     // store [0] imeg orl
     addOrIncrementInCart: (state, action) => {
@@ -33,6 +43,8 @@ export const cartSlice = createSlice({
         0,
       );
     },
+
+    
 
     // decrease quantity if exist if not exist remove item
     decrementOrRemoveInCart: (state, action) => {
@@ -74,4 +86,5 @@ export const {
   decrementOrRemoveInCart,
   removeItemInCart,
   clearCart,
+  setCartItems
 } = cartSlice.actions;
