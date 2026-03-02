@@ -10,13 +10,13 @@ export const cartSlice = createSlice({
   reducers: {
     // add or increase item quantity if exist 
     // store [0] imeg orl 
-    addOrIncrement: (state, action) => {
-      const { productId,price,name,description,imageUrl} = action.payload;
+    addOrIncrementInCart: (state, action) => {
+      const { productId,price,slug,name,description,imageUrl} = action.payload;
       const item = state.items.find((i) => i.productId === productId);
       if (item) {
         item.quantity += 1;
       } else {
-        state.items.push({productId,price, name,description,imageUrl, quantity: 1 });
+        state.items.push({productId,slug,price, name,description,imageUrl, quantity: 1 });
       }
       state.subtotal = state.items.reduce(
   (acc, item) => acc + Number(item.price || 0) * Number(item.quantity || 0),
@@ -25,7 +25,7 @@ export const cartSlice = createSlice({
     },
  
     // decrease quantity if exist if not exist remove item 
-    decrementOrRemove: (state, action) => {
+    decrementOrRemoveInCart: (state, action) => {
       const productId = action.payload;
       const item = state.items.find((i) => i.productId === productId);
       if (!item) return;
@@ -40,7 +40,7 @@ export const cartSlice = createSlice({
 );
     },
 
-    removeItem: (state, action) => {
+    removeItemInCart: (state, action) => {
       const productId = action.payload;
       state.items = state.items.filter((i) => i.productId !== productId);
 
@@ -57,5 +57,5 @@ export const cartSlice = createSlice({
   },
 });
 
-export const { addOrIncrement, decrementOrRemove, removeItem, clearCart } =
+export const { addOrIncrementInCart, decrementOrRemoveInCart, removeItemInCart, clearCart } =
   cartSlice.actions;

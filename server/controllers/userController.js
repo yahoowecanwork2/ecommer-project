@@ -248,3 +248,615 @@ export const sendEmailToUser = async (req, res) => {
     });
   }
 };
+
+
+
+// get my cart 
+export const getMyCartItems = async (req, res) => {
+  try {
+    const userId = req.id;
+
+    const user = await User.findById(userId).select("cart");
+
+    if (!user) {
+      return res.status(404).json({
+        success: false,
+        message: "User not found",
+      });
+    }
+    const totalAmount = user.cart.reduce((sum, item) => {
+      const price = Number(item.price) || 0;
+      return sum + price * item.quantity;
+    }, 0);
+
+    return res.status(200).json({
+      success: true,
+      count: user.cart.length,
+      totalAmount,
+      cart: user.cart,
+    });
+
+  } catch (error) {
+    console.error("Get cart error:", error);
+    return res.status(500).json({
+      success: false,
+      message: "Failed to fetch cart items",
+    });
+  }
+};
+
+
+
+// get my cart 
+export const addItemToCart = async (req, res) => {
+  try {
+    const userId = req.id;
+
+    const {
+      productId,
+      imageUrl,
+      quantity,
+      price,
+      slug,
+      name,
+      description,
+    } = req.body;
+
+    if (!productId) {
+      return res.status(400).json({
+        success: false,
+        message: "productId is required",
+      });
+    }
+    const user = await User.findById(userId);
+    if (!user) {
+      return res.status(404).json({
+        success: false,
+        message: "User not found",
+      });
+    }
+    const existingItem = user.cart.find(
+      (item) => item.slug.toString() === slug
+    );
+    if (existingItem) {
+      existingItem.quantity += 1;
+    } else {
+      user.cart.push({
+        productId,
+        imageUrl,
+        quantity,
+        price,
+        slug,
+        name,
+        description,
+        quantity: 1,
+      });
+    }
+    await user.save();
+    return res.status(200).json({
+      success: true,
+      message: existingItem
+        ? "Cart item quantity updated"
+        : "Item added to cart",
+      cart: user.cart,
+    });
+
+  } catch (error) {
+    console.error("Add to cart error:", error);
+    return res.status(500).json({
+      success: false,
+      message: "Failed to add item to cart",
+    });
+  }
+};
+
+
+
+// remove item to cart
+export const removeFromCart = async (req, res) => {
+  try {
+    const userId = req.id;
+    const { productId } = req.body;
+    if (!productId) {
+      return res.status(400).json({
+        success: false,
+        message: "productId is required",
+      });
+    }
+    const user = await User.findByIdAndUpdate(
+      userId,
+      {
+        $pull: {
+          cart: { productId: productId },
+        },
+      },
+      { new: true }
+    ).select("cart");
+    if (!user) {
+      return res.status(404).json({
+        success: false,
+        message: "User not found",
+      });
+    }
+    return res.status(200).json({
+      success: true,
+      message: "Item removed from cart",
+      cart: user.cart,
+    });
+  } catch (error) {
+    console.error("Remove from cart error:", error);
+    return res.status(500).json({
+      success: false,
+      message: "Failed to remove item from cart",
+    });
+  }
+}; 
+
+
+export const updateCartQuantity = async (req, res) => {
+  try {
+    const userId = req.id;
+    const { productId, quantity } = req.body;
+    if (!productId || quantity === undefined) {
+      return res.status(400).json({
+        success: false,
+        message: "productId and quantity are required",
+      });
+    }
+
+    if (quantity < 0) {
+      return res.status(400).json({
+        success: false,
+        message: "Quantity cannot be negative",
+      });
+    }
+
+    const user = await User.findById(userId);
+
+    if (!user) {
+      return res.status(404).json({
+        success: false,
+        message: "User not found",
+      });
+    }
+
+    const itemIndex = user.cart.findIndex(
+      (item) => item.productId.toString() === productId
+    );
+
+    if (itemIndex === -1) {
+      return res.status(404).json({
+        success: false,
+        message: "Item not found in cart",
+      });
+    }
+    if (quantity === 0) {
+      user.cart.splice(itemIndex, 1);
+    } else {
+      user.cart[itemIndex].quantity = quantity;
+    }
+
+    await user.save();
+
+    return res.status(200).json({
+      success: true,
+      message:
+        quantity === 0
+          ? "Item removed from cart"
+          : "Cart quantity updated",
+      cart: user.cart,
+    });
+
+  } catch (error) {
+    console.error("Update cart quantity error:", error);
+    return res.status(500).json({
+      success: false,
+      message: "Failed to update cart quantity",
+    });
+  }
+};
+
+
+
+// clear cart 
+export const clearCart = async (req, res) => {
+  try {
+    const userId = req.id;
+    const user = await User.findByIdAndUpdate(
+      userId,
+      { $set: { cart: [] } },
+      { new: true }
+    ).select("cart");
+    if (!user) {
+      return res.status(404).json({
+        success: false,
+        message: "User not found",
+      });
+    }
+    return res.status(200).json({
+      success: true,
+      message: "Cart cleared successfully",
+      cart: user.cart,
+    });
+  } catch (error) {
+    console.error("Clear cart error:", error);
+    return res.status(500).json({
+      success: false,
+      message: "Failed to clear cart",
+    });
+  }
+};
+
+
+
+// my wishlist 
+export const getMyWishlistItems = async (req, res) => {
+  try {
+    const userId = req.id;
+    const user = await User.findById(userId).select("wishlist");
+    if (!user) {
+      return res.status(404).json({
+        success: false,
+        message: "User not found",
+      });
+    }
+    return res.status(200).json({
+      success: true,
+      count: user.wishlist.length,
+      cart: user.wishlist,
+    });
+
+  } catch (error) {
+    console.error("Get cart error:", error);
+    return res.status(500).json({
+      success: false,
+      message: "Failed to fetch cart items",
+    });
+  }
+};
+
+
+
+// add itme to wishlist 
+export const addItemToWishlist = async (req, res) => {
+  try {
+    const userId = req.id;
+
+    const {
+      productId,
+      imageUrl,
+      price,
+      slug,
+      name,
+      description,
+    } = req.body;
+
+    if (!productId) {
+      return res.status(400).json({
+        success: false,
+        message: "productId is required",
+      });
+    }
+    const user = await User.findById(userId);
+    if (!user) {
+      return res.status(404).json({
+        success: false,
+        message: "User not found",
+      });
+    }
+    const existingItem = user.cart.find(
+      (item) => item.slug.toString() === slug
+    );
+    if (existingItem) {
+      existingItem.quantity += 1;
+    } else {
+      user.cart.push({
+        productId,
+        imageUrl,
+        quantity,
+        price,
+        slug,
+        name,
+        description,
+      });
+    }
+    await user.save();
+    return res.status(200).json({
+      success: true,
+      message: existingItem
+        ? "Cart item quantity updated"
+        : "Item added to wishlist",
+       wishlist: user. wishlist,
+    });
+
+  } catch (error) {
+    console.error("Add to wishlist error:", error);
+    return res.status(500).json({
+      success: false,
+      message: "Failed to add item to  wishlist",
+    });
+  }
+};
+
+
+// remove item to wishlist 
+export const removeFromWishlist = async (req, res) => {
+  try {
+    const userId = req.id;
+    const { productId } = req.body;
+    if (!productId) {
+      return res.status(400).json({
+        success: false,
+        message: "productId is required",
+      });
+    }
+    const user = await User.findByIdAndUpdate(
+      userId,
+      {
+        $pull: {
+          wishlist: { productId: productId },
+        },
+      },
+      { new: true }
+    ).select("wishlist");
+    if (!user) {
+      return res.status(404).json({
+        success: false,
+        message: "User not found",
+      });
+    }
+    return res.status(200).json({
+      success: true,
+      message: "Item removed from wishlist",
+      wishlist: user.wishlist,
+    });
+  } catch (error) {
+    console.error("Remove from wishlist error:", error);
+    return res.status(500).json({
+      success: false,
+      message: "Failed to remove item from wishlist",
+    });
+  }
+}; 
+
+// clear wihslist 
+export const clearWishlist = async (req, res) => {
+  try {
+    const userId = req.id;
+    const user = await User.findByIdAndUpdate(
+      userId,
+      { $set: { wishlist: [] } },
+      { new: true }
+    ).select("wishlist");
+    if (!user) {
+      return res.status(404).json({
+        success: false,
+        message: "User not found",
+      });
+    }
+    return res.status(200).json({
+      success: true,
+      message: "wishlist cleared successfully",
+      wishlist: user.wishlist,
+    });
+  } catch (error) {
+    console.error("Clear wishlist error:", error);
+    return res.status(500).json({
+      success: false,
+      message: "Failed to clear wishlist",
+    });
+  }
+};
+
+
+
+
+// admin apis 
+export const getAllUsers = async (req, res) => {
+  try {
+    const page = parseInt(req.query.page) || 1;
+    const limit = parseInt(req.query.limit) || 10;
+    const skip = (page - 1) * limit;
+    const totalUsers = await User.countDocuments();
+    const users = await User.find({})
+      .select("-password -orders -wishlist -cart -address")
+      .sort({ createdAt: -1 }) 
+      .skip(skip)
+      .limit(limit);
+    const totalPages = Math.ceil(totalUsers / limit);
+    return res.status(200).json({
+      success: true,
+      message: "Users fetched successfully",
+      data: users,
+      pagination: {
+        totalUsers,
+        totalPages,
+        currentPage: page,
+        hasNextPage: page < totalPages,
+        hasPrevPage: page > 1,
+      },
+    });
+  } catch (error) {
+    console.error("Get users error:", error);
+    return res.status(500).json({
+      success: false,
+      message: "Failed to fetch users",
+    });
+  }
+};
+
+
+
+export const getSingleUser = async (req, res) => {
+  try {
+    const { userId } = req.params;
+    if (!userId) {
+      return res.status(400).json({
+        success: false,
+        message: "userId is required",
+      });
+    }
+    const user = await User.findById(userId).select("-password");
+
+    if (!user) {
+      return res.status(404).json({
+        success: false,
+        message: "User not found",
+      });
+    }
+
+    return res.status(200).json({
+      success: true,
+      message: "User fetched successfully",
+      data: user,
+    });
+  } catch (error) {
+    console.error("Get single user error:", error);
+
+
+    if (error.name === "CastError") {
+      return res.status(400).json({
+        success: false,
+        message: "Invalid userId",
+      });
+    }
+
+    return res.status(500).json({
+      success: false,
+      message: "Failed to fetch user",
+    });
+  }
+};
+
+
+
+export const getSingleUserOrders = async (req, res) => {
+  try {
+    const { userId } = req.params;
+    if (!userId) {
+      return res.status(400).json({
+        success: false,
+        message: "userId is required",
+      });
+    }
+    const user = await User.findById(userId)
+      .select("-password")
+      .populate({
+        path: "orders",
+        options: { sort: { createdAt: -1 } },
+      });
+    if (!user) {
+      return res.status(404).json({
+        success: false,
+        message: "User not found",
+      });
+    }
+    return res.status(200).json({
+      success: true,
+      message: "User with orders fetched successfully",
+      data: user,
+    });
+  } catch (error) {
+    console.error("Get user orders error:", error);
+    if (error.name === "CastError") {
+      return res.status(400).json({
+        success: false,
+        message: "Invalid userId",
+      });
+    }
+    return res.status(500).json({
+      success: false,
+      message: "Failed to fetch user orders",
+    });
+  }
+};
+
+
+
+
+export const getUserCartItems = async (req, res) => {
+  try {
+    const { userId } = req.params;
+    if (!userId) {
+      return res.status(400).json({
+        success: false,
+        message: "userId is required",
+      });
+    }
+    const user = await User.findById(userId).select("cart");
+
+    if (!user) {
+      return res.status(404).json({
+        success: false,
+        message: "User not found",
+      });
+    }
+    const subtotal = user.cart.reduce(
+      (acc, item) =>
+        acc + Number(item.price || 0) * Number(item.quantity || 0),
+      0
+    );
+
+    return res.status(200).json({
+      success: true,
+      message: "Cart fetched successfully",
+      cart: user.cart,
+      subtotal,
+      totalItems: user.cart.length,
+    });
+  } catch (error) {
+    console.error("Get cart error:", error);
+
+    if (error.name === "CastError") {
+      return res.status(400).json({
+        success: false,
+        message: "Invalid userId",
+      });
+    }
+
+    return res.status(500).json({
+      success: false,
+      message: "Failed to fetch cart",
+    });
+  }
+};
+
+
+
+export const getUserWishlistItems = async (req, res) => {
+  try {
+    const { userId } = req.params;
+    if (!userId) {
+      return res.status(400).json({
+        success: false,
+        message: "userId is required",
+      });
+    }
+    const user = await User.findById(userId).select("wishlist");
+    if (!user) {
+      return res.status(404).json({
+        success: false,
+        message: "User not found",
+      });
+    }
+    return res.status(200).json({
+      success: true,
+      message: "Cart fetched successfully",
+      cart: user.cart,
+      totalItems: user.cart.length,
+    });
+  } catch (error) {
+    console.error("Get cart error:", error);
+
+    if (error.name === "CastError") {
+      return res.status(400).json({
+        success: false,
+        message: "Invalid userId",
+      });
+    }
+    return res.status(500).json({
+      success: false,
+      message: "Failed to fetch cart",
+    });
+  }
+};

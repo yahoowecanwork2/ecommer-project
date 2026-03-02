@@ -8,15 +8,14 @@ export const wishlistSlice = createSlice({
   },
 
   reducers: {
-    // add or increase item quantity if exist 
-    // store [0] imeg orl 
-    addOrIncrement: (state, action) => {
-      const { productId,price,name,description,imageUrl} = action.payload;
+   
+    addOrIncrementInWishlist: (state, action) => {
+      const { productId,slug,price,name,description,imageUrl} = action.payload;
       const item = state.items.find((i) => i.productId === productId);
       if (item) {
         item.quantity += 1;
       } else {
-        state.items.push({productId,price, name,description,imageUrl, quantity: 1 });
+        state.items.push({productId,slug,price, name,description,imageUrl, quantity: 1 });
       }
       state.subtotal = state.items.reduce(
   (acc, item) => acc + Number(item.price || 0) * Number(item.quantity || 0),
@@ -25,7 +24,7 @@ export const wishlistSlice = createSlice({
     },
  
     // decrease quantity if exist if not exist remove item 
-    decrementOrRemove: (state, action) => {
+    decrementOrRemoveInWishlist: (state, action) => {
       const productId = action.payload;
       const item = state.items.find((i) => i.productId === productId);
       if (!item) return;
@@ -40,7 +39,7 @@ export const wishlistSlice = createSlice({
 );
     },
 
-    removeItem: (state, action) => {
+    removeItemInWishlist: (state, action) => {
       const productId = action.payload;
       state.items = state.items.filter((i) => i.productId !== productId);
 
@@ -57,5 +56,5 @@ export const wishlistSlice = createSlice({
   },
 });
 
-export const { addOrIncrement, decrementOrRemove, removeItem,clearWishlist } =
+export const { addOrIncrementInWishlist, decrementOrRemoveInWishlist, removeItemInWishlist,clearWishlist } =
   wishlistSlice.actions;

@@ -12,6 +12,7 @@ import Myorders from "../pages/order/Myorders";
 import About from "../pages/static/About";
 import Whishlist from "../pages/whishlist/Whishlist";
 import Cart from "../pages/cart/Cart";
+import Order from "../pages/order/Order";
 
 const Pagesroutes = () => {
   return (
@@ -29,6 +30,7 @@ const Pagesroutes = () => {
         <Route path="/about" element={<About />} />
         <Route path="/whishlist" element={<Whishlist />} />
         <Route path="/cart" element={<Cart />} />
+        <Route path="/order" element={<Order />} />
       </Routes>
     </>
   );
