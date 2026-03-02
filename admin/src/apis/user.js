@@ -1,13 +1,12 @@
 import { api } from "./index";
 
 export const userApi = {
-
   // ------------------------- cart apis -------------------------------------
-   all: async () => {
-    const res = await api.get("/user/get-all");
+
+  all: async (query = "") => {
+    const res = await api.get(`/user/get-all${query}`);
     return res.data;
   },
-  
 
   getSingleUser: async (useId) => {
     const res = await api.get(`/user/get-single/${useId}`);
@@ -19,17 +18,13 @@ export const userApi = {
     return res.data;
   },
 
-
-  userWishlist: async (data) => {
-    const res = await api.put(`/user/user-wishlist/${useId}`);
+  userWishlist: async (data, userId) => {
+    const res = await api.put(`/user/user-wishlist/${userId}`, data);
     return res.data;
   },
 
-
-  userCart: async () => {
-    const res = await api.get(`/user/user-cart/${useId}`);
+  userCart: async (userId, data) => {
+    const res = await api.get(`/user/user-cart/${userId}`, data);
     return res.data;
   },
-
-
 };
