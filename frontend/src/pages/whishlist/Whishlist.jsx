@@ -5,7 +5,7 @@ import {
   removeItemInWishlist,
 } from "../../redux/wishlistSlice";
 import { addOrIncrementInCart } from "../../redux/cartSlice";
-import HeaderHome from "../common/Headerhome";
+import HeaderHome from "../common/Header";
 import { FaTimes } from "react-icons/fa";
 import { authApi } from "../../apis/auth";
 

@@ -1,1 +1,59 @@
+@import url('https://fonts.googleapis.com/css2?family=Google+Sans:ital,opsz,wght@0,17..18,400..700;1,17..18,400..700&family=Rouge+Script&display=swap');
 @import "tailwindcss";
+
+.font-google {
+  font-family: 'Google Sans', sans-serif;
+}
+
+.font-rouge {
+  font-family: 'Rouge Script', cursive;
+}
+
+.fade-up {
+  opacity: 0;
+  transform: translateY(40px);
+  animation: fadeUp 1s ease forwards;
+}
+
+.fade-up-delay {
+  opacity: 0;
+  transform: translateY(40px);
+  animation: fadeUp 1s ease forwards;
+  animation-delay: 0.3s;
+}
+
+.fade-up-delay-2 {
+  opacity: 0;
+  transform: translateY(40px);
+  animation: fadeUp 1s ease forwards;
+  animation-delay: 0.6s;
+}
+
+@keyframes fadeUp {
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.image-zoom {
+  animation: imageZoom 8s ease-out forwards;
+}
+
+@keyframes imageZoom {
+  from {
+    transform: scale(1.05);
+  }
+  to {
+    transform: scale(1);
+  }
+}
+
+.image-hover {
+  transition: transform 0.6s ease, box-shadow 0.6s ease;
+}
+
+.image-hover:hover {
+  transform: scale(1.04) translateY(-8px) rotate(-0.8deg);
+  box-shadow: 0 40px 80px rgba(0, 0, 0, 0.15);
+}

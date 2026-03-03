@@ -9,7 +9,7 @@ import {
 import { MdKeyboardArrowLeft, MdKeyboardArrowRight } from "react-icons/md";
 
 import Cards from "./components/Cards";
-import HeaderHome from "../common/Headerhome";
+import HeaderHome from "../common/Header";
 import { productApi } from "../../apis/product";
 
 // const categories = [

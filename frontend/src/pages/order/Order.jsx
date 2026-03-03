@@ -3,7 +3,7 @@ import { useSelector, useDispatch } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import { authApi } from "../../apis/auth";
 import { addOrIncrementInCart } from "../../redux/cartSlice";
-import HeaderHome from "../common/Headerhome";
+import HeaderHome from "../common/Header";
 const Order = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch();

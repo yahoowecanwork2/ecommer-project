@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { productApi } from "../../apis/product";
 import { FaHeart, FaArrowLeft, FaShoppingCart, FaCheck } from "react-icons/fa";
-import HeaderHome from "../common/Headerhome";
+import HeaderHome from "../common/Header";
 
 const Productdetail = () => {
   const { slug } = useParams();

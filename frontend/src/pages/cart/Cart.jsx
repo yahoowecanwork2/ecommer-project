@@ -8,7 +8,7 @@ import {
   removeItemInCart,
   setCartItems,
 } from "../../redux/cartSlice";
-import HeaderHome from "../common/Headerhome";
+import HeaderHome from "../common/Header";
 import { useNavigate } from "react-router-dom";
 import { FaPlus, FaMinus, FaTrash, FaShoppingCart } from "react-icons/fa";
 
