@@ -3,7 +3,7 @@ import { FaHeart } from "react-icons/fa";
 import { useNavigate } from "react-router-dom";
 import { useDispatch } from "react-redux";
 import { addOrIncrementInCart } from "../../../redux/cartSlice";
-import { addOrIncrementInWishlist } from "../../../redux/wishlistSlice"; 
+import { addOrIncrementInWishlist } from "../../../redux/wishlistSlice";
 import { authApi } from "../../../apis/auth";
 
 const Cards = ({ item }) => {
@@ -18,7 +18,6 @@ const Cards = ({ item }) => {
       ? Math.round(item.price - (item.price * item.discount) / 100)
       : item?.price;
 
-
   const addToCart = async (e) => {
     e.stopPropagation();
     const payload = {
@@ -31,13 +30,12 @@ const Cards = ({ item }) => {
     };
     try {
       dispatch(addOrIncrementInCart(payload));
-     const res =  await authApi.addToCart(payload);
-    //  console.log(res)
+      const res = await authApi.addToCart(payload);
+      //  console.log(res)
     } catch (err) {
       console.error("Add to cart error:", err);
     }
   };
-
 
   const addToWishlist = async (e) => {
     e.stopPropagation();
@@ -51,8 +49,8 @@ const Cards = ({ item }) => {
     };
     try {
       dispatch(addOrIncrementInWishlist(payload));
-     const res = await authApi.addToWishlist(payload);
-    //  console.log(res)
+      const res = await authApi.addToWishlist(payload);
+      //  console.log(res)
       setWish(true);
     } catch (err) {
       console.error("Add to wishlist error:", err);
@@ -65,61 +63,73 @@ const Cards = ({ item }) => {
         console.log("slug:", item.slug);
         navigate(`/product-detail/${item.slug}`);
       }}
-      className="relative bg-white rounded-2xl shadow-lg hover:shadow-2xl hover:-translate-y-1 transition-all duration-300 p-4"
+      className="relative bg-white border border-gray-200 hover:shadow-md transition-all duration-200 overflow-hidden group cursor-pointer"
     >
+      {/* Discount Badge */}
       {item?.discount > 0 && (
-        <span className="absolute top-3 left-3 bg-red-600 text-white text-xs px-3 py-1 rounded-full shadow">
+        <span className="absolute top-2 left-2 bg-black text-white text-xs px-2 py-1">
           {item.discount}% OFF
         </span>
       )}
 
-      <div className="h-70 bg-[#160059]/10 rounded-xl mb-3 overflow-hidden flex items-center justify-center">
+      {/* Product Image */}
+      <div className="h-[320px] bg-gray-100 overflow-hidden">
         {item?.image?.url ? (
           <img
             src={item.image.url}
             alt={item.name}
-            className="w-full h-full object-cover"
+            className="w-full h-full object-cover group-hover:scale-105 transition duration-500"
           />
         ) : (
-          <span className="text-gray-400 text-sm">No Image</span>
+          <div className="flex items-center justify-center h-full text-gray-400 text-sm">
+            No Image
+          </div>
         )}
       </div>
-      <h4 className="font-semibold text-gray-800 truncate">
-        {item?.name}
-      </h4>
-      <p className="text-gray-500 text-sm line-clamp-2">
-        {item?.description}
-      </p>
 
-      <div className="flex justify-between items-center mt-4">
-        <div>
+      {/* Card Content */}
+      <div className="p-3">
+        <h4 className="text-sm font-semibold text-gray-900 truncate">
+          {item?.name}
+        </h4>
+
+        <p className="text-xs text-gray-500 line-clamp-2 mt-1">
+          {item?.description}
+        </p>
+
+        {/* Price */}
+        <div className="flex items-center gap-2 mt-2">
           {item?.discount > 0 ? (
             <>
-              <span className="text-sm line-through text-gray-400">
+              <span className="text-xs line-through text-gray-400">
                 ₹{item?.price}
               </span>
-              <span className="block font-bold text-[#160059]">
+
+              <span className="text-sm font-semibold text-gray-900">
                 ₹{discountedPrice}
               </span>
             </>
           ) : (
-            <span className="font-bold text-[#160059]">
+            <span className="text-sm font-semibold text-gray-900">
               ₹{item?.price}
             </span>
           )}
         </div>
-        <div className="flex items-center gap-3">
+
+        {/* Actions */}
+        <div className="flex items-center justify-between mt-3">
           <button
             onClick={addToWishlist}
             className={`text-lg transition ${
-              wish ? "text-red-500" : "text-gray-300"
+              wish ? "text-red-500" : "text-gray-400 hover:text-red-500"
             }`}
           >
             <FaHeart />
           </button>
+
           <button
             onClick={addToCart}
-            className="bg-[#160059] text-white px-4 py-1.5 rounded-lg text-sm hover:bg-[#2a1380] transition"
+            className="px-3 py-1 text-xs bg-black text-white hover:bg-gray-800 transition"
           >
             Add
           </button>

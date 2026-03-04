@@ -90,52 +90,60 @@ const Registerotpverify = ({
   };
 
   return (
-    <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
-      <div className="bg-white w-[90%] max-w-md rounded-xl shadow-lg p-6 relative">
+<div className="fixed inset-0 bg-black/40 backdrop-blur-sm flex items-center justify-center z-50">
+  <div className="bg-white w-[90%] max-w-sm rounded-2xl shadow-xl p-7 relative">
 
-        <button
-          onClick={() => setShowmodal(false)}
-          className="absolute top-3 right-3 text-gray-500 hover:text-red-500"
-        >
-          ✕
-        </button>
+    {/* Close Button */}
+    <button
+      onClick={() => setShowmodal(false)}
+      className="absolute top-4 right-4 text-gray-400 hover:text-red-500 transition"
+    >
+      ✕
+    </button>
 
-        <h2 className="text-2xl font-bold text-center text-blue-600 mb-2">
-        Register OTP Verification
-        </h2>
+    {/* Title */}
+    <h2 className="text-xl font-semibold text-gray-900 text-center mb-1">
+      Verify OTP
+    </h2>
 
-        <p className="text-sm text-center text-gray-500 mb-6">
-          Enter OTP sent to your phone
-        </p>
+    <p className="text-sm text-gray-500 text-center mb-6">
+      Enter the 6 digit code sent to your phone
+    </p>
 
-        <input
-          type="text"
-          placeholder="Enter OTP"
-          value={otp}
-          onChange={(e) => setOtp(e.target.value)}
-          maxLength={6}
-          className="w-full border p-3 rounded mb-4"
-        />
+    {/* OTP Input */}
+    <input
+      type="text"
+      placeholder="Enter OTP"
+      value={otp}
+      onChange={(e) => setOtp(e.target.value)}
+      maxLength={6}
+      className="w-full border border-gray-300 rounded-lg px-4 py-3 text-center tracking-widest text-lg focus:outline-none focus:border-pink-500 mb-5"
+    />
 
-        <button
-          onClick={verifyOtp}
-          disabled={loading}
-          className="w-full bg-blue-600 text-white p-3 rounded"
-        >
-          {loading ? "Verifying..." : "Verify OTP"}
-        </button>
+    {/* Verify Button */}
+    <button
+      onClick={verifyOtp}
+      disabled={loading}
+      className="w-full bg-[#ff3f6c] text-white py-3 rounded-lg font-medium hover:bg-[#ff527b] transition disabled:opacity-60"
+    >
+      {loading ? "Verifying..." : "Verify OTP"}
+    </button>
 
-        <div className="text-center mt-4 text-sm text-gray-500">
-          {canResend ? (
-            <span className="text-blue-600 cursor-pointer">
-              Resend OTP
-            </span>
-          ) : (
-            <span>Resend OTP in {timer}s</span>
-          )}
-        </div>
-      </div>
+    {/* Resend */}
+    <div className="text-center mt-5 text-sm">
+      {canResend ? (
+        <span className="text-[#ff3f6c] font-medium cursor-pointer hover:underline">
+          Resend OTP
+        </span>
+      ) : (
+        <span className="text-gray-400">
+          Resend OTP in {timer}s
+        </span>
+      )}
     </div>
+
+  </div>
+</div>
   );
 };
 

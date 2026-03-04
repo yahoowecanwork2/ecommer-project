@@ -33,7 +33,7 @@ const Pagesroutes = () => {
         <Route path="/order-detail/:id" element={<Orderdetails />} />
         {/* <Route path="/dashboard" element={<Home />} /> */}
         <Route path="/about" element={<About />} />
-        <Route path="/whishlist" element={<Whishlist />} />
+        <Route path="/wishlist" element={<Whishlist />} />
         <Route path="/cart" element={<Cart />} />
         <Route path="/order" element={<Order />} />
 

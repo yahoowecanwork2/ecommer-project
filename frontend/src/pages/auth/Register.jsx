@@ -1,13 +1,11 @@
 import React, { useEffect, useState } from "react";
 import { auth } from "../../firebase";
-import {
-  RecaptchaVerifier,
-  signInWithPhoneNumber,
-} from "firebase/auth";
+import { RecaptchaVerifier, signInWithPhoneNumber } from "firebase/auth";
 import { authApi } from "../../apis/auth";
 import { toast } from "react-hot-toast";
 import Registerotpverify from "./modal/Regisetrotpverify";
 import Loginotpverifymodal from "./modal/Loginotpverifymodal";
+import Header from "../common/Header";
 
 const Register = () => {
   const [showmodal, setShowmodal] = useState(false);
@@ -16,18 +14,15 @@ const Register = () => {
   const [registrationLoading, setRegistrationLoading] = useState(false);
   const [phone, setPhone] = useState("");
   const [confirmationResult, setConfirmationResult] = useState(null);
+  const [agreeTerms, setAgreeTerms] = useState(false);
 
-  // ---------------- Invisible Recaptcha Setup ----------------
+  // ---------------- Recaptcha Setup ----------------
   useEffect(() => {
+    // window.location.reload();
     if (!auth) return;
 
-    const initializeRecaptcha = () => {
+    // if (!window.recaptchaVerifier) {
       try {
-        if (window.recaptchaVerifier) {
-          window.recaptchaVerifier.clear();
-          window.recaptchaVerifier = null;
-        }
-
         window.recaptchaVerifier = new RecaptchaVerifier(
           auth,
           "recaptcha-container",
@@ -36,26 +31,17 @@ const Register = () => {
             callback: () => {
               console.log("Recaptcha solved");
             },
-          }
+          },
         );
 
         window.recaptchaVerifier.render();
       } catch (error) {
         console.log("Recaptcha Init Error:", error);
       }
-    };
-
-    initializeRecaptcha();
-
-    return () => {
-      if (window.recaptchaVerifier) {
-        window.recaptchaVerifier.clear();
-        window.recaptchaVerifier = null;
-      }
-    };
+    // }
   }, []);
 
-  // ---------------- Send OTP (Common for Register & Login) ----------------
+  // ---------------- Send OTP ----------------
   const sendOtp = async (type) => {
     try {
       if (!window.recaptchaVerifier) {
@@ -68,7 +54,7 @@ const Register = () => {
       const result = await signInWithPhoneNumber(
         auth,
         `+91${phone}`,
-        window.recaptchaVerifier
+        window.recaptchaVerifier,
       );
 
       if (result) {
@@ -83,8 +69,9 @@ const Register = () => {
         toast.success("OTP sent successfully!");
       }
     } catch (error) {
-      toast.error(error.message);
       console.error("OTP Error:", error);
+      toast.error(error.message);
+      // window.location.reload();
     } finally {
       setRegistrationLoading(false);
     }
@@ -97,57 +84,102 @@ const Register = () => {
         toast.error("Enter phone number");
         return;
       }
+
       setUserExistLoading(true);
+
       const res = await authApi.checkUserExist(phone);
+
       if (res?.success) {
-        toast.success(res?.message);
+        // toast.success(res?.message);
         sendOtp("register");
       }
     } catch (error) {
       if (error?.response?.status === 400) {
-        toast.success(error?.response?.data?.message);
-        sendOtp("login"); 
+        // toast.success(error?.response?.data?.message);
+        sendOtp("login");
       } else {
         toast.error("Server Error");
       }
-
     } finally {
       setUserExistLoading(false);
     }
   };
 
   return (
-    <div style={{ maxWidth: "400px", margin: "50px auto" }}>
-      <h2>Phone Authentication</h2>
+    <div className="font-google bg-[#fdecec] min-h-screen">
+      <Header />
 
-      <input
-        type="tel"
-        placeholder="Enter phone number"
-        value={phone}
-        onChange={(e) => setPhone(e.target.value)}
-        style={{ width: "100%", padding: "10px", marginBottom: "10px" }}
-      />
+      <div className="flex justify-center items-center py-16 mt-16 mx-6">
+        <div className="bg-white w-[400px] shadow-sm">
+          {/* Banner */}
+          {/* <img src="/login-banner.png" alt="Offer" className="w-full" /> */}
 
-      <button
-        onClick={checkUserExist}
-        disabled={userExistLoading || registrationLoading}
-        style={{
-          width: "100%",
-          padding: "10px",
-          background: "green",
-          color: "white",
-          border: "none",
-        }}
-      >
-        {registrationLoading
-          ? "Sending..."
-          : userExistLoading
-          ? "Checking..."
-          : "Send OTP"}
-      </button>
+          <div className="p-6">
+            <h2 className="text-xl font-semibold text-gray-800 mb-6">
+              Login <span className="text-gray-500">or</span> Signup
+            </h2>
 
-      {/* Invisible Recaptcha */}
-      <div id="recaptcha-container" style={{ display: "none" }}></div>
+            {/* Phone Input */}
+            <div className="border border-gray-300 flex items-center px-3 py-3 mb-4">
+              <span className="text-gray-500 mr-2">+91</span>
+              <input
+                type="tel"
+                placeholder="Mobile Number"
+                value={phone}
+                onChange={(e) => setPhone(e.target.value)}
+                className="outline-none flex-1 text-sm"
+              />
+            </div>
+
+            {/* Terms */}
+            <div className="text-xs text-gray-500 mb-4 flex items-start gap-2">
+              <input
+                type="checkbox"
+                className="mt-1"
+                checked={agreeTerms}
+                onChange={(e) => setAgreeTerms(e.target.checked)}
+              />
+              <p>
+                By continuing, I agree to the{" "}
+                <span className="text-pink-500 font-medium">Terms of Use</span>{" "}
+                &{" "}
+                <span className="text-pink-500 font-medium">
+                  Privacy Policy
+                </span>{" "}
+                and I am above 18 years old.
+              </p>
+            </div>
+
+            {/* Continue Button */}
+            <button
+              onClick={checkUserExist}
+              disabled={!agreeTerms || userExistLoading || registrationLoading}
+              className={`w-full py-3 font-semibold transition ${
+                agreeTerms
+                  ? "bg-[#ff3f6c] text-white"
+                  : "bg-gray-300 text-white cursor-not-allowed"
+              }`}
+            >
+              {registrationLoading
+                ? "Sending..."
+                : userExistLoading
+                  ? "Checking..."
+                  : "CONTINUE"}
+            </button>
+
+            {/* Help */}
+            <p className="text-xs text-gray-500 mt-6 text-center">
+              Have trouble logging in?{" "}
+              <span className="text-pink-500 font-medium cursor-pointer">
+                Get help
+              </span>
+            </p>
+          </div>
+        </div>
+      </div>
+
+      {/* Recaptcha container */}
+      <div id="recaptcha-container"></div>
 
       {/* Register OTP Modal */}
       {showmodal && confirmationResult && (

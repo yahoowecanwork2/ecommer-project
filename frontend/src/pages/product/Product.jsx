@@ -9,8 +9,9 @@ import {
 import { MdKeyboardArrowLeft, MdKeyboardArrowRight } from "react-icons/md";
 
 import Cards from "./components/Cards";
-import HeaderHome from "../common/Header";
 import { productApi } from "../../apis/product";
+import Header from "../common/Header";
+import Footer from "../common/Footer";
 
 // const categories = [
 //   { name: "Mobiles", icon: <FaMobileAlt /> },
@@ -22,7 +23,6 @@ import { productApi } from "../../apis/product";
 // ];
 
 const Product = () => {
-  
   const [products, setProducts] = useState([]);
   const [startIndex, setStartIndex] = useState(0);
   const [loading, setLoading] = useState(false);
@@ -70,89 +70,101 @@ const Product = () => {
     arr.length > 0 &&
     arr.map((item) => <Cards key={`${item._id}`} item={item} />);
   return (
-    <div className="w-full bg-white min-h-screen">
-      <HeaderHome />
+    <div className="w-full bg-white min-h-screen font-google">
+      <Header />
 
-      <div className="px-10 py-20 mt-8">
-        <div className="flex gap-3 w-1/2 mb-10">
-          <input
-            type="text"
-            placeholder="Search products..."
-            className="w-full p-3 rounded-xl border border-[#160059] focus:ring-2 focus:ring-[#160059] outline-none"
-          />
-          <button className="bg-[#160059] text-white px-6 rounded-xl hover:bg-[#2a1380] transition">
-            Search
-          </button>
-        </div>
+      <div className="bg-[#faf7f2] min-h-screen font-google pt-28 pb-20">
+        <div className="max-w-7xl mx-auto px-6">
+          {/* Search */}
+          <div className="flex gap-3 max-w-xl mb-12">
+            <input
+              type="text"
+              placeholder="Search products..."
+              className="w-full px-5 py-3 rounded-full border border-gray-300 focus:outline-none focus:border-gray-900 text-sm"
+            />
 
-        <div className="mb-10">
-          <h3 className="text-xl font-semibold text-[#160059] mb-4">
-            Categories
-          </h3>
-
-          {/* <div className="flex gap-6 overflow-x-auto pb-2">
-            {categories?.map((cat) => (
-              <div
-                key={cat._id}
-                className="flex flex-col items-center cursor-pointer group"
-              >
-                <div className="w-16 h-16 bg-[#160059]/10 text-[#160059] rounded-full flex items-center justify-center text-xl shadow-md group-hover:bg-[#160059] group-hover:text-white transition">
-                  {categoryIcons[cat?.slug?.toLowerCase()] || <FaTshirt />}{" "}
-                </div>
-                <p className="text-sm mt-2 text-gray-700">{cat.name}</p>
-              </div>
-            ))}
-          </div> */}
-          <div className="flex gap-6 overflow-x-auto pb-2">
-            {categories?.map((cat) => {
-              const key = cat?.slug?.toLowerCase();
-
-              return (
-                <div
-                  key={cat._id}
-                  className="flex flex-col items-center cursor-pointer group"
-                >
-                  <div className="w-16 h-16 bg-[#160059]/10 text-[#160059] rounded-full flex items-center justify-center text-2xl shadow-md group-hover:bg-[#160059] group-hover:text-white transition">
-                    {categoryIcons[key] || <FaTshirt />}
-                  </div>
-                  <p className="text-sm mt-2 text-gray-700">{cat.name}</p>
-                </div>
-              );
-            })}
+            <button className="px-6 py-3 bg-black text-white rounded-full text-sm font-medium hover:bg-gray-800 transition">
+              Search
+            </button>
           </div>
-        </div>
 
-        <div>
-          <h3 className="text-xl font-semibold text-[#160059] mb-4">
-            Products
-          </h3>
+          {/* Categories */}
+          <div className="mb-14">
+            <h3 className="text-2xl font-semibold text-gray-900 mb-6">
+              Shop by Category
+            </h3>
 
+            <div className="flex gap-8 overflow-x-auto pb-2">
+              {categories?.map((cat) => {
+                const key = cat?.slug?.toLowerCase();
+
+                return (
+                  <div
+                    key={cat._id}
+                    className="flex flex-col items-center cursor-pointer group min-w-[70px]"
+                  >
+                    <div className="w-16 h-16 rounded-full bg-white border border-gray-200 flex items-center justify-center text-xl shadow-sm group-hover:bg-black group-hover:text-white transition">
+                      {categoryIcons[key] || <FaTshirt />}
+                    </div>
+
+                    <p className="text-sm mt-3 text-gray-700 group-hover:text-black">
+                      {cat.name}
+                    </p>
+                  </div>
+                );
+              })}
+            </div>
+          </div>
+
+          {/* Product Header */}
+          <div className="flex justify-between items-center mb-8">
+            <h3 className="text-2xl font-semibold text-gray-900">
+              All Products
+              <span className="text-gray-400 text-sm ml-2">
+                ({products?.length})
+              </span>
+            </h3>
+
+            {/* Sort */}
+            <select className="border border-gray-300 rounded-lg px-4 py-2 text-sm bg-white">
+              <option>Sort: Recommended</option>
+              <option>Price: Low to High</option>
+              <option>Price: High to Low</option>
+              <option>Newest</option>
+            </select>
+          </div>
+
+          {/* Products Grid */}
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-8">
             {renderCards(products, "all")}
           </div>
-          <div className="flex justify-center items-center gap-4 mt-8">
+
+          {/* Pagination */}
+          <div className="flex justify-center items-center gap-6 mt-12">
             <button
               disabled={startIndex === 0}
               onClick={() => setStartIndex((prev) => Math.max(prev - limit, 0))}
-              className="p-2 rounded-full bg-white shadow hover:bg-blue-100 text-blue-600 disabled:opacity-40 disabled:cursor-not-allowed transition"
+              className="w-10 h-10 flex items-center justify-center rounded-full border border-gray-300 hover:bg-gray-900 hover:text-white transition disabled:opacity-30"
             >
-              <MdKeyboardArrowLeft size={26} />
+              <MdKeyboardArrowLeft size={22} />
             </button>
 
-            <span className="px-4 py-1 rounded-full bg-blue-100 text-blue-700 font-semibold">
+            <span className="text-sm text-gray-600 font-medium">
               Page {startIndex / limit + 1}
             </span>
 
             <button
               disabled={products.length < limit}
               onClick={() => setStartIndex((prev) => prev + limit)}
-              className="p-2 rounded-full bg-white shadow hover:bg-blue-100 text-blue-600 disabled:opacity-40 disabled:cursor-not-allowed transition"
+              className="w-10 h-10 flex items-center justify-center rounded-full border border-gray-300 hover:bg-gray-900 hover:text-white transition disabled:opacity-30"
             >
-              <MdKeyboardArrowRight size={26} />
+              <MdKeyboardArrowRight size={22} />
             </button>
           </div>
         </div>
       </div>
+
+      <Footer />
     </div>
   );
 };

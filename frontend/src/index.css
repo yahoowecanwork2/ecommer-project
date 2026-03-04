@@ -57,3 +57,43 @@
   transform: scale(1.04) translateY(-8px) rotate(-0.8deg);
   box-shadow: 0 40px 80px rgba(0, 0, 0, 0.15);
 }
+
+@keyframes popup {
+  0% {
+    opacity: 0;
+    transform: scale(0.9) translateY(20px);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+  }
+}
+
+@keyframes fadeIn {
+  0% {
+    opacity: 0;
+  }
+  100% {
+    opacity: 1;
+  }
+}
+
+.animate-popup {
+  animation: popup 0.25s ease-out;
+}
+
+.animate-fadeIn {
+  animation: fadeIn 0.2s ease-out;
+}
+@keyframes subtleBounce {
+  0%, 100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-4px);
+  }
+}
+
+.bounce-subtle {
+  animation: subtleBounce 2s ease-in-out infinite;
+}
