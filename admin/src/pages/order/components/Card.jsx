@@ -11,25 +11,25 @@ const Card = ({ order }) => {
       className="bg-white/70 backdrop-blur-xl border border-gray-200 
     rounded-2xl p-4 shadow-lg hover:scale-[1.02] transition-all text-[#160059]"
     >
-      <h2 className="text-lg font-semibold mb-2">Order: {order.orderno}</h2>
+      <h2 className="text-lg font-semibold mb-2">Order: {order?.orderno}</h2>
 
       <p className="flex items-center gap-2 text-sm">
-        <FaUser className="text-[#160059]" /> {order.customername}
+        <FaUser className="text-[#160059]" /> {order?.customername}
       </p>
 
       <p className="flex items-center gap-2 text-sm">
-        <FaRupeeSign className="text-[#160059]" /> {order.ordertotal}
+        <FaRupeeSign className="text-[#160059]" /> {order?.ordertotal}
       </p>
 
       <p className="flex items-center gap-2 text-sm">
-        <FaClock className="text-[#160059]" /> {order.createdAt}
+        <FaClock className="text-[#160059]" /> {order?.createdAt}
       </p>
 
       <span
         className="inline-block mt-3 px-3 py-1 rounded-full text-xs font-semibold 
       bg-[#160059]/10 text-[#160059]"
       >
-        {order.status}
+        {order?.status}
       </span>
     </div>
   );

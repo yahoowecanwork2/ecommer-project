@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import Layout from "../../componets/common/Layout";
 import {
   FaShoppingCart,
@@ -10,46 +10,131 @@ import {
   FaList,
 } from "react-icons/fa";
 import Card from "./components/Card";
-
-const dummyStats = {
-  totalOrders: 120,
-  lastMonthOrders: 35,
-  pending: 20,
-  delivered: 60,
-  canceled: 10,
-  returned: 5,
-};
-
-const dummyOrders = [
-  {
-    id: 1,
-    orderno: "ORD123",
-    customername: "Rahul Sharma",
-    status: "pending",
-    ordertotal: "1499",
-    createdAt: "2026-02-20",
-  },
-  {
-    id: 2,
-    orderno: "ORD124",
-    customername: "Neha Yadav",
-    status: "delivered",
-    ordertotal: "999",
-    createdAt: "2026-02-22",
-  },
-  {
-    id: 3,
-    orderno: "ORD125",
-    customername: "Amit Verma",
-    status: "canceled",
-    ordertotal: "1999",
-    createdAt: "2026-02-25",
-  },
-];
+import { orderApis } from "../../apis/order";
+import toast from "react-hot-toast"
 
 const Order = () => {
   const [date, setDate] = useState("");
+  const [orders, setOrders] = useState([]);
+  const [stats, setStats] = useState(null);
   const [filter, setFilter] = useState("all");
+
+  // ------------------ STATS ------------------
+  const getStats = async () => {
+    try {
+      const res = await orderApis.stats();
+      if (res.success) {
+        toast.success(res.message)
+        setStats(res.stats);
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  // ------------------ ALL ORDERS ------------------
+  const getAllOrders = async () => {
+    try {
+      setOrders([]); // clear old orders
+
+      const res = await orderApis.getAll();
+
+      if (res.success) {
+        toast.success(res.message)       
+        setOrders(res.orders);
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  // ------------------ FILTER STATUS ------------------
+  const filterByStatus = async () => {
+    try {
+      setOrders([]);
+      const res = await orderApis.filterByStatus();
+      if (res.success) {
+        toast.success(res.message)
+        setOrders(res.orders);
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  // ------------------ FILTER RETURN ------------------
+  const filterByReturnStatus = async () => {
+    try {
+      setOrders([]);
+      const res = await orderApis.filterByReturnStatus();
+      if (res.success) {
+        toast.success(res.message)
+        setOrders(res.orders);
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  // ------------------ FILTER CANCEL ------------------
+  const filterBYCancelStatus = async () => {
+    try {
+      setOrders([]);
+      const res = await orderApis.filterBYCancelStatus();
+      if (res.success) {
+        toast.success(res.message)
+        setOrders(res.orders);
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  // ------------------ FILTER DATE ------------------
+  const filterByDate = async (selectedDate) => {
+    try {
+      setOrders([]);
+      const res = await orderApis.filterByDate(selectedDate);
+      if (res.success) {
+        toast.success(res.message)
+        setOrders(res.orders);
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  // ------------------ DATE CHANGE ------------------
+  const handleDateChange = (e) => {
+    const selectedDate = e.target.value;
+    setDate(selectedDate);
+
+    if (selectedDate) {
+      filterByDate(selectedDate);
+    }
+  };
+
+  // ------------------ FILTER HANDLER ------------------
+  const handleFilter = (type) => {
+    setFilter(type);
+
+    if (type === "all") {
+      getAllOrders();
+    }
+
+    if (type === "returned") {
+      filterByReturnStatus();
+    }
+
+    if (type === "canceled") {
+      filterBYCancelStatus();
+    }
+  };
+
+  useEffect(() => {
+    getStats();
+    getAllOrders();
+  }, []);
 
   return (
     <Layout>
@@ -58,75 +143,86 @@ const Order = () => {
           Order Dashboard
         </h1>
 
+        {/* ---------------- STATS ---------------- */}
         <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-6 gap-4 mb-6">
           <StatCard
             icon={<FaShoppingCart />}
             label="Total"
-            value={dummyStats.totalOrders}
+            value={stats?.totalOrders}
           />
+
           <StatCard
             icon={<FaTruck />}
             label="Pending"
-            value={dummyStats.pending}
+            value={stats?.pending}
           />
+
           <StatCard
             icon={<FaCheckCircle />}
             label="Delivered"
-            value={dummyStats.delivered}
+            value={stats?.delivered}
           />
+
           <StatCard
             icon={<FaTimesCircle />}
             label="Canceled"
-            value={dummyStats.canceled}
+            value={stats?.canceled}
           />
+
           <StatCard
             icon={<FaUndoAlt />}
             label="Returned"
-            value={dummyStats.returned}
+            value={stats?.returned}
           />
+
           <StatCard
             icon={<FaCalendarAlt />}
             label="Last Month"
-            value={dummyStats.lastMonthOrders}
+            value={stats?.lastMonthOrders}
           />
         </div>
 
+        {/* ---------------- FILTER BAR ---------------- */}
         <div
           className="bg-white/70 backdrop-blur-xl border border-gray-200 
         rounded-2xl p-4 shadow-lg flex flex-col md:flex-row items-center justify-between mb-6 gap-4"
         >
           <div className="flex items-center gap-2 text-[#160059]">
             <FaCalendarAlt />
+
             <input
               type="date"
               value={date}
-              onChange={(e) => setDate(e.target.value)}
+              onChange={handleDateChange}
               className="px-3 py-2 rounded-lg bg-white border border-gray-300 text-[#160059] outline-none"
             />
           </div>
 
           <div className="flex gap-3">
             <FilterBtn
-              onClick={() => setFilter("all")}
+              onClick={() => handleFilter("all")}
               icon={<FaList />}
               text="All"
             />
+
             <FilterBtn
-              onClick={() => setFilter("returned")}
+              onClick={() => handleFilter("returned")}
               icon={<FaUndoAlt />}
               text="Returned"
             />
+
             <FilterBtn
-              onClick={() => setFilter("canceled")}
+              onClick={() => handleFilter("canceled")}
               icon={<FaTimesCircle />}
               text="Canceled"
             />
           </div>
         </div>
 
+        {/* ---------------- ORDERS ---------------- */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-          {dummyOrders.map((order) => (
-            <Card key={order.id} order={order} />
+          {orders.map((order) => (
+            <Card key={order._id} order={order} />
           ))}
         </div>
       </div>

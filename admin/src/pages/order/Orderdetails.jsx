@@ -1,5 +1,5 @@
 import React from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate,useParams } from "react-router-dom";
 import Layout from "../../componets/common/Layout";
 import {
   FaUser,
@@ -9,21 +9,26 @@ import {
   FaRupeeSign,
   FaArrowLeft,
 } from "react-icons/fa";
+import { useState } from "react";
+import { useEffect } from "react";
+import { orderApis } from "../../apis/order";
+import toast from "react-hot-toast"
 
-const dummyOrder = {
-  orderno: "ORD123",
-  customername: "Neha Yadav",
-  phoneno: "9876543210",
-  shippingaddress: "Gurugram, Haryana",
-  pincode: "122001",
-  ordertotal: "1999",
-  status: "delivered", // pending | delivered | cancelled
-  createdAt: "2026-02-20",
-  items: [
-    { name: "Blue Cotton T-Shirt", quantity: 2, price: 499 },
-    { name: "Black Hoodie", quantity: 1, price: 999 },
-  ],
-};
+
+// const dummyOrder = {
+//   orderno: "ORD123",
+//   customername: "Neha Yadav",
+//   phoneno: "9876543210",
+//   shippingaddress: "Gurugram, Haryana",
+//   pincode: "122001",
+//   ordertotal: "1999",
+//   status: "delivered", // pending | delivered | cancelled
+//   createdAt: "2026-02-20",
+//   items: [
+//     { name: "Blue Cotton T-Shirt", quantity: 2, price: 499 },
+//     { name: "Black Hoodie", quantity: 1, price: 999 },
+//   ],
+// };
 
 const getStatusStyle = (status) => {
   switch (status) {
@@ -39,8 +44,36 @@ const getStatusStyle = (status) => {
 };
 
 const Orderdetails = () => {
-  const order = dummyOrder;
+  const { id } = useParams();
+  const [order,setOrder] = useState(null)
+  const [loading,setLoading] = useState(false)
   const navigate = useNavigate();
+  console.log(id)
+  // get single
+    const getSingleOrder = async () => {
+       try {
+         setLoading(true);
+         const res = await orderApis.getSingle(id);
+         console.log("detail", res);
+         toast.success(res.order)
+         setOrder(res.order);
+         setLoading(false);
+       } catch (error) {
+         setLoading(false);
+         console.log(error);
+       }
+     };
+   
+
+
+  // update status 
+  //  updeat return status 
+
+
+   
+  useEffect(()=>{
+   getSingleOrder()
+  },[id])
 
   return (
     <Layout>
@@ -62,17 +95,17 @@ const Orderdetails = () => {
         <div className="bg-white border border-gray-200 rounded-xl p-5 shadow-sm mb-6 flex justify-between items-center">
           <div>
             <p className="text-[#160059] font-semibold">
-              Order No: <span className="font-bold">{order.orderno}</span>
+              Order No: <span className="font-bold">{order?.orderno}</span>
             </p>
-            <p className="text-sm text-gray-500">Date: {order.createdAt}</p>
+            <p className="text-sm text-gray-500">Date: {order?.createdAt}</p>
           </div>
 
           <span
             className={`px-4 py-1 rounded-full border text-sm font-semibold capitalize ${getStatusStyle(
-              order.status,
+              order?.status,
             )}`}
           >
-            {order.status}
+            {order?.status}
           </span>
         </div>
 
@@ -85,10 +118,10 @@ const Orderdetails = () => {
             </h2>
 
             <p className="flex items-center gap-2 text-sm text-[#160059]">
-              <FaUser /> {order.customername}
+              <FaUser /> {order?.customername}
             </p>
             <p className="flex items-center gap-2 text-sm text-[#160059]">
-              <FaPhone /> {order.phoneno}
+              <FaPhone /> {order?.phoneno}
             </p>
           </div>
 
@@ -99,7 +132,7 @@ const Orderdetails = () => {
             </h2>
 
             <p className="text-sm text-[#160059]">
-              {order.shippingaddress}, {order.pincode}
+              {order?.shippingaddress}, {order?.pincode}
             </p>
           </div>
         </div>
@@ -120,12 +153,12 @@ const Orderdetails = () => {
               </tr>
             </thead>
             <tbody>
-              {order.items.map((item, index) => (
+              {order?.items.map((item, index) => (
                 <tr key={index} className="border-b last:border-none">
                   <td className="py-2">{item.name}</td>
-                  <td>{item.quantity}</td>
-                  <td>₹{item.price}</td>
-                  <td>₹{item.price * item.quantity}</td>
+                  <td>{item?.quantity}</td>
+                  <td>₹{item?.price}</td>
+                  <td>₹{item?.price * item?.quantity}</td>
                 </tr>
               ))}
             </tbody>
@@ -135,7 +168,7 @@ const Orderdetails = () => {
         {/* BOTTOM ACTION */}
         <div className="bg-white border border-gray-200 rounded-xl p-5 shadow-sm flex justify-between items-center">
           <p className="text-lg font-bold text-[#160059] flex items-center gap-2">
-            <FaRupeeSign /> Grand Total: ₹{order.ordertotal}
+            <FaRupeeSign /> Grand Total: ₹{order?.ordertotal}
           </p>
 
           <div className="flex gap-3">

@@ -331,19 +331,21 @@ export const orderStats = async (req, res) => {
     const canceled = (await Order.find({ status: "canceled" })).length;
     const returned = (await Order.find({ return: "yes" })).length;
     return res.status(201).json({
-      success: true,
-      status: "success",
-      message: "Order fetched successfully",
-      totalOrders,
-      lastMonthOrders,
-      pending,
-      processing,
-      dispatched,
-      intransit,
-      delivered,
-      canceled,
-      returned,
-    });
+        success:true,
+        status: "success",
+        message: "Order fetched successfully",
+        stats:{
+        totalOrders:totalOrders,
+        lastMonthOrders:lastMonthOrders,
+        pending:pending,
+        processing:processing,
+        dispatched:dispatched,
+        intransit:intransit,
+        delivered:delivered,
+        canceled:canceled,
+        returned:returned
+        }
+    })
   } catch (error) {
     console.error(error);
     return res.status(500).json({
@@ -364,8 +366,7 @@ export const allUsersOrders = async (req, res) => {
     // Fetch paginated orders
     const orders = await Order.find()
       .select(
-        `
-        orderno 
+        `orderno 
         customername 
         phoneno 
         shippingaddress 
@@ -405,9 +406,7 @@ export const allUsersOrders = async (req, res) => {
 // get single order
 export const getUserOrderById = async (req, res) => {
   try {
-    const order = await Order.findById(req.params.orderId)
-      .select(
-        `
+    const order = await Order.findById(req.params.orderId).select(`
     orderno 
     customerId
     customername 
@@ -439,8 +438,10 @@ export const getUserOrderById = async (req, res) => {
         message: "Order not found",
       });
     }
+    console.log(order)
     res.status(200).json({
       success: true,
+      message:"Single order fetched successfully",
       order,
     });
   } catch (err) {
@@ -458,8 +459,7 @@ export const filterByStatus = async (req, res) => {
     const orderCount = (await Order.find({ status: status })).length;
     const orders = await Order.find({ status: status })
       .select(
-        `
-        orderno 
+        `orderno 
         customername 
         phoneno 
         shippingaddress 
@@ -472,7 +472,7 @@ export const filterByStatus = async (req, res) => {
         createdAt
         items.name 
         items.quantity 
-        items.itemId 
+        items.productId 
         items.itemModel
       `,
       )
@@ -503,8 +503,7 @@ export const filterOrderByDate = async (req, res) => {
     }
     const orders = await Order.find(filter)
       .select(
-        `
-        orderno 
+        `orderno 
         customername 
         phoneno 
         shippingaddress 
@@ -517,7 +516,7 @@ export const filterOrderByDate = async (req, res) => {
         createdAt
         items.name 
         items.quantity 
-        items.itemId 
+        items.productId
         items.itemModel
       `,
       )
@@ -545,8 +544,7 @@ export const filterByReturnStatus = async (req, res) => {
     const orderCount = (await Order.find({ return: returnStatus })).length;
     const orders = await Order.find({ return: returnStatus })
       .select(
-        `
-        orderno 
+        `orderno 
         customername 
         phoneno 
         shippingaddress 
@@ -559,7 +557,7 @@ export const filterByReturnStatus = async (req, res) => {
         createdAt
         items.name 
         items.quantity 
-        items.itemId 
+        items.productId 
         items.itemModel
       `,
       )
@@ -587,8 +585,7 @@ export const filterByCancelStatus = async (req, res) => {
       .length;
     const orders = await Order.find({ cancelStatus: cancelStatus })
       .select(
-        `
-        orderno 
+        `orderno 
         customername 
         phoneno 
         shippingaddress 
@@ -601,7 +598,7 @@ export const filterByCancelStatus = async (req, res) => {
         createdAt
         items.name 
         items.quantity 
-        items.itemId 
+        items.productId 
         items.itemModel
       `,
       )
