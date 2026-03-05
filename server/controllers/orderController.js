@@ -234,9 +234,6 @@ export const updateOrderCancelStatus = async (req, res) => {
   }
 };
 
-
-
-
 //------------------------------------ admin routes -------------------------------------
 
 // order stats 
@@ -263,15 +260,18 @@ export const orderStats = async (req, res) => {
         success:true,
         status: "success",
         message: "Order fetched successfully",
-        totalOrders,
-        lastMonthOrders,
-        pending,
-        processing,
-        dispatched,
-        intransit,
-        delivered,
-        canceled,
-        returned
+        stats:{
+        totalOrders:totalOrders,
+        lastMonthOrders:lastMonthOrders,
+        pending:pending,
+        processing:processing,
+        dispatched:dispatched,
+        intransit:intransit,
+        delivered:delivered,
+        canceled:canceled,
+        returned:returned
+        }
+        
     })
     }catch(error){
       console.error(error);
@@ -336,7 +336,7 @@ export const allUsersOrders = async (req, res) => {
 // get single order 
 export const getUserOrderById = async (req, res) => {
   try {
-    const order = await Order.findById(req.params.orderId) .select(`
+    const order = await Order.findById(req.params.orderId).select(`
     orderno 
     customerId
     customername 
@@ -366,8 +366,10 @@ export const getUserOrderById = async (req, res) => {
         message: "Order not found",
       });
     }
+    console.log(order)
     res.status(200).json({
       success: true,
+      message:"Single order fetched successfully",
       order,
     });
 
@@ -401,7 +403,7 @@ export const filterByStatus = async (req, res) => {
         createdAt
         items.name 
         items.quantity 
-        items.itemId 
+        items.productId 
         items.itemModel
       `)
       .sort({ createdAt: -1 }) 
@@ -447,7 +449,7 @@ export const filterOrderByDate = async (req, res) => {
         createdAt
         items.name 
         items.quantity 
-        items.itemId 
+        items.productId
         items.itemModel
       `)
       .sort({ createdAt:-1 })
@@ -489,7 +491,7 @@ export const filterByReturnStatus = async (req, res) => {
         createdAt
         items.name 
         items.quantity 
-        items.itemId 
+        items.productId 
         items.itemModel
       `)
       .sort({ createdAt: -1 }) 
@@ -531,7 +533,7 @@ export const filterByCancelStatus = async (req, res) => {
         createdAt
         items.name 
         items.quantity 
-        items.itemId 
+        items.productId 
         items.itemModel
       `)
       .sort({ createdAt: -1 }) 
