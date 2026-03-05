@@ -93,10 +93,10 @@ const Order = () => {
       setLoading(false);
     }
   };
+  
 
   // ONLINE PAYMENT
   const createOnlineOrder = async () => {
-
     try {
       setLoading(true);
       const { data } = await orderApi.checkOut({

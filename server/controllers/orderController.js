@@ -8,8 +8,7 @@ import { generateOrderId } from "../utils/idGenerate.js";
 
 export const checkoutPayment = async (req, res) => {
   try {
-    console.log(amount)
-    console.log(req.body)
+    console.log(req.body);
     const { amount } = req.body;
     if (!amount || amount <= 0) {
       return res.status(400).json({
@@ -23,8 +22,8 @@ export const checkoutPayment = async (req, res) => {
       receipt: `receipt_order_${Date.now()}`,
       payment_capture: 1,
     };
-    console.log(order)
     const order = await instance.orders.create(options);
+    console.log("Create check out Payment line no 26", order);
     return res.status(200).json({
       success: true,
       message: "Proceeding for payment",
