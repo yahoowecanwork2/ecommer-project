@@ -21,7 +21,22 @@ const Orderdetails = () => {
       setLoading(false);
     }
   };
+  // status
+  const cancelOrder = async () => {
+    try {
+      const res = await orderApi.myOrderStatus(orderId, {
+        cancelStatus: "yes",
+      });
 
+      if (res.success) {
+        alert("Order canceled successfully");
+
+        setOrder(res.order);
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  };
   useEffect(() => {
     fetchOrder();
   }, []);
@@ -39,21 +54,41 @@ const Orderdetails = () => {
           Order Details
         </h2>
 
-        <div className="border rounded-xl p-6 mb-6 shadow-sm">
-          <div className="flex flex-col md:flex-row md:justify-between gap-4">
-            <div>
-              <p className="text-gray-500 text-sm">Order No</p>
-              <h3 className="text-xl font-bold text-[#160059]">
-                {order?.orderno}
-              </h3>
-              <p className="text-gray-500">Date: {order?.createdAt}</p>
-            </div>
+        <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+          <div>
+            <p className="text-gray-500 text-sm">Order No</p>
+            <h3 className="text-xl font-bold text-[#160059]">
+              {order?.orderno}
+            </h3>
 
-            <div>
-              <span className="px-4 py-1 rounded-full bg-green-100 text-green-700 text-sm">
-                {order?.status}
-              </span>
-            </div>
+            <p className="text-gray-500 text-sm">
+              Date: {new Date(order?.createdAt).toLocaleDateString()}
+            </p>
+          </div>
+
+          <div className="flex items-center gap-3">
+            <span
+              className={`px-4 py-1 rounded-full text-sm font-medium
+      ${
+        order?.status === "pending"
+          ? "bg-yellow-100 text-yellow-700"
+          : order?.status === "canceled"
+            ? "bg-red-100 text-red-600"
+            : "bg-green-100 text-green-700"
+      }`}
+            >
+              {order?.status}
+            </span>
+
+            {/* Cancel Button */}
+            {order?.status === "pending" && (
+              <button
+                onClick={cancelOrder}
+                className="flex items-center gap-2 px-4 py-2 text-sm font-medium text-white bg-[#160059] rounded-lg shadow hover:bg-red-600 transition"
+              >
+                Cancel Order
+              </button>
+            )}
           </div>
         </div>
 

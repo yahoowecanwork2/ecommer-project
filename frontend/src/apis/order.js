@@ -23,6 +23,10 @@ export const orderApi = {
     const res = await api.get(`/order/get-single/${orderId}`);
     return res.data;
   },
+  myOrderStatus: async (orderId, data) => {
+    const res = await api.put(`/order/user-update-status/${orderId}`, data);
+    return res.data;
+  },
 
   // ------------------------- cart apis -------------------------------------
   myOrders: async () => {
