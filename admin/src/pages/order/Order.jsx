@@ -11,7 +11,7 @@ import {
 } from "react-icons/fa";
 import Card from "./components/Card";
 import { orderApis } from "../../apis/order";
-import toast from "react-hot-toast"
+import toast from "react-hot-toast";
 
 const Order = () => {
   const [date, setDate] = useState("");
@@ -24,7 +24,7 @@ const Order = () => {
     try {
       const res = await orderApis.stats();
       if (res.success) {
-        toast.success(res.message)
+        toast.success(res.message);
         setStats(res.stats);
       }
     } catch (error) {
@@ -40,7 +40,7 @@ const Order = () => {
       const res = await orderApis.getAll();
 
       if (res.success) {
-        toast.success(res.message)       
+        toast.success(res.message);
         setOrders(res.orders);
       }
     } catch (error) {
@@ -54,7 +54,7 @@ const Order = () => {
       setOrders([]);
       const res = await orderApis.filterByStatus();
       if (res.success) {
-        toast.success(res.message)
+        toast.success(res.message);
         setOrders(res.orders);
       }
     } catch (error) {
@@ -68,7 +68,7 @@ const Order = () => {
       setOrders([]);
       const res = await orderApis.filterByReturnStatus();
       if (res.success) {
-        toast.success(res.message)
+        toast.success(res.message);
         setOrders(res.orders);
       }
     } catch (error) {
@@ -82,7 +82,7 @@ const Order = () => {
       setOrders([]);
       const res = await orderApis.filterBYCancelStatus();
       if (res.success) {
-        toast.success(res.message)
+        toast.success(res.message);
         setOrders(res.orders);
       }
     } catch (error) {
@@ -96,7 +96,7 @@ const Order = () => {
       setOrders([]);
       const res = await orderApis.filterByDate(selectedDate);
       if (res.success) {
-        toast.success(res.message)
+        toast.success(res.message);
         setOrders(res.orders);
       }
     } catch (error) {
@@ -151,11 +151,7 @@ const Order = () => {
             value={stats?.totalOrders}
           />
 
-          <StatCard
-            icon={<FaTruck />}
-            label="Pending"
-            value={stats?.pending}
-          />
+          <StatCard icon={<FaTruck />} label="Pending" value={stats?.pending} />
 
           <StatCard
             icon={<FaCheckCircle />}

@@ -331,21 +331,21 @@ export const orderStats = async (req, res) => {
     const canceled = (await Order.find({ status: "canceled" })).length;
     const returned = (await Order.find({ return: "yes" })).length;
     return res.status(201).json({
-        success:true,
-        status: "success",
-        message: "Order fetched successfully",
-        stats:{
-        totalOrders:totalOrders,
-        lastMonthOrders:lastMonthOrders,
-        pending:pending,
-        processing:processing,
-        dispatched:dispatched,
-        intransit:intransit,
-        delivered:delivered,
-        canceled:canceled,
-        returned:returned
-        }
-    })
+      success: true,
+      status: "success",
+      message: "Order fetched successfully",
+      stats: {
+        totalOrders: totalOrders,
+        lastMonthOrders: lastMonthOrders,
+        pending: pending,
+        processing: processing,
+        dispatched: dispatched,
+        intransit: intransit,
+        delivered: delivered,
+        canceled: canceled,
+        returned: returned,
+      },
+    });
   } catch (error) {
     console.error(error);
     return res.status(500).json({
@@ -406,7 +406,9 @@ export const allUsersOrders = async (req, res) => {
 // get single order
 export const getUserOrderById = async (req, res) => {
   try {
-    const order = await Order.findById(req.params.orderId).select(`
+    const order = await Order.findById(req.params.orderId)
+      .select(
+        `
     orderno 
     customerId
     customername 
@@ -438,10 +440,10 @@ export const getUserOrderById = async (req, res) => {
         message: "Order not found",
       });
     }
-    console.log(order)
+    console.log(order);
     res.status(200).json({
       success: true,
-      message:"Single order fetched successfully",
+      message: "Single order fetched successfully",
       order,
     });
   } catch (err) {
@@ -540,9 +542,9 @@ export const filterOrderByDate = async (req, res) => {
 
 export const filterByReturnStatus = async (req, res) => {
   try {
-    const { returnStatus } = req.body;
-    const orderCount = (await Order.find({ return: returnStatus })).length;
-    const orders = await Order.find({ return: returnStatus })
+    const { returnstatus } = req.params;
+    const orderCount = (await Order.find({ return: returnstatus })).length;
+    const orders = await Order.find({ return: returnstatus })
       .select(
         `orderno 
         customername 
@@ -580,10 +582,10 @@ export const filterByReturnStatus = async (req, res) => {
 
 export const filterByCancelStatus = async (req, res) => {
   try {
-    const { cancelStatus } = req.body;
-    const orderCount = (await Order.find({ cancelStatus: cancelStatus }))
+    const { cancelstatus } = req.body;
+    const orderCount = (await Order.find({ cancelStatus: cancelstatus }))
       .length;
-    const orders = await Order.find({ cancelStatus: cancelStatus })
+    const orders = await Order.find({ cancelStatus: cancelstatus })
       .select(
         `orderno 
         customername 

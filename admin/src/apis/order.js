@@ -1,18 +1,17 @@
-// order apis 
+// order apis
 import { api } from ".";
 
 export const orderApis = {
-// stats 
-// get all 
-// get single 
-// filter by status 
-// filter by date 
-// filter by return status 
-// filter by cancel status 
-// filter byupdaet status 
-// update status 
-// updaet return status 
-
+  // stats
+  // get all
+  // get single
+  // filter by status
+  // filter by date
+  // filter by return status
+  // filter by cancel status
+  // filter byupdaet status
+  // update status
+  // updaet return status
 
   stats: async () => {
     const res = await api.get("/order/stats");
@@ -26,7 +25,7 @@ export const orderApis = {
   getSingle: async (orderId) => {
     // console.log(orderId)
     const res = await api.get(`/order/admin/get-single/${orderId}`);
-    console.log(res)
+    console.log(res);
     return res.data;
   },
 
@@ -47,14 +46,13 @@ export const orderApis = {
     return res.data;
   },
 
- updateStatus: async () => {
+  updateStatus: async (orderId) => {
     const res = await api.get(`/order/admin/update-status/${orderId}`);
     return res.data;
   },
 
-  updateReturnStatus: async () => {
+  updateReturnStatus: async (orderId) => {
     const res = await api.get(`/order/admin/update-return-status/${orderId}`);
     return res.data;
   },
-
 };
