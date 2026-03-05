@@ -96,13 +96,15 @@ const Order = () => {
 
   // ONLINE PAYMENT
   const createOnlineOrder = async () => {
+
     try {
       setLoading(true);
       const { data } = await orderApi.checkOut({
         amount: total,
       });
+      console.log(data)
       const options = {
-        key: "rzp_test_f0OZHGJrgtUxhn",
+        key:import.meta.env.VITE_RAZORPAY_KEY,
         amount: data.amount,
         currency: "INR",
         name: "E-commerce Module",
@@ -121,7 +123,9 @@ const Order = () => {
               razorpay_payment_id: response.razorpay_payment_id,
               razorpay_signature: response.razorpay_signature,
             };
+                console.log(payload)
             const res = await orderApi.placeOrder(payload);
+            console.log(res)
             toast.success(res.message || "Order successful");
             navigate("/my-order");
           } catch (error) {

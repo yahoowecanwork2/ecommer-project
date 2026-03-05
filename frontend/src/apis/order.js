@@ -3,6 +3,7 @@ import { api } from "./index";
 
 export const orderApi = {
   checkOut: async (amount) => {
+    console.log(amount)
     const res = await api.post("/order/checkout", amount);
     return res.data;
   },

@@ -1,3 +1,4 @@
+import { instance } from "../app/app.js";
 import Order from "../models/Order.js";
 import { Payment } from "../models/Payment.js";
 import { generateOrderId } from "../utils/idGenerate.js";
@@ -7,6 +8,8 @@ import { generateOrderId } from "../utils/idGenerate.js";
 
 export const checkoutPayment = async (req, res) => {
   try {
+    console.log(amount)
+    console.log(req.body)
     const { amount } = req.body;
     if (!amount || amount <= 0) {
       return res.status(400).json({
@@ -20,8 +23,9 @@ export const checkoutPayment = async (req, res) => {
       receipt: `receipt_order_${Date.now()}`,
       payment_capture: 1,
     };
+    console.log(order)
     const order = await instance.orders.create(options);
-    return res.status(201).json({
+    return res.status(200).json({
       success: true,
       message: "Proceeding for payment",
       order,
@@ -248,6 +252,7 @@ export const getMyOrders = async (req, res) => {
 // };
 export const getSingleOrder = async (req, res) => {
   try {
+    console.log(req.params.orderId)
     const order = await Order.findById(req.params.orderId)
       .select("-returnremark")
       .populate({
@@ -264,13 +269,18 @@ export const getSingleOrder = async (req, res) => {
         message: "Order not found",
       });
     }
+<<<<<<< Updated upstream
 
     res.status(200).json({
+=======
+    return res.status(200).json({
+>>>>>>> Stashed changes
       success: true,
       order,
     });
   } catch (err) {
-    res.status(500).json({
+    console.error("Get Single Order Error:", err);
+    return res.status(500).json({
       success: false,
       message: err.message,
     });

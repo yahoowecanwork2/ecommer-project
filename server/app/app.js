@@ -2,6 +2,7 @@ import express from "express";
 import dotenv from "dotenv";
 import cors from "cors";
 dotenv.config();
+import Razorpay from "razorpay";
 import morgan from "morgan";
 import cookieParser from "cookie-parser";
 import dbConnect from "../config/dbConfig.js";
@@ -15,6 +16,11 @@ import userRoutes from "../routes/userRoutes.js";
 
 dbConnect();
 const app = express();
+export const instance = new Razorpay({
+  key_id: process.env.RAZORPAY_KEY,
+  key_secret: process.env.RAZORPAY_SECRET,
+});
+
 
 const allowedOrigins = [
   "http://localhost:5173",
