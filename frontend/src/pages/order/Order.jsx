@@ -13,7 +13,7 @@ const Order = () => {
   const { items, subtotal } = useSelector((state) => state.cart);
 
   const [loading, setLoading] = useState(false);
-console.log(items)
+  console.log(items);
   const [form, setForm] = useState({
     customername: "",
     phoneno: "",
@@ -58,17 +58,15 @@ console.log(items)
     });
   };
 
-   
   const handleClearCart = async () => {
-      try {
-        const res = await authApi.clearCart();
-        console.log(res);
-        dispatch(clearCart());
-      } catch (error) {
-        console.error("Clear cart error:", error);
-      }
-    };
-  
+    try {
+      const res = await authApi.clearCart();
+      console.log(res);
+      dispatch(clearCart());
+    } catch (error) {
+      console.error("Clear cart error:", error);
+    }
+  };
 
   // COD ORDER
   const createCodOrder = async () => {
@@ -83,11 +81,11 @@ console.log(items)
         paymentType: "cod",
       };
       const res = await orderApi.placeOrder(payload);
-      if(res.success){
-      console.log(res.order)
-      toast.success(res.message || "Order placed");
-      handleClearCart()
-      navigate("/my-order");
+      if (res.success) {
+        console.log(res.order);
+        toast.success(res.message || "Order placed");
+        handleClearCart();
+        navigate("/my-order");
       }
     } catch (error) {
       toast.error(error.response?.data?.message || "Order failed");
@@ -139,7 +137,7 @@ console.log(items)
       const rzp = new window.Razorpay(options);
       rzp.open();
     } catch (error) {
-      toast.error("Payment failed");
+      toast.error("Payment failed", error);
     } finally {
       setLoading(false);
     }
@@ -210,9 +208,7 @@ console.log(items)
               </p>
 
               <div className="flex justify-between mt-3">
-                <span className="font-bold text-[#160059]">
-                  ₹{item.price}
-                </span>
+                <span className="font-bold text-[#160059]">₹{item.price}</span>
 
                 <span className="text-sm text-gray-600">
                   Qty: {item.quantity}
