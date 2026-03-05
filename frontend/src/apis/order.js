@@ -1,32 +1,33 @@
-// order apis 
+// order apis
 import { api } from "./index";
 
 export const orderApi = {
-  
-checkOut: async (amount) => {
-    const res = await api.post("/order/checkout",amount);
+  checkOut: async (amount) => {
+    const res = await api.post("/order/checkout", amount);
     return res.data;
   },
 
-
-// create order 
+  // create order
   placeOrder: async (data) => {
-    const res = await api.post("/order/create",data);
+    const res = await api.post("/order/create", data);
     return res.data;
   },
+  // get myorder
 
+  myOrder: async () => {
+    const res = await api.get("/order/get-my");
+    return res.data;
+  },
 
   // ------------------------- cart apis -------------------------------------
-   myOrders: async () => {
+  myOrders: async () => {
     const res = await api.get("/order/my-cart");
     return res.data;
   },
 
-//   get single order
-   mySingleOrder: async () => {
+  //   get single order
+  mySingleOrder: async () => {
     const res = await api.get(`/order/get-single/${orderId}`);
     return res.data;
   },
-
-
 };
