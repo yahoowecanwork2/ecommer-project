@@ -269,12 +269,7 @@ export const getSingleOrder = async (req, res) => {
         message: "Order not found",
       });
     }
-<<<<<<< Updated upstream
-
     res.status(200).json({
-=======
-    return res.status(200).json({
->>>>>>> Stashed changes
       success: true,
       order,
     });
