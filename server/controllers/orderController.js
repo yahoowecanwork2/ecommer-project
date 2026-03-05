@@ -6,31 +6,40 @@ import { generateOrderId } from "../utils/idGenerate.js";
 
 //------------------------------ user controller ---------------------------
 // use rozer pay payment method check out payment
+
 export const checkoutPayment = async (req, res) => {
-  try{
-    const { price } = req.body;
-  console.log(price)
-  const options = {
-    amount: Number(price * 100),
-    currency: "INR",
-  };
-  const order = await instance.orders.create(options);
-  res.status(201).json({
-    success: true,
-    message: " procedding for payment successfully",
-    order,
-  });
-  }catch (error) {
-    console.error("Create Order Error:", error);
+  try {
+    const { amount } = req.body;
+    if (!amount || amount <= 0) {
+      return res.status(400).json({
+        success: false,
+        message: "Invalid payment amount",
+      });
+    }
+    const options = {
+      amount: Number(amount) * 100,
+      currency: "INR",
+      receipt: `receipt_order_${Date.now()}`,
+      payment_capture: 1
+    };
+    const order = await instance.orders.create(options);
+    return res.status(201).json({
+      success: true,
+      message: "Proceeding for payment",
+      order
+    });
+  } catch (error) {
+    console.error("Checkout Payment Error:", error);
     return res.status(500).json({
       success: false,
       message: "Server Error",
     });
-  }}
+  }
+};
   
 
 
-
+// firstly make payment verify then place save order in our data base 
 export const createOrder = async (req, res) => {
   try {
     const {
@@ -71,7 +80,6 @@ export const createOrder = async (req, res) => {
       paymentType,
       paymentstatus: paymentType === "online" ? "complete" : "pending",
     });
-
     if (paymentType === "online") {
       if (!razorpay_order_id || !razorpay_payment_id || !razorpay_signature) {
         return res.status(400).json({
@@ -79,7 +87,6 @@ export const createOrder = async (req, res) => {
           message: "Razorpay payment details required",
         });
       }
-
       const payment = await Payment.create({
         razorpay_order_id,
         razorpay_payment_id,
@@ -93,7 +100,7 @@ export const createOrder = async (req, res) => {
     return res.status(201).json({
       success: true,
       message: "Order created successfully",
-      data: order,
+      order,
     });
 
   } catch (error) {
@@ -104,6 +111,7 @@ export const createOrder = async (req, res) => {
     });
   }
 };;
+
 
 
 

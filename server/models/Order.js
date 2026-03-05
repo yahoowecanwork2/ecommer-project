@@ -6,14 +6,15 @@ const addItemsSchema = new mongoose.Schema({
     type:String,
     required:true
   },
-  itemId:{
+//   store firt image 
+  imageurl:{
     type:String,
-    required:true
+    required:false 
   },
-  item: {
+  productId: {
     type: mongoose.Schema.Types.ObjectId,
     ref: "Product",
-    required: true,
+    required: false,
   },
   quantity: {
     type: Number,

@@ -109,6 +109,7 @@ const Cart = () => {
     }
   };
 
+
   if (!cartItems || cartItems.length === 0) {
     return (
       <>
