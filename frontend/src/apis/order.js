@@ -18,6 +18,11 @@ export const orderApi = {
     const res = await api.get("/order/get-my");
     return res.data;
   },
+  // single order
+  myOrderSingle: async (orderId) => {
+    const res = await api.get(`/order/get-single/${orderId}`);
+    return res.data;
+  },
 
   // ------------------------- cart apis -------------------------------------
   myOrders: async () => {

@@ -1,35 +1,37 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { FaBox, FaUser, FaMapMarkerAlt, FaMoneyBillWave } from "react-icons/fa";
-
-const dummyOrder = {
-  orderno: "ORD789456",
-  createdAt: "28 Feb 2026",
-  status: "Delivered",
-  paymentType: "cod",
-  paymentstatus: "complete",
-  customername: "Neha Yadav",
-  phoneno: "9311836217",
-  emailid: "neha@gmail.com",
-  shippingaddress: "Sector 14, Gurugram, Haryana",
-  pincode: "122001",
-  ordertotal: "2499",
-  items: [
-    {
-      name: "Blue Cotton T-Shirt",
-      quantity: 2,
-      price: 799,
-      image: "https://via.placeholder.com/150",
-    },
-    {
-      name: "Black Shoes",
-      quantity: 1,
-      price: 899,
-      image: "https://via.placeholder.com/150",
-    },
-  ],
-};
+import { useParams } from "react-router-dom";
+import { orderApi } from "../../apis/order";
 
 const Orderdetails = () => {
+  const { orderId } = useParams();
+  const [order, setOrder] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const fetchOrder = async () => {
+    try {
+      const res = await orderApi.myOrderSingle(orderId);
+      console.log("detail", res);
+
+      if (res.success) {
+        setOrder(res.order);
+      }
+    } catch (error) {
+      console.log(error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    fetchOrder();
+  }, []);
+  if (loading) {
+    return <div className="text-center mt-20">Loading...</div>;
+  }
+
+  if (!order) {
+    return <div className="text-center mt-20">Order not found</div>;
+  }
   return (
     <div className="min-h-screen bg-white p-6">
       <div className="max-w-5xl mx-auto">
@@ -42,14 +44,14 @@ const Orderdetails = () => {
             <div>
               <p className="text-gray-500 text-sm">Order No</p>
               <h3 className="text-xl font-bold text-[#160059]">
-                {dummyOrder.orderno}
+                {order?.orderno}
               </h3>
-              <p className="text-gray-500">Date: {dummyOrder.createdAt}</p>
+              <p className="text-gray-500">Date: {order?.createdAt}</p>
             </div>
 
             <div>
               <span className="px-4 py-1 rounded-full bg-green-100 text-green-700 text-sm">
-                {dummyOrder.status}
+                {order?.status}
               </span>
             </div>
           </div>
@@ -61,20 +63,27 @@ const Orderdetails = () => {
           </h3>
 
           <div className="space-y-4">
-            {dummyOrder.items.map((item, index) => (
+            {order?.items?.map((item, index) => (
               <div
                 key={index}
                 className="flex gap-4 border-b pb-4 last:border-b-0"
               >
                 <img
-                  src={item.image}
-                  alt={item.name}
+                  src={item?.productId?.image?.[0]?.url}
+                  alt={item?.productId?.name}
                   className="w-24 h-24 object-cover rounded-lg border"
                 />
+
                 <div className="flex-1">
-                  <h4 className="font-semibold text-gray-800">{item.name}</h4>
-                  <p className="text-gray-500">Qty: {item.quantity}</p>
-                  <p className="text-[#160059] font-bold">₹{item.price}</p>
+                  <h4 className="font-semibold text-gray-800">
+                    {item?.productId?.name}
+                  </h4>
+
+                  <p className="text-gray-500">Qty: {item?.quantity}</p>
+
+                  <p className="text-[#160059] font-bold">
+                    ₹{item?.productId?.price}
+                  </p>
                 </div>
               </div>
             ))}
@@ -87,13 +96,13 @@ const Orderdetails = () => {
               <FaUser /> Customer Info
             </h3>
             <p>
-              <b>Name:</b> {dummyOrder.customername}
+              <b>Name:</b> {order?.customername}
             </p>
             <p>
-              <b>Phone:</b> {dummyOrder.phoneno}
+              <b>Phone:</b> {order?.phoneno}
             </p>
             <p>
-              <b>Email:</b> {dummyOrder.emailid}
+              <b>Email:</b> {order?.emailid}
             </p>
           </div>
 
@@ -101,8 +110,8 @@ const Orderdetails = () => {
             <h3 className="text-lg font-semibold text-[#160059] flex items-center gap-2 mb-3">
               <FaMapMarkerAlt /> Shipping Address
             </h3>
-            <p>{dummyOrder.shippingaddress}</p>
-            <p>Pincode: {dummyOrder.pincode}</p>
+            <p>{order?.shippingaddress}</p>
+            <p>Pincode: {order?.pincode}</p>
           </div>
         </div>
 
@@ -111,13 +120,13 @@ const Orderdetails = () => {
             <FaMoneyBillWave /> Payment Info
           </h3>
           <p>
-            <b>Payment Type:</b> {dummyOrder.paymentType}
+            <b>Payment Type:</b> {order?.paymentType}
           </p>
           <p>
-            <b>Payment Status:</b> {dummyOrder.paymentstatus}
+            <b>Payment Status:</b> {order?.paymentstatus}
           </p>
           <p className="text-xl font-bold text-[#160059] mt-2">
-            Total: ₹{dummyOrder.ordertotal}
+            Total: ₹{order?.ordertotal}
           </p>
         </div>
       </div>

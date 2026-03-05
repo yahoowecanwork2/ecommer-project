@@ -7,7 +7,7 @@ const Card = ({ order }) => {
 
   return (
     <div
-      onClick={() => navigate(`/order-detail/${order?._id}`)}
+      onClick={() => navigate(`/order-detail/${order._id}`)}
       className="bg-white rounded-2xl shadow-md p-6 border border-[#160059]/20 hover:shadow-xl transition cursor-pointer"
     >
       <div className="flex flex-col md:flex-row md:justify-between md:items-center gap-4 border-b pb-4">

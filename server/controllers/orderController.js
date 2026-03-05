@@ -211,30 +211,60 @@ export const getMyOrders = async (req, res) => {
 };
 
 // get single order
+// export const getSingleOrder = async (req, res) => {
+//   try {
+//     const order = await Order.findById(req.params.orderId)
+//       .select(
+//         `
+//   -returnremark
+//   `,
+//       )
+//       .sort({ createdAt: -1 })
+//       .skip(skip)
+//       .limit(limit)
+//       .populate({
+//         path: "items.item",
+//         select: "name price image slug",
+//       })
+//       .populate("customerId", "name email")
+//       .populate("payment")
+//       .lean();
+//     if (!order) {
+//       return res.status(404).json({
+//         success: false,
+//         message: "Order not found",
+//       });
+//     }
+//     res.status(200).json({
+//       success: true,
+//       order,
+//     });
+//   } catch (err) {
+//     res.status(500).json({
+//       success: false,
+//       message: err.message,
+//     });
+//   }
+// };
 export const getSingleOrder = async (req, res) => {
   try {
     const order = await Order.findById(req.params.orderId)
-      .select(
-        `
-  -returnremark
-  `,
-      )
-      .sort({ createdAt: -1 })
-      .skip(skip)
-      .limit(limit)
+      .select("-returnremark")
       .populate({
-        path: "items.item",
+        path: "items.productId",
         select: "name price image slug",
       })
       .populate("customerId", "name email")
       .populate("payment")
       .lean();
+
     if (!order) {
       return res.status(404).json({
         success: false,
         message: "Order not found",
       });
     }
+
     res.status(200).json({
       success: true,
       order,
