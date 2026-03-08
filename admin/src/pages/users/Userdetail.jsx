@@ -11,7 +11,9 @@ import {
   FaHeart,
   FaBoxOpen,
   FaEnvelope,
+  FaRegCalendarAlt,
 } from "react-icons/fa";
+import { HiOutlineShieldCheck, HiOutlineDotsVertical } from "react-icons/hi";
 
 const Userdetail = () => {
   const { id } = useParams();
@@ -23,120 +25,130 @@ const Userdetail = () => {
     try {
       setLoading(true);
       const res = await userApi.getSingleUser(id);
-      console.log("detail", res);
-
       setUser(res.data);
       setLoading(false);
     } catch (error) {
       setLoading(false);
-
       console.log(error);
     }
   };
 
   useEffect(() => {
     fetchUser();
-  }, []);
+  }, [id]);
 
+  if (loading) return <Layout><div className="p-8 text-xs font-bold uppercase tracking-widest text-gray-400">Loading profile...</div></Layout>;
   if (!user) return null;
 
   return (
     <Layout>
-      <div className="p-6 min-h-screen bg-white">
-        {/* BACK BUTTON */}
-        <button
-          onClick={() => navigate("/user")}
-          className="flex items-center gap-2 mb-4 text-[#160059] font-semibold hover:underline"
-        >
-          <FaArrowLeft /> Back to Users
-        </button>
-
-        <h1 className="text-3xl font-bold mb-6 text-[#160059]">
-          User Details (Admin)
-        </h1>
-
-        <div className="bg-white border border-gray-200 rounded-xl p-5 shadow-sm mb-6 flex justify-between items-center">
-          <div>
-            <p className="text-[#160059] font-semibold">
-              User Name: <span className="font-bold">{user.name || "N/A"}</span>
-            </p>
-            <p className="text-sm text-gray-500">
-              Joined: {new Date(user.createdAt).toLocaleDateString()}
-            </p>
-          </div>
-
-          <span className="px-4 py-1 rounded-full border text-sm font-semibold bg-blue-100 text-blue-700 border-blue-300">
-            Active User
-          </span>
-        </div>
-
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
-          <div className="bg-white border border-gray-200 rounded-xl p-5 shadow-sm">
-            <h2 className="text-lg font-bold text-[#160059] mb-4 flex items-center gap-2">
-              <FaUser /> User Info
-            </h2>
-
-            <p className="flex items-center gap-2 text-sm text-[#160059]">
-              <FaUser /> {user.name || "N/A"}
-            </p>
-            <p className="flex items-center gap-2 text-sm text-[#160059]">
-              <FaEnvelope /> {user.email || "N/A"}
-            </p>
-            <p className="flex items-center gap-2 text-sm text-[#160059]">
-              <FaPhone /> {user.phoneno}
-            </p>
-          </div>
-
-          <div className="bg-white border border-gray-200 rounded-xl p-5 shadow-sm">
-            <h2 className="text-lg font-bold text-[#160059] mb-4 flex items-center gap-2">
-              <FaMapMarkerAlt /> Address
-            </h2>
-
-            <p className="text-sm text-[#160059]">
-              {user?.address?.locality || "Locality"},{" "}
-              {user?.address?.city || "City"} -{" "}
-              {user?.address?.pinCode || "000000"},{" "}
-              {user?.address?.state || "State"}
-            </p>
-          </div>
-        </div>
-
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">
-          <div className="bg-white border border-gray-200 rounded-xl p-5 shadow-sm">
-            <h2 className="text-lg font-bold text-[#160059] mb-2 flex items-center gap-2">
-              <FaShoppingCart /> Cart
-            </h2>
-            <p className="text-2xl font-bold text-[#160059]">
-              {user.cart?.length || 0}
-            </p>
-          </div>
-
-          <div className="bg-white border border-gray-200 rounded-xl p-5 shadow-sm">
-            <h2 className="text-lg font-bold text-[#160059] mb-2 flex items-center gap-2">
-              <FaHeart /> Wishlist
-            </h2>
-            <p className="text-2xl font-bold text-[#160059]">
-              {user.wishlist?.length || 0}
-            </p>
-          </div>
-
-          <div className="bg-white border border-gray-200 rounded-xl p-5 shadow-sm">
-            <h2 className="text-lg font-bold text-[#160059] mb-2 flex items-center gap-2">
-              <FaBoxOpen /> Orders
-            </h2>
-            <p className="text-2xl font-bold text-[#160059]">
-              {user.orders?.length || 0}
-            </p>
-          </div>
-        </div>
-
-        <div className="bg-white border border-gray-200 rounded-xl p-5 shadow-sm flex justify-end gap-3">
-          <button className="px-4 py-2 rounded-lg bg-red-600 text-white hover:bg-red-700 transition">
-            Block User
+      <div className="space-y-6">
+        {/* TOP NAVIGATION & ACTIONS */}
+        <div className="flex items-center justify-between border-b border-gray-100 pb-4">
+          <button
+            onClick={() => navigate("/user")}
+            className="flex items-center gap-2 text-[11px] font-bold uppercase tracking-widest text-gray-400 hover:text-gray-900 transition-colors"
+          >
+            <FaArrowLeft size={10} /> Back to Directory
           </button>
-          <button className="px-4 py-2 rounded-lg bg-blue-600 text-white hover:bg-blue-700 transition">
-            Edit User
-          </button>
+          
+          <div className="flex gap-2">
+            <button className="px-4 py-2 text-[11px] font-bold uppercase tracking-widest border border-gray-200 rounded-sm hover:bg-gray-50 transition-all">
+              Edit Profile
+            </button>
+            <button className="px-4 py-2 text-[11px] font-bold uppercase tracking-widest bg-red-600 text-white rounded-sm hover:bg-red-700 transition-all">
+              Block User
+            </button>
+          </div>
+        </div>
+
+        {/* PROFILE SUMMARY HEADER */}
+        <div className="bg-white border border-gray-200 rounded-sm p-6 flex flex-col md:flex-row items-center md:items-start gap-6">
+          <div className="w-20 h-20 bg-gray-900 text-white flex items-center justify-center text-3xl font-bold rounded-sm shadow-sm">
+            {user.name?.charAt(0) || "U"}
+          </div>
+          <div className="flex-1 text-center md:text-left">
+            <div className="flex flex-col md:flex-row md:items-center gap-2 mb-2">
+              <h1 className="text-xl font-bold text-gray-900 tracking-tight">{user.name}</h1>
+              <span className="inline-flex items-center px-2 py-0.5 rounded-sm bg-green-50 border border-green-100 text-[10px] font-bold uppercase text-green-700 w-fit mx-auto md:mx-0">
+                Verified Account
+              </span>
+            </div>
+            <div className="flex flex-wrap justify-center md:justify-start gap-4 text-xs text-gray-500 font-medium">
+              <span className="flex items-center gap-1.5"><FaEnvelope className="text-gray-300" /> {user.email}</span>
+              <span className="flex items-center gap-1.5"><FaRegCalendarAlt className="text-gray-300" /> Member since {new Date(user.createdAt).toLocaleDateString()}</span>
+            </div>
+          </div>
+        </div>
+
+        {/* QUICK STATS GRID */}
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-px bg-gray-200 border border-gray-200 rounded-sm overflow-hidden">
+          <div className="bg-white p-6">
+            <p className="text-[10px] font-bold text-gray-400 uppercase tracking-[0.15em] mb-2">Shopping Cart</p>
+            <div className="flex items-center gap-3">
+              <div className="p-2 bg-gray-50 text-gray-900 rounded-sm"><FaShoppingCart /></div>
+              <span className="text-2xl font-bold text-gray-900">{user.cart?.length || 0} <span className="text-xs font-normal text-gray-400">items</span></span>
+            </div>
+          </div>
+          <div className="bg-white p-6">
+            <p className="text-[10px] font-bold text-gray-400 uppercase tracking-[0.15em] mb-2">Saved Items</p>
+            <div className="flex items-center gap-3">
+              <div className="p-2 bg-gray-50 text-gray-900 rounded-sm"><FaHeart /></div>
+              <span className="text-2xl font-bold text-gray-900">{user.wishlist?.length || 0} <span className="text-xs font-normal text-gray-400">items</span></span>
+            </div>
+          </div>
+          <div className="bg-white p-6">
+            <p className="text-[10px] font-bold text-gray-400 uppercase tracking-[0.15em] mb-2">Total Orders</p>
+            <div className="flex items-center gap-3">
+              <div className="p-2 bg-gray-50 text-gray-900 rounded-sm"><FaBoxOpen /></div>
+              <span className="text-2xl font-bold text-gray-900">{user.orders?.length || 0} <span className="text-xs font-normal text-gray-400">orders</span></span>
+            </div>
+          </div>
+        </div>
+
+        {/* DETAILED INFO BOXES */}
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          {/* Contact Details */}
+          <div className="bg-white border border-gray-200 rounded-sm">
+            <div className="px-4 py-3 border-b border-gray-100 flex items-center justify-between bg-gray-50/50">
+              <h3 className="text-xs font-bold text-gray-900 uppercase tracking-widest">Contact Details</h3>
+              <FaUser className="text-gray-300 text-xs" />
+            </div>
+            <div className="p-4 space-y-4">
+              <div className="flex items-center justify-between text-xs">
+                <span className="text-gray-400 font-medium">Full Name</span>
+                <span className="text-gray-900 font-bold">{user.name}</span>
+              </div>
+              <div className="flex items-center justify-between text-xs">
+                <span className="text-gray-400 font-medium">Email Address</span>
+                <span className="text-gray-900 font-bold underline decoration-gray-200">{user.email}</span>
+              </div>
+              <div className="flex items-center justify-between text-xs">
+                <span className="text-gray-400 font-medium">Phone Number</span>
+                <span className="text-gray-900 font-bold">{user.phoneno || "N/A"}</span>
+              </div>
+            </div>
+          </div>
+
+          {/* Shipping Address */}
+          <div className="bg-white border border-gray-200 rounded-sm">
+            <div className="px-4 py-3 border-b border-gray-100 flex items-center justify-between bg-gray-50/50">
+              <h3 className="text-xs font-bold text-gray-900 uppercase tracking-widest">Primary Address</h3>
+              <FaMapMarkerAlt className="text-gray-300 text-xs" />
+            </div>
+            <div className="p-4">
+              <p className="text-xs font-bold text-gray-900 leading-relaxed">
+                {user?.address?.locality || "Address Not Provided"}
+                <br />
+                {user?.address?.city}, {user?.address?.state}
+                <br />
+                {user?.address?.pinCode}
+              </p>
+              <button className="mt-4 text-[10px] font-bold text-blue-600 uppercase tracking-widest hover:underline">
+                View on Map
+              </button>
+            </div>
+          </div>
         </div>
       </div>
     </Layout>

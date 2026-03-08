@@ -1,5 +1,5 @@
-import React from "react";
-import { useNavigate,useParams } from "react-router-dom";
+import React, { useState, useEffect } from "react";
+import { useNavigate, useParams } from "react-router-dom";
 import Layout from "../../componets/common/Layout";
 import {
   FaUser,
@@ -8,176 +8,163 @@ import {
   FaBoxOpen,
   FaRupeeSign,
   FaArrowLeft,
+  FaRegCalendarAlt,
+  FaHashtag,
 } from "react-icons/fa";
-import { useState } from "react";
-import { useEffect } from "react";
 import { orderApis } from "../../apis/order";
-import toast from "react-hot-toast"
-
-
-// const dummyOrder = {
-//   orderno: "ORD123",
-//   customername: "Neha Yadav",
-//   phoneno: "9876543210",
-//   shippingaddress: "Gurugram, Haryana",
-//   pincode: "122001",
-//   ordertotal: "1999",
-//   status: "delivered", // pending | delivered | cancelled
-//   createdAt: "2026-02-20",
-//   items: [
-//     { name: "Blue Cotton T-Shirt", quantity: 2, price: 499 },
-//     { name: "Black Hoodie", quantity: 1, price: 999 },
-//   ],
-// };
-
-const getStatusStyle = (status) => {
-  switch (status) {
-    case "pending":
-      return "bg-yellow-100 text-yellow-700 border-yellow-300";
-    case "delivered":
-      return "bg-green-100 text-green-700 border-green-300";
-    case "cancelled":
-      return "bg-red-100 text-red-700 border-red-300";
-    default:
-      return "bg-gray-100 text-gray-700 border-gray-300";
-  }
-};
+import toast from "react-hot-toast";
 
 const Orderdetails = () => {
   const { id } = useParams();
-  const [order,setOrder] = useState(null)
-  const [loading,setLoading] = useState(false)
+  const [order, setOrder] = useState(null);
+  const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
-  console.log(id)
-  // get single
-    const getSingleOrder = async () => {
-       try {
-         setLoading(true);
-         const res = await orderApis.getSingle(id);
-         console.log("detail", res);
-         toast.success(res.order)
-         setOrder(res.order);
-         setLoading(false);
-       } catch (error) {
-         setLoading(false);
-         console.log(error);
-       }
-     };
-   
 
+  // --- Logic remains identical ---
+  const getSingleOrder = async () => {
+    try {
+      setLoading(true);
+      const res = await orderApis.getSingle(id);
+      if (res.order) {
+        setOrder(res.order);
+      }
+      setLoading(false);
+    } catch (error) {
+      setLoading(false);
+      console.log(error);
+    }
+  };
 
-  // update status 
-  //  updeat return status 
+  useEffect(() => {
+    getSingleOrder();
+  }, [id]);
 
+  const getStatusStyle = (status) => {
+    const base = "px-2 py-0.5 rounded-sm border text-[10px] font-bold uppercase tracking-tight ";
+    switch (status?.toLowerCase()) {
+      case "pending": return base + "bg-orange-50 text-orange-700 border-orange-200";
+      case "delivered": return base + "bg-green-50 text-green-700 border-green-200";
+      case "cancelled": return base + "bg-red-50 text-red-700 border-red-200";
+      default: return base + "bg-gray-50 text-gray-700 border-gray-200";
+    }
+  };
 
-   
-  useEffect(()=>{
-   getSingleOrder()
-  },[id])
+  if (loading) return <Layout><div className="p-8 text-[11px] font-bold uppercase tracking-widest text-gray-400 animate-pulse">Loading Order Data...</div></Layout>;
+  // if (!order) return null;
 
   return (
     <Layout>
-      <div className="p-6 min-h-screen bg-white">
-        {/* BACK BUTTON */}
-        <button
-          onClick={() => navigate("/order")}
-          className="flex items-center gap-2 mb-4 text-[#160059] font-semibold hover:underline"
-        >
-          <FaArrowLeft /> Back to Orders
-        </button>
-
-        {/* HEADING */}
-        <h1 className="text-3xl font-bold mb-6 text-[#160059]">
-          Order Details (Admin)
-        </h1>
-
-        {/* TOP SUMMARY */}
-        <div className="bg-white border border-gray-200 rounded-xl p-5 shadow-sm mb-6 flex justify-between items-center">
-          <div>
-            <p className="text-[#160059] font-semibold">
-              Order No: <span className="font-bold">{order?.orderno}</span>
-            </p>
-            <p className="text-sm text-gray-500">Date: {order?.createdAt}</p>
-          </div>
-
-          <span
-            className={`px-4 py-1 rounded-full border text-sm font-semibold capitalize ${getStatusStyle(
-              order?.status,
-            )}`}
+      <div className="space-y-6">
+        {/* TOP NAVIGATION & ACTIONS */}
+        <div className="flex items-center justify-between border-b border-gray-100 pb-4">
+          <button
+            onClick={() => navigate("/order")}
+            className="flex items-center gap-2 text-[11px] font-bold uppercase tracking-widest text-gray-400 hover:text-gray-900 transition-colors"
           >
-            {order?.status}
-          </span>
-        </div>
-
-        {/* CUSTOMER + ADDRESS */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
-          {/* CUSTOMER */}
-          <div className="bg-white border border-gray-200 rounded-xl p-5 shadow-sm">
-            <h2 className="text-lg font-bold text-[#160059] mb-4 flex items-center gap-2">
-              <FaUser /> Customer Info
-            </h2>
-
-            <p className="flex items-center gap-2 text-sm text-[#160059]">
-              <FaUser /> {order?.customername}
-            </p>
-            <p className="flex items-center gap-2 text-sm text-[#160059]">
-              <FaPhone /> {order?.phoneno}
-            </p>
-          </div>
-
-          {/* ADDRESS */}
-          <div className="bg-white border border-gray-200 rounded-xl p-5 shadow-sm">
-            <h2 className="text-lg font-bold text-[#160059] mb-4 flex items-center gap-2">
-              <FaMapMarkerAlt /> Shipping Address
-            </h2>
-
-            <p className="text-sm text-[#160059]">
-              {order?.shippingaddress}, {order?.pincode}
-            </p>
+            <FaArrowLeft size={10} /> Back to Orders
+          </button>
+          
+          <div className="flex gap-2">
+            <button className="px-4 py-2 text-[11px] font-bold uppercase tracking-widest bg-red-600 text-white rounded-sm hover:bg-red-700 transition-all">
+              Cancel Order
+            </button>
+            <button className="px-4 py-2 text-[11px] font-bold uppercase tracking-widest bg-green-600 text-white rounded-sm hover:bg-green-700 transition-all">
+              Mark Delivered
+            </button>
           </div>
         </div>
 
-        {/* ITEMS */}
-        <div className="bg-white border border-gray-200 rounded-xl p-5 shadow-sm mb-6">
-          <h2 className="text-lg font-bold text-[#160059] mb-4 flex items-center gap-2">
-            <FaBoxOpen /> Order Items
-          </h2>
+        {/* ORDER SUMMARY HEADER */}
+        <div className="bg-white border border-gray-200 rounded-sm p-6 flex flex-col md:flex-row items-center md:items-start gap-6">
+          <div className="w-16 h-16 bg-gray-900 text-white flex items-center justify-center text-xl font-bold rounded-sm shadow-sm">
+            <FaBoxOpen />
+          </div>
+          <div className="flex-1 text-center md:text-left">
+            <div className="flex flex-col md:flex-row md:items-center gap-2 mb-2">
+              <h1 className="text-xl font-bold text-gray-900 tracking-tight flex items-center gap-2">
+                Order <span className="text-gray-400">#{order?.orderno}</span>
+              </h1>
+              <span className={getStatusStyle(order?.status)}>
+                {order?.status}
+              </span>
+            </div>
+            <div className="flex flex-wrap justify-center md:justify-start gap-4 text-xs text-gray-500 font-medium">
+              <span className="flex items-center gap-1.5"><FaRegCalendarAlt className="text-gray-300" /> Placed on {order?.createdAt}</span>
+              <span className="flex items-center gap-1.5"><FaHashtag className="text-gray-300" /> ID: {order?._id}</span>
+            </div>
+          </div>
+        </div>
 
-          <table className="w-full text-sm text-left">
+        {/* CUSTOMER & SHIPPING GRID */}
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          {/* Customer Details */}
+          <div className="bg-white border border-gray-200 rounded-sm">
+            <div className="px-4 py-3 border-b border-gray-100 flex items-center justify-between bg-gray-50/50">
+              <h3 className="text-xs font-bold text-gray-900 uppercase tracking-widest">Customer Information</h3>
+              <FaUser className="text-gray-300 text-xs" />
+            </div>
+            <div className="p-4 space-y-4">
+              <div className="flex items-center justify-between text-xs">
+                <span className="text-gray-400 font-medium">Full Name</span>
+                <span className="text-gray-900 font-bold">{order?.customername}</span>
+              </div>
+              <div className="flex items-center justify-between text-xs">
+                <span className="text-gray-400 font-medium">Phone Number</span>
+                <span className="text-gray-900 font-bold">{order?.phoneno}</span>
+              </div>
+            </div>
+          </div>
+
+          {/* Shipping Address */}
+          <div className="bg-white border border-gray-200 rounded-sm">
+            <div className="px-4 py-3 border-b border-gray-100 flex items-center justify-between bg-gray-50/50">
+              <h3 className="text-xs font-bold text-gray-900 uppercase tracking-widest">Shipping Address</h3>
+              <FaMapMarkerAlt className="text-gray-300 text-xs" />
+            </div>
+            <div className="p-4">
+              <p className="text-xs font-bold text-gray-900 leading-relaxed uppercase tracking-tight">
+                {order?.shippingaddress}
+                <br />
+                PIN: {order?.pincode}
+              </p>
+            </div>
+          </div>
+        </div>
+
+        {/* ITEMS TABLE */}
+        <div className="bg-white border border-gray-200 rounded-sm shadow-sm overflow-hidden">
+          <div className="px-4 py-3 border-b border-gray-100 bg-gray-50/50">
+            <h3 className="text-xs font-bold text-gray-900 uppercase tracking-widest">Order Manifest</h3>
+          </div>
+          <table className="w-full text-left border-collapse">
             <thead>
-              <tr className="border-b text-[#160059]">
-                <th className="py-2">Item</th>
-                <th>Qty</th>
-                <th>Price</th>
-                <th>Total</th>
+              <tr className="border-b border-gray-100 text-[10px] uppercase tracking-widest font-bold text-gray-400">
+                <th className="px-6 py-4">Item Description</th>
+                <th className="px-6 py-4">Qty</th>
+                <th className="px-6 py-4">Unit Price</th>
+                <th className="px-6 py-4 text-right">Total</th>
               </tr>
             </thead>
-            <tbody>
+            <tbody className="divide-y divide-gray-50">
               {order?.items.map((item, index) => (
-                <tr key={index} className="border-b last:border-none">
-                  <td className="py-2">{item.name}</td>
-                  <td>{item?.quantity}</td>
-                  <td>₹{item?.price}</td>
-                  <td>₹{item?.price * item?.quantity}</td>
+                <tr key={index} className="text-xs text-gray-700">
+                  <td className="px-6 py-4 font-bold text-gray-900">{item.name}</td>
+                  <td className="px-6 py-4 font-medium">{item?.quantity}</td>
+                  <td className="px-6 py-4 font-medium">₹{item?.price}</td>
+                  <td className="px-6 py-4 text-right font-bold text-gray-900">₹{item?.price * item?.quantity}</td>
                 </tr>
               ))}
             </tbody>
           </table>
-        </div>
-
-        {/* BOTTOM ACTION */}
-        <div className="bg-white border border-gray-200 rounded-xl p-5 shadow-sm flex justify-between items-center">
-          <p className="text-lg font-bold text-[#160059] flex items-center gap-2">
-            <FaRupeeSign /> Grand Total: ₹{order?.ordertotal}
-          </p>
-
-          <div className="flex gap-3">
-            <button className="px-4 py-2 rounded-lg bg-green-600 text-white hover:bg-green-700 transition">
-              Mark Delivered
-            </button>
-            <button className="px-4 py-2 rounded-lg bg-red-600 text-white hover:bg-red-700 transition">
-              Cancel Order
-            </button>
+          
+          {/* TOTAL FOOTER */}
+          <div className="bg-gray-50 px-6 py-4 border-t border-gray-100 flex justify-end">
+            <div className="flex items-center gap-4">
+              <span className="text-[10px] font-bold text-gray-400 uppercase tracking-[0.2em]">Grand Total</span>
+              <span className="text-xl font-black text-gray-900 flex items-center">
+                <FaRupeeSign size={14} className="mt-1" /> {order?.ordertotal}
+              </span>
+            </div>
           </div>
         </div>
       </div>

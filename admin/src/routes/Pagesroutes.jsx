@@ -11,6 +11,9 @@ import Orderdetails from "../pages/order/Orderdetails";
 import Order from "../pages/order/Order";
 import { Route, Routes } from "react-router-dom";
 import Home from "../pages/home/Home";
+import PlansAndBilling from "../pages/plans/PlansAndBilling";
+import Billing from "../pages/billinghistory/Billing";
+import Profile from "../pages/profile/Profile";
 
 const Pagesroutes = () => {
   return (
@@ -27,6 +30,10 @@ const Pagesroutes = () => {
         <Route path="/order" element={<Order />} />
         <Route path="/order-detail/:id" element={<Orderdetails />} />
         <Route path="/dashboard" element={<Home />} />
+        <Route path="/plans" element={<PlansAndBilling />} />
+        <Route path="/history" element={<Billing />} />
+        <Route path="/profile" element={<Profile />} />
+        {/* <Route path="/payments" element={<Payments />} /> */}
       </Routes>
     </>
   );
