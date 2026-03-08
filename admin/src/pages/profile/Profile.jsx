@@ -108,7 +108,7 @@ const Profile = () => {
             </div>
 
             {/* SECURITY LOGS SECTION */}
-            <div className="bg-gray-50 border border-gray-100 rounded-sm p-6">
+            {/* <div className="bg-gray-50 border border-gray-100 rounded-sm p-6">
                <h3 className="text-[10px] font-black text-gray-400 uppercase tracking-[0.2em] mb-4">Account Security</h3>
                <div className="flex items-center justify-between py-3 border-b border-gray-200">
                   <div className="flex items-center gap-3">
@@ -124,7 +124,7 @@ const Profile = () => {
                   </div>
                   <span className="text-[11px] text-gray-400 font-medium">14 days ago</span>
                </div>
-            </div>
+            </div> */}
           </div>
 
           {/* RIGHT: ACTIVITY SNAPSHOT (1 col) */}

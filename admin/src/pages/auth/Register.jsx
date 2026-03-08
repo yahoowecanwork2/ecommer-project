@@ -1,23 +1,19 @@
 import React, { useState } from "react";
-import {
-  MdOutlineMail,
-  MdOutlineLock,
-  MdOutlinePerson,
-  MdPhone,
-} from "react-icons/md";
-import { IoEyeOutline, IoEyeOffOutline } from "react-icons/io5";
 import { useNavigate } from "react-router-dom";
 import { useDispatch } from "react-redux";
-import {
-  clearRegisterData,
-  setAuth,
-  setRegisterData,
-} from "../../redux/userSlice";
-import { clearToken, setToken } from "../../apis/storage";
 import toast from "react-hot-toast";
-// import Userheader from "../../components/common/Userheader";
+
+// Icons
+import { MdOutlineMail, MdOutlineLock, MdOutlinePerson, MdPhone } from "react-icons/md";
+import { IoEyeOutline, IoEyeOffOutline } from "react-icons/io5";
+
+// Logic & Components
 import { adminApi } from "../../apis/auth";
+import { clearToken, setToken } from "../../apis/storage";
+import { clearRegisterData, setAuth, setRegisterData } from "../../redux/userSlice";
 import Registerotpverify from "./modal/Regisetrotpverify";
+
+import logo from "../../assets/logo.png";
 
 const Register = () => {
   const navigate = useNavigate();
@@ -25,7 +21,8 @@ const Register = () => {
 
   const [loading, setLoading] = useState(false);
   const [showmodal, setShowmodal] = useState(false);
-
+  const [showPassword, setShowPassword] = useState(false);
+  
   const [formData, setFormData] = useState({
     name: "",
     email: "",
@@ -33,14 +30,9 @@ const Register = () => {
     password: "",
   });
 
-  const [showPassword, setShowPassword] = useState(false);
-
   const handleChange = (e) => {
     const { name, value } = e.target;
-    setFormData((prev) => ({
-      ...prev,
-      [name]: value,
-    }));
+    setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
   const handleSubmit = async (e) => {
@@ -51,7 +43,7 @@ const Register = () => {
     try {
       setLoading(true);
       const res = await adminApi.register(formData);
-      if (res?.status === "success") {
+      if (res?.status === "success" || res?.success) {
         toast.success(res?.message);
         setToken(res?.token);
         setLoading(false);
@@ -62,143 +54,152 @@ const Register = () => {
       clearToken();
       dispatch(clearRegisterData());
       dispatch(setAuth(false));
-      toast.error(error?.response?.data?.message || "Server Error");
+      toast.error(error?.response?.data?.message || "Registration failed");
     }
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-100 to-white">
-      <div className="flex min-h-[90vh]">
-        {/* LEFT INFO */}
-        <div className="hidden md:flex w-1/2 text-blue-900 flex-col justify-center px-16">
-          <h1 className="text-4xl font-bold mb-4">Create Account</h1>
-          <p className="text-lg mb-6 text-blue-700">
-            Register to access your dashboard and manage your account.
-          </p>
+    <div className="min-h-screen bg-gray-50 flex items-center justify-center p-4">
+      <div className="flex w-full max-w-5xl bg-white rounded-sm shadow-2xl overflow-hidden border border-gray-200">
+        
+        {/* LEFT SIDE: BRANDING PANEL */}
+        <div className="hidden md:flex w-5/12 bg-gray-900 p-12 flex-col justify-between text-white relative">
+          <div className="absolute inset-0 opacity-5 pointer-events-none bg-[url('https://www.transparenttextures.com/patterns/carbon-fibre.png')]"></div>
+          
+          <div className="relative z-10">
+            <img src={logo} alt="Logo" className="w-28 mb-1" />
+            <p className="text-[10px] font-bold text-gray-400 uppercase tracking-widest">Digital Solutions</p>
+          </div>
 
-          <ul className="space-y-3 text-sm text-blue-700">
-            <li>✔ Secure Registration</li>
-            <li>✔ Personal Dashboard</li>
-            <li>✔ Easy Profile Management</li>
-            <li>✔ Fast & Simple</li>
-          </ul>
+          <div className="relative z-10">
+            <h1 className="text-4xl font-black uppercase tracking-tighter leading-none mb-4">
+              Join the <br /> Ecosystem
+            </h1>
+            <p className="text-gray-400 text-sm font-medium leading-relaxed max-w-xs">
+              Create an administrative account to oversee inventory, fulfill orders, and monitor business growth.
+            </p>
+          </div>
+
+          <div className="relative z-10 pt-8 border-t border-gray-800">
+            <ul className="space-y-3">
+              {["Secure Enrollment", "Role-Based Access", "Inventory Management"].map((item, i) => (
+                <li key={i} className="flex items-center gap-2 text-[9px] font-black text-gray-500 uppercase tracking-widest">
+                  <span className="w-2 h-2 bg-blue-600 rounded-full"></span> {item}
+                </li>
+              ))}
+            </ul>
+          </div>
         </div>
 
-        {/* RIGHT FORM */}
-        <div className="w-full md:w-1/2 mt-5 flex justify-center items-center px-4">
-          <form
-            onSubmit={handleSubmit}
-            className="bg-white w-full max-w-md rounded-2xl shadow-xl p-8 border border-blue-200"
-          >
-            <h1 className="text-2xl font-bold text-center text-blue-800">
-              Admin Register
-            </h1>
-            <p className="text-center text-sm text-blue-600 mb-6">
-              Create your account
-            </p>
+        {/* RIGHT SIDE: REGISTRATION FORM */}
+        <div className="w-full md:w-7/12 p-8 md:p-12 overflow-y-auto max-h-[90vh] custom-scrollbar">
+          <div className="mb-8">
+            <h2 className="text-2xl font-black text-gray-900 uppercase tracking-tight">Create Account</h2>
+            <p className="text-xs font-bold text-gray-400 uppercase tracking-widest mt-1">Enroll as a new administrator</p>
+          </div>
 
+          <form onSubmit={handleSubmit} className="grid grid-cols-1 md:grid-cols-2 gap-5">
+            
             {/* NAME */}
-            <label className="text-sm font-medium text-blue-700">
-              Full Name
-            </label>
-            <div className="flex items-center w-full h-11 mb-4 bg-blue-50 border border-blue-300 px-3 rounded-md mt-1">
-              <MdOutlinePerson className="h-5 w-5 text-blue-500" />
-              <input
-                type="text"
-                placeholder="Your name"
-                name="name"
-                value={formData.name}
-                onChange={handleChange}
-                className="w-full h-full ml-2 bg-transparent outline-none text-blue-800 placeholder-blue-400"
-              />
+            <div className="space-y-1.5 md:col-span-2">
+              <label className="text-[10px] font-black text-gray-400 uppercase tracking-widest">Full Name</label>
+              <div className="flex items-center w-full h-12 bg-gray-50 border border-gray-200 px-4 rounded-sm focus-within:border-gray-900 transition-all group">
+                <MdOutlinePerson className="text-gray-400 group-focus-within:text-gray-900" size={20} />
+                <input
+                  type="text"
+                  name="name"
+                  placeholder="John Doe"
+                  value={formData.name}
+                  onChange={handleChange}
+                  className="flex-1 h-full ml-3 bg-transparent outline-none text-sm font-bold text-gray-900 placeholder:text-gray-300 placeholder:font-normal"
+                  required
+                />
+              </div>
             </div>
 
             {/* EMAIL */}
-            <label className="text-sm font-medium text-blue-700">Email</label>
-            <div className="flex items-center w-full h-11 mb-4 bg-blue-50 border border-blue-300 px-3 rounded-md mt-1">
-              <MdOutlineMail className="h-5 w-5 text-blue-500" />
-              <input
-                type="email"
-                placeholder="admin@gmail.com"
-                name="email"
-                value={formData.email}
-                onChange={handleChange}
-                className="w-full h-full ml-2 bg-transparent outline-none text-blue-800 placeholder-blue-400"
-              />
+            <div className="space-y-1.5">
+              <label className="text-[10px] font-black text-gray-400 uppercase tracking-widest">Email Address</label>
+              <div className="flex items-center w-full h-12 bg-gray-50 border border-gray-200 px-4 rounded-sm focus-within:border-gray-900 transition-all group">
+                <MdOutlineMail className="text-gray-400 group-focus-within:text-gray-900 shrink-0" size={20} />
+                <input
+                  type="email"
+                  name="email"
+                  placeholder="admin@example.com"
+                  value={formData.email}
+                  onChange={handleChange}
+                  className="flex-1 h-full ml-3 bg-transparent outline-none text-sm font-bold text-gray-900 placeholder:text-gray-300 placeholder:font-normal"
+                  required
+                />
+              </div>
             </div>
 
             {/* PHONE */}
-            <label className="text-sm font-medium text-blue-700">
-              Phone Number
-            </label>
-            <div className="flex items-center w-full h-11 mb-4 bg-blue-50 border border-blue-300 px-3 rounded-md mt-1">
-              <MdPhone className="h-5 w-5 text-blue-500" />
-              <input
-                type="text"
-                placeholder="Enter phone number"
-                name="phoneno"
-                value={formData.phoneno}
-                onChange={handleChange}
-                className="w-full h-full ml-2 bg-transparent outline-none text-blue-800 placeholder-blue-400"
-              />
+            <div className="space-y-1.5">
+              <label className="text-[10px] font-black text-gray-400 uppercase tracking-widest">Phone Number</label>
+              <div className="flex items-center w-full h-12 bg-gray-50 border border-gray-200 px-4 rounded-sm focus-within:border-gray-900 transition-all group">
+                <MdPhone className="text-gray-400 group-focus-within:text-gray-900 shrink-0" size={18} />
+                <input
+                  type="text"
+                  name="phoneno"
+                  placeholder="+91 00000 00000"
+                  value={formData.phoneno}
+                  onChange={handleChange}
+                  className="flex-1 h-full ml-3 bg-transparent outline-none text-sm font-bold text-gray-900 placeholder:text-gray-300 placeholder:font-normal"
+                  required
+                />
+              </div>
             </div>
 
             {/* PASSWORD */}
-            <label className="text-sm font-medium text-blue-700">
-              Password
-            </label>
-            <div className="flex items-center w-full h-11 bg-blue-50 border border-blue-300 px-3 rounded-md mt-1">
-              <MdOutlineLock className="h-5 w-5 text-blue-500" />
-              <input
-                type={showPassword ? "text" : "password"}
-                placeholder="Password"
-                name="password"
-                value={formData.password}
-                onChange={handleChange}
-                className="w-full h-full ml-2 bg-transparent outline-none text-blue-700 placeholder-blue-400"
-              />
-              {showPassword ? (
-                <IoEyeOffOutline
-                  onClick={() => setShowPassword((prev) => !prev)}
-                  className="h-5 w-5 text-blue-500 cursor-pointer"
+            <div className="space-y-1.5 md:col-span-2">
+              <label className="text-[10px] font-black text-gray-400 uppercase tracking-widest">Password</label>
+              <div className="flex items-center w-full h-12 bg-gray-50 border border-gray-200 px-4 rounded-sm focus-within:border-gray-900 transition-all group">
+                <MdOutlineLock className="text-gray-400 group-focus-within:text-gray-900" size={20} />
+                <input
+                  type={showPassword ? "text" : "password"}
+                  name="password"
+                  placeholder="••••••••"
+                  value={formData.password}
+                  onChange={handleChange}
+                  className="flex-1 h-full ml-3 bg-transparent outline-none text-sm font-bold text-gray-900"
+                  required
                 />
-              ) : (
-                <IoEyeOutline
-                  onClick={() => setShowPassword((prev) => !prev)}
-                  className="h-5 w-5 text-blue-500 cursor-pointer"
-                />
-              )}
+                <button
+                  type="button"
+                  onClick={() => setShowPassword(!showPassword)}
+                  className="text-gray-400 hover:text-gray-900"
+                >
+                  {showPassword ? <IoEyeOffOutline size={18} /> : <IoEyeOutline size={18} />}
+                </button>
+              </div>
             </div>
 
-            <button
-              type="submit"
-              disabled={loading}
-              className="bg-blue-600 text-white h-11 w-full mt-6 text-lg rounded-md hover:bg-blue-700 transition"
-            >
-              {loading ? "Registering..." : "Register"}
-            </button>
-
-            {/* <button
-              onClick={() => setShowmodal(true)}
-              className="bg-blue-500 text-white h-11 w-full mt-4 text-lg rounded-md hover:bg-blue-600 transition"
-            >
-              OTP Verification
-            </button> */}
-
-            <p className="mt-4 text-center text-sm text-blue-700">
-              Already have an account?
-              <span
-                onClick={() => navigate("/")}
-                className="text-blue-600 cursor-pointer ml-1 font-medium hover:text-blue-800"
+            <div className="md:col-span-2 pt-4">
+              <button
+                type="submit"
+                disabled={loading}
+                className="w-full bg-gray-900 text-white h-12 text-[11px] font-black uppercase tracking-[0.2em] rounded-sm hover:bg-black transition-all shadow-lg active:scale-[0.98] disabled:bg-gray-400"
               >
-                Login
-              </span>
-            </p>
+                {loading ? "Registering System..." : "Confirm Enrollment"}
+              </button>
 
-            {showmodal && <Registerotpverify setShowmodal={setShowmodal} />}
+              <p className="text-center text-[11px] font-bold text-gray-400 uppercase tracking-widest mt-6">
+                Already registered?{" "}
+                <button 
+                  type="button"
+                  onClick={() => navigate("/")}
+                  className="text-gray-900 border-b-2 border-gray-900 pb-0.5 hover:text-gray-600 hover:border-gray-400 transition-all ml-1"
+                >
+                  Return to Login
+                </button>
+              </p>
+            </div>
           </form>
         </div>
       </div>
+
+      {showmodal && <Registerotpverify setShowmodal={setShowmodal} />}
     </div>
   );
 };

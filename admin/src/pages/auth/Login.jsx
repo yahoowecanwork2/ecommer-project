@@ -1,28 +1,30 @@
 import React, { useState } from "react";
-import { MdOutlineMail, MdOutlineLock } from "react-icons/md";
-import { IoEyeOutline, IoEyeOffOutline } from "react-icons/io5";
 import { useNavigate } from "react-router-dom";
+import { useDispatch } from "react-redux";
 import toast from "react-hot-toast";
 
-import Forgotpassword from "./modal/Forgotpassword";
-import { setLoginData } from "../../redux/userSlice";
-import { useDispatch } from "react-redux";
-import { clearToken, setToken } from "../../apis/storage";
+// Icons
+import { MdOutlineMail, MdOutlineLock } from "react-icons/md";
+import { IoEyeOutline, IoEyeOffOutline } from "react-icons/io5";
+
+// Logic & Components
 import { adminApi } from "../../apis/auth";
+import { clearToken, setToken } from "../../apis/storage";
+import { setLoginData } from "../../redux/userSlice";
+import Forgotpassword from "./modal/Forgotpassword";
 import Loginotpverify from "./modal/Loginotpverifymodal";
+
+import logo from "../../assets/logo.png";
 
 const Login = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
+  
   const [loading, setLoading] = useState(false);
-  const [formData, setFormData] = useState({
-    email: "",
-    password: "",
-  });
-
   const [showPassword, setShowPassword] = useState(false);
   const [forgotPassword, setForgotPassword] = useState(false);
   const [showmodal, setShowmodal] = useState(false);
+  const [formData, setFormData] = useState({ email: "", password: "" });
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -44,115 +46,123 @@ const Login = () => {
       }
     } catch (error) {
       setLoading(false);
-      toast.error(error?.response?.data?.message || "Server Error Occurred");
+      toast.error(error?.response?.data?.message || "Invalid credentials");
     }
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-100 to-white">
-      <div className="flex min-h-[90vh]">
-        {/* LEFT SIDE INFO */}
-        <div className="hidden md:flex w-1/2 text-blue-900 flex-col justify-center px-16">
-          <h1 className="text-4xl font-bold mb-4">Welcome Back!</h1>
-          <p className="text-lg mb-6 text-blue-700">
-            Login to manage your account and access dashboard.
-          </p>
+    <div className="min-h-screen bg-gray-50 flex items-center justify-center p-4">
+      <div className="flex w-full max-w-4xl bg-white rounded-sm shadow-2xl overflow-hidden border border-gray-200">
+        
+        {/* LEFT SIDE: THEME PANEL */}
+        <div className="hidden md:flex w-1/2 bg-gray-900 p-12 flex-col justify-between text-white relative">
+          {/* Decorative Pattern */}
+          <div className="absolute inset-0 opacity-5 pointer-events-none bg-[url('https://www.transparenttextures.com/patterns/carbon-fibre.png')]"></div>
+          
+          <div className="relative z-10">
+            <img src={logo} alt="Logo" className="w-28 mb-1" />
+            <p className="text-[10px] font-bold text-gray-400 uppercase tracking-widest">Digital Solutions</p>
+          </div>
 
-          <ul className="space-y-3 text-sm text-blue-700">
-            <li>✔ Secure Login System</li>
-            <li>✔ Manage Your Profile</li>
-            <li>✔ Access Dashboard</li>
-            <li>✔ Fast & Easy</li>
-          </ul>
+          <div className="relative z-10">
+            <h1 className="text-4xl font-black uppercase tracking-tighter leading-none mb-4">
+              Ecommerce <br /> Admin Panel
+            </h1>
+            <p className="text-gray-400 text-sm font-medium leading-relaxed">
+              Secure access to your store's inventory, orders, and customer analytics.
+            </p>
+          </div>
+
+          <div className="relative z-10 pt-8 border-t border-gray-800">
+            <p className="text-[10px] font-black text-gray-500 uppercase tracking-[0.2em]">
+              System Status: <span className="text-green-500">Active</span>
+            </p>
+          </div>
         </div>
 
-        {/* RIGHT SIDE LOGIN FORM */}
-        <div className="w-full md:w-1/2 flex justify-center items-center px-4">
-          <form
-            onSubmit={handleSubmit}
-            className="bg-white w-full max-w-md rounded-2xl shadow-xl p-8 border border-blue-200"
-          >
-            <h1 className="text-2xl font-bold text-center text-blue-800">
-              Admin Login
-            </h1>
-            <p className="text-center text-sm text-blue-600 mb-6">
-              Login to continue
-            </p>
+        {/* RIGHT SIDE: LOGIN FORM */}
+        <div className="w-full md:w-1/2 p-8 md:p-12 flex flex-col justify-center">
+          <div className="mb-8">
+            <h2 className="text-2xl font-black text-gray-900 uppercase tracking-tight">Login</h2>
+            <p className="text-xs font-bold text-gray-400 uppercase tracking-widest mt-1">Enter your credentials</p>
+          </div>
 
+          <form onSubmit={handleSubmit} className="space-y-6">
+            
             {/* EMAIL */}
-            <label className="text-sm font-medium text-blue-700">Email</label>
-            <div className="flex items-center w-full h-11 mb-4 bg-blue-50 border border-blue-300 px-3 rounded-md mt-1">
-              <MdOutlineMail className="h-5 w-5 text-blue-500" />
-              <input
-                type="text"
-                placeholder="admin@gmail.com"
-                name="email"
-                value={formData.email}
-                onChange={handleChange}
-                className="w-full h-full ml-2 bg-transparent outline-none placeholder-blue-400 text-blue-800"
-              />
+            <div className="space-y-1.5">
+              <label className="text-[10px] font-black text-gray-400 uppercase tracking-widest">Email Address</label>
+              <div className="flex items-center w-full h-12 bg-gray-50 border border-gray-200 px-4 rounded-sm focus-within:border-gray-900 transition-all group">
+                <MdOutlineMail className="text-gray-400 group-focus-within:text-gray-900 transition-colors" size={20} />
+                <input
+                  type="email"
+                  name="email"
+                  placeholder="admin@example.com"
+                  value={formData.email}
+                  onChange={handleChange}
+                  className="flex-1 h-full ml-3 bg-transparent outline-none text-sm font-bold text-gray-900 placeholder:text-gray-300 placeholder:font-normal"
+                  required
+                />
+              </div>
             </div>
 
             {/* PASSWORD */}
-            <label className="text-sm font-medium text-blue-700">
-              Password
-            </label>
-            <div className="flex items-center w-full h-11 bg-blue-50 border border-blue-300 px-3 rounded-md mt-1">
-              <MdOutlineLock className="h-5 w-5 text-blue-500" />
-              <input
-                type={showPassword ? "text" : "password"}
-                placeholder="Password"
-                name="password"
-                value={formData.password}
-                onChange={handleChange}
-                className="w-full h-full ml-2 bg-transparent outline-none placeholder-blue-400 text-blue-800"
-              />
-              {showPassword ? (
-                <IoEyeOffOutline
-                  onClick={() => setShowPassword((prev) => !prev)}
-                  className="h-5 w-5 text-blue-500 cursor-pointer"
+            <div className="space-y-1.5">
+              <div className="flex justify-between items-center">
+                <label className="text-[10px] font-black text-gray-400 uppercase tracking-widest">Password</label>
+                <button 
+                  type="button"
+                  onClick={() => setForgotPassword(true)}
+                  className="text-[10px] font-bold text-gray-500 hover:text-gray-900 transition-colors uppercase tracking-tighter"
+                >
+                  Forgot?
+                </button>
+              </div>
+              <div className="flex items-center w-full h-12 bg-gray-50 border border-gray-200 px-4 rounded-sm focus-within:border-gray-900 transition-all group">
+                <MdOutlineLock className="text-gray-400 group-focus-within:text-gray-900 transition-colors" size={20} />
+                <input
+                  type={showPassword ? "text" : "password"}
+                  name="password"
+                  placeholder="••••••••"
+                  value={formData.password}
+                  onChange={handleChange}
+                  className="flex-1 h-full ml-3 bg-transparent outline-none text-sm font-bold text-gray-900"
+                  required
                 />
-              ) : (
-                <IoEyeOutline
-                  onClick={() => setShowPassword((prev) => !prev)}
-                  className="h-5 w-5 text-blue-500 cursor-pointer"
-                />
-              )}
+                <button
+                  type="button"
+                  onClick={() => setShowPassword(!showPassword)}
+                  className="text-gray-400 hover:text-gray-900"
+                >
+                  {showPassword ? <IoEyeOffOutline size={18} /> : <IoEyeOutline size={18} />}
+                </button>
+              </div>
             </div>
 
-            {/* FORGOT */}
-            <p
-              onClick={() => setForgotPassword(true)}
-              className="text-blue-600 text-right text-sm mt-2 cursor-pointer hover:text-blue-800"
-            >
-              Forgot Password?
-            </p>
-
-            {/* BUTTON */}
             <button
               type="submit"
               disabled={loading}
-              className="bg-blue-600 text-white h-11 w-full mt-6 text-lg rounded-md hover:bg-blue-700 transition"
+              className="w-full bg-gray-900 text-white h-12 mt-4 text-[11px] font-black uppercase tracking-[0.2em] rounded-sm hover:bg-black transition-all shadow-lg active:scale-[0.98] disabled:bg-gray-400"
             >
-              {loading ? "Logging in..." : "Login"}
+              {loading ? "Processing..." : "Login to Dashboard"}
             </button>
 
-            <p className="mt-4 text-center text-sm text-blue-700">
-              Don’t have an account?
-              <span
+            <p className="text-center text-[11px] font-bold text-gray-400 uppercase tracking-widest mt-6">
+              Don't have an account?{" "}
+              <button 
+                type="button"
                 onClick={() => navigate("/register")}
-                className="text-blue-600 cursor-pointer ml-1 font-medium hover:text-blue-800"
+                className="text-gray-900 border-b-2 border-gray-900 pb-0.5 hover:text-gray-600 hover:border-gray-400 transition-all ml-1"
               >
                 Sign Up
-              </span>
+              </button>
             </p>
           </form>
         </div>
       </div>
 
-      {forgotPassword && (
-        <Forgotpassword setForgotPassword={setForgotPassword} />
-      )}
+      {/* MODALS */}
+      {forgotPassword && <Forgotpassword setForgotPassword={setForgotPassword} />}
       {showmodal && <Loginotpverify setShowmodal={setShowmodal} />}
     </div>
   );

@@ -2,6 +2,7 @@ import React, { useEffect, useRef, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import toast from "react-hot-toast";
+import { MdClose, MdSecurity } from "react-icons/md";
 import { clearLoginData, setAuth, setUser } from "../../../redux/userSlice";
 import { clearToken, getToken, setToken } from "../../../apis/storage";
 import { adminApi } from "../../../apis/auth";
@@ -13,22 +14,20 @@ const Loginotpverify = ({ setShowmodal }) => {
   const [resendLoading, setresendLoading] = useState(false);
   const [loading, setLoading] = useState(false);
   const [otp, setOtp] = useState(["", "", "", "", "", ""]);
+  
   const inputsRef = useRef([]);
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const loginData = useSelector((state) => state.user.loginData);
-  console.log(loginData);
 
   useEffect(() => {
     if (timer === 0) {
       setCanResend(true);
       return;
     }
-
     const interval = setInterval(() => {
       setTimer((prev) => prev - 1);
     }, 1000);
-
     return () => clearInterval(interval);
   }, [timer]);
 
@@ -63,162 +62,176 @@ const Loginotpverify = ({ setShowmodal }) => {
     const newOtp = [...otp];
     pastedData.forEach((digit, idx) => (newOtp[idx] = digit));
     setOtp(newOtp);
-    const lastIndex = pastedData.length - 1;
+    const lastIndex = Math.min(pastedData.length, 5);
     inputsRef.current[lastIndex]?.focus();
   };
 
-  // get user profile function
   const getProfile = async () => {
     try {
       setUserLoading(true);
       const res = await adminApi.profile();
       if (res?.success) {
-        setUserLoading(false);
         dispatch(setUser(res.user));
         dispatch(setAuth(true));
         navigate("/dashboard");
       }
     } catch (error) {
-      setUserLoading(false);
-      console.log(error);
+      console.error(error);
+      toast.error("Profile sync failed");
     } finally {
       setUserLoading(false);
     }
   };
 
-  const handleVerification = async (e) => {
+  const handleVerification = async (enteredOtp) => {
     const token = getToken();
-    console.log({ otp: e, activationToken: token });
     try {
       setLoading(true);
       const res = await adminApi.loginOtpVerify({
-        otp: e,
+        otp: enteredOtp,
         activationToken: token,
       });
-      console.log(res);
       if (res?.success) {
         setToken(res.token);
-        setLoading(false);
-        toast.success(res?.message);
+        toast.success(res?.message || "Identity Verified");
         dispatch(clearLoginData());
         setShowmodal(false);
-        setTimeout(() => {
-          getProfile();
-        }, 500);
+        setTimeout(() => getProfile(), 500);
       }
     } catch (error) {
+      toast.error(error?.response?.data?.message || "Invalid OTP");
+    } finally {
       setLoading(false);
-      console.log(error);
     }
   };
 
   const handleSubmit = (e) => {
     e.preventDefault();
     const enteredOtp = otp.join("");
-    console.log(enteredOtp);
     if (enteredOtp.length < 6) {
-      return toast.error("Please enter a valid 6-digit OTP");
+      return toast.error("Enter complete 6-digit code");
     }
     handleVerification(enteredOtp);
   };
 
   const resendOtp = async () => {
     if (!canResend) return;
-    setCanResend(false);
-    setTimer(30);
-    console.log();
     try {
       setresendLoading(true);
       clearToken();
-      console.log(loginData.email, loginData.password);
       const res = await adminApi.resendOtp({
         email: loginData.email,
         password: loginData.password,
       });
-      console.log(res);
       if (res.success) {
         setToken(res?.token);
-        setresendLoading(false);
-        toast.success(res?.message || "OTP resent successfully!");
-      } else {
-        setresendLoading(false);
-        toast.error(res?.message || "Something went wrong");
-        navigate("/");
+        setTimer(30);
+        setCanResend(false);
+        toast.success("New code transmitted");
       }
     } catch (error) {
+      toast.error("Resend failed. Please login again.");
+      navigate("/");
+    } finally {
       setresendLoading(false);
-      toast.error(error?.response?.data?.message || "Server Error Ocurred");
-      console.log(error);
     }
-    console.log("Resending OTP...");
   };
 
-  if (userLoading) return <div> please wait fetching user detail ....... </div>;
+  if (userLoading) {
+    return (
+      <div className="fixed inset-0 bg-gray-900 z-[60] flex flex-col items-center justify-center text-white">
+        <div className="w-12 h-12 border-4 border-gray-700 border-t-white rounded-full animate-spin mb-4"></div>
+        <p className="text-[10px] font-black uppercase tracking-[0.3em]">Initializing Dashboard...</p>
+      </div>
+    );
+  }
+
   return (
-    <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
-      <div className="bg-white w-[90%] max-w-md rounded-xl shadow-lg p-6 relative">
-        {/* Close Button */}
+    <div className="fixed inset-0 bg-gray-900/80 backdrop-blur-sm flex items-center justify-center z-50 p-4">
+      <div className="bg-white w-full max-w-md rounded-sm shadow-2xl overflow-hidden border border-gray-100 relative">
+        
+        {/* TOP ACCENT BAR */}
+        <div className="h-1 bg-gray-900 w-full"></div>
+
+        {/* CLOSE BUTTON */}
         <button
           onClick={() => setShowmodal(false)}
-          className="absolute top-3 right-3 text-gray-500 hover:text-red-500"
+          className="absolute top-4 right-4 text-gray-400 hover:text-gray-900 transition-colors"
         >
-          ✕
+          <MdClose size={20} />
         </button>
 
-        {/* Heading */}
-        <h2 className="text-2xl font-bold text-center text-blue-600 mb-2">
-          Login OTP Verification
-        </h2>
-        <p className="text-sm text-center text-gray-500 mb-6">
-          Enter the 6 digit OTP sent to your email or phone
-        </p>
-
-        <form className="flex flex-col items-center space-y-6 w-full">
-          <div className="flex justify-center gap-3" onPaste={handlePaste}>
-            {otp.map((digit, i) => (
-              <input
-                key={i}
-                ref={(el) => (inputsRef.current[i] = el)}
-                type="text"
-                maxLength="1"
-                value={digit}
-                onChange={(e) => handleChange(e, i)}
-                onKeyDown={(e) => handleKeyDown(e, i)}
-                className="w-12 h-12 text-center text-lg font-semibold rounded-lg 
-            border border-gray-300 bg-[#F5F5F5] text-gray-800 
-            focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent 
-            transition-all"
-              />
-            ))}
+        <div className="p-8 md:p-10">
+          {/* HEADER */}
+          <div className="mb-8 text-center md:text-left">
+            <div className="flex items-center justify-center md:justify-start gap-2 mb-2">
+                <MdSecurity className="text-gray-900" size={20}/>
+                <h2 className="text-2xl font-black text-gray-900 uppercase tracking-tight">2FA Verify</h2>
+            </div>
+            <p className="text-[10px] font-bold text-gray-400 uppercase tracking-widest leading-relaxed">
+              Multi-factor authentication required
+            </p>
           </div>
 
-          {/* Submit Button */}
-          <button
-            disabled={loading || resendLoading}
-            onClick={handleSubmit}
-            className="w-full h-11 bg-blue-600 text-white font-semibold text-sm rounded-lg  hover:bg-blue-700 active:scale-95 transition-all duration-200"
-          >
-            {resendLoading || loading ? "Verifying..." : "Verify OTP"}
-          </button>
-        </form>
+          <form onSubmit={handleSubmit} className="space-y-8">
+            <p className="text-xs font-medium text-gray-500 text-center md:text-left leading-relaxed">
+              Transmit the 6-digit verification code sent to your registered contact point.
+            </p>
 
-        {/* Resend */}
-        <p className="text-center text-sm text-gray-500 mt-4">
-          Didn't receive OTP?{" "}
-          {canResend ? (
-            <button
-              type="button"
-              onClick={resendOtp}
-              className="text-blue-600 cursor-pointer font-semibold hover:text-indigo-600 transition"
-            >
-              Resend OTP
-            </button>
-          ) : (
-            <span className="text-gray-400 font-semibold">
-              Resend in {timer}s
-            </span>
-          )}
-        </p>
+            {/* OTP INPUTS */}
+            <div className="flex justify-between gap-2" onPaste={handlePaste}>
+              {otp.map((digit, i) => (
+                <input
+                  key={i}
+                  ref={(el) => (inputsRef.current[i] = el)}
+                  type="text"
+                  maxLength="1"
+                  value={digit}
+                  onChange={(e) => handleChange(e, i)}
+                  onKeyDown={(e) => handleKeyDown(e, i)}
+                  className="w-10 h-14 md:w-12 md:h-14 text-center text-lg font-black bg-gray-50 border border-gray-200 text-gray-900 rounded-sm focus:border-gray-900 focus:bg-white focus:outline-none transition-all"
+                />
+              ))}
+            </div>
+
+            {/* SUBMIT */}
+            <div className="space-y-4 pt-2">
+              <button
+                type="submit"
+                disabled={loading || resendLoading}
+                className="w-full bg-gray-900 text-white h-12 text-[11px] font-black uppercase tracking-[0.2em] rounded-sm hover:bg-black transition-all shadow-lg active:scale-[0.98] disabled:bg-gray-400"
+              >
+                {loading ? "Verifying Access..." : "Finalize Authentication"}
+              </button>
+
+              <div className="flex items-center justify-between px-1">
+                <p className="text-[10px] font-bold text-gray-400 uppercase tracking-widest">
+                  Transmission Status
+                </p>
+                {canResend ? (
+                  <button
+                    type="button"
+                    onClick={resendOtp}
+                    className="text-[10px] font-black text-gray-900 uppercase tracking-widest border-b border-gray-900 hover:text-gray-600 hover:border-gray-400 transition-all"
+                  >
+                    Resend Code
+                  </button>
+                ) : (
+                  <span className="text-[10px] font-black text-gray-400 uppercase tracking-widest">
+                    Wait {timer}s
+                  </span>
+                )}
+              </div>
+            </div>
+          </form>
+        </div>
+
+        {/* FOOTER */}
+        <div className="bg-gray-50 py-3 border-t border-gray-100 text-center">
+          <p className="text-[9px] font-black text-gray-400 uppercase tracking-[0.3em]">
+            Identity Protocol v3.0
+          </p>
+        </div>
       </div>
     </div>
   );

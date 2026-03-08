@@ -32,89 +32,155 @@ const Updatefields = ({ product, setOpenEdit, refresh }) => {
   };
 
   return (
-    <div className="fixed inset-0 bg-black/40 flex items-center justify-center z-50">
-      <div className="bg-white w-[600px] rounded-2xl shadow-xl p-6 relative">
-        <button
-          onClick={() => setOpenEdit(false)}
-          className="absolute top-3 right-3 text-gray-600 hover:text-red-500"
-        >
-          <FaTimes />
-        </button>
-
-        <h2 className="text-xl font-bold mb-4">Edit Product</h2>
-
-        <div className="grid grid-cols-2 gap-4">
-          <input
-            className="border p-2 rounded"
-            name="name"
-            value={form.name}
-            onChange={handleChange}
-            placeholder="Name"
-          />
-
-          <input
-            className="border p-2 rounded"
-            name="price"
-            value={form.price}
-            onChange={handleChange}
-            placeholder="Price"
-          />
-
-          <input
-            className="border p-2 rounded"
-            name="discount"
-            value={form.discount}
-            onChange={handleChange}
-            placeholder="Discount"
-          />
-
-          <input
-            className="border p-2 rounded"
-            name="keywords"
-            value={form.keywords}
-            onChange={handleChange}
-            placeholder="Keywords"
-          />
-
-          <input
-            className="border p-2 rounded col-span-2"
-            name="category"
-            value={form.category}
-            onChange={handleChange}
-            placeholder="Category ID"
-          />
-
-          <textarea
-            className="border p-2 rounded col-span-2"
-            name="description"
-            value={form.description}
-            onChange={handleChange}
-            placeholder="Description"
-          />
-
-          <input
-            className="border p-2 rounded"
-            name="remark"
-            value={form.remark}
-            onChange={handleChange}
-            placeholder="Remark"
-          />
-
-          <input
-            className="border p-2 rounded"
-            name="averageRating"
-            value={form.averageRating}
-            onChange={handleChange}
-            placeholder="Rating"
-          />
+    <div className="fixed inset-0 bg-gray-900/40 backdrop-blur-sm flex items-center justify-center z-50 p-4">
+      <div className="bg-white w-full max-w-2xl border border-gray-200 rounded-sm shadow-2xl relative overflow-hidden animate-in fade-in zoom-in duration-200">
+        {/* MODAL HEADER */}
+        <div className="flex justify-between items-center px-6 py-4 border-b border-gray-100 bg-gray-50/50">
+          <div>
+            <h3 className="text-sm font-black text-gray-900 uppercase tracking-[0.2em]">
+              Modify Inventory
+            </h3>
+            <p className="text-[10px] text-blue-600 font-bold uppercase tracking-widest mt-0.5">
+              Editing SKU: {form._id?.slice(-6).toUpperCase() || "N/A"}
+            </p>
+          </div>
+          <button
+            onClick={() => setOpenEdit(false)}
+            className="text-gray-400 hover:text-red-600 transition-colors p-1"
+          >
+            <FaTimes size={16} />
+          </button>
         </div>
 
-        <button
-          onClick={handleUpdate}
-          className="mt-5 w-full bg-blue-600 text-white py-2 rounded-xl hover:bg-blue-700"
-        >
-          Update Product
-        </button>
+        {/* FORM BODY */}
+        <div className="p-6 space-y-5 max-h-[80vh] overflow-y-auto custom-scrollbar">
+          {/* Name & Keywords */}
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div className="space-y-1">
+              <label className="text-[10px] font-black text-gray-400 uppercase tracking-widest">
+                Product Name
+              </label>
+              <input
+                className="w-full border border-gray-200 p-2.5 rounded-sm text-xs font-bold bg-gray-50/30 focus:border-gray-900 transition-all outline-none"
+                name="name"
+                value={form.name}
+                onChange={handleChange}
+                placeholder="Name"
+              />
+            </div>
+            <div className="space-y-1">
+              <label className="text-[10px] font-black text-gray-400 uppercase tracking-widest">
+                Search Keywords
+              </label>
+              <input
+                className="w-full border border-gray-200 p-2.5 rounded-sm text-xs font-medium bg-gray-50/30 focus:border-gray-900 transition-all outline-none"
+                name="keywords"
+                value={form.keywords}
+                onChange={handleChange}
+                placeholder="e.g. wireless, bluetooth"
+              />
+            </div>
+          </div>
+
+          {/* Price, Discount & Rating */}
+          <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
+            <div className="space-y-1">
+              <label className="text-[10px] font-black text-gray-400 uppercase tracking-widest">
+                Base Price (₹)
+              </label>
+              <input
+                className="w-full border border-gray-200 p-2.5 rounded-sm text-xs font-black bg-gray-50/30 focus:border-gray-900 transition-all outline-none"
+                name="price"
+                value={form.price}
+                onChange={handleChange}
+                placeholder="Price"
+              />
+            </div>
+            <div className="space-y-1">
+              <label className="text-[10px] font-black text-gray-400 uppercase tracking-widest">
+                Discount %
+              </label>
+              <input
+                className="w-full border border-gray-200 p-2.5 rounded-sm text-xs font-black bg-gray-50/30 focus:border-green-600 transition-all outline-none text-green-600"
+                name="discount"
+                value={form.discount}
+                onChange={handleChange}
+                placeholder="Discount"
+              />
+            </div>
+            <div className="space-y-1 col-span-2 md:col-span-1">
+              <label className="text-[10px] font-black text-gray-400 uppercase tracking-widest">
+                Global Rating
+              </label>
+              <input
+                className="w-full border border-gray-200 p-2.5 rounded-sm text-xs font-black bg-gray-50/30 focus:border-yellow-500 transition-all outline-none"
+                name="averageRating"
+                value={form.averageRating}
+                onChange={handleChange}
+                placeholder="Rating (1-5)"
+              />
+            </div>
+          </div>
+
+          {/* Category */}
+          <div className="space-y-1">
+            <label className="text-[10px] font-black text-gray-400 uppercase tracking-widest">
+              Classification ID
+            </label>
+            <input
+              className="w-full border border-gray-200 p-2.5 rounded-sm text-xs font-mono bg-gray-50/30 focus:border-gray-900 transition-all outline-none"
+              name="category"
+              value={form.category}
+              onChange={handleChange}
+              placeholder="Category ID"
+            />
+          </div>
+
+          {/* Description */}
+          <div className="space-y-1">
+            <label className="text-[10px] font-black text-gray-400 uppercase tracking-widest">
+              Public Description
+            </label>
+            <textarea
+              className="w-full border border-gray-200 p-2.5 rounded-sm text-xs font-medium bg-gray-50/30 focus:border-gray-900 transition-all outline-none"
+              name="description"
+              rows="3"
+              value={form.description}
+              onChange={handleChange}
+              placeholder="Description"
+            />
+          </div>
+
+          {/* Admin Remark */}
+          <div className="space-y-1">
+            <label className="text-[10px] font-black text-gray-400 uppercase tracking-widest">
+              Internal Admin Remark
+            </label>
+            <input
+              className="w-full border border-gray-200 p-2.5 rounded-sm text-[11px] italic font-medium bg-yellow-50/50 border-yellow-100 focus:border-yellow-400 transition-all outline-none"
+              name="remark"
+              value={form.remark}
+              onChange={handleChange}
+              placeholder="e.g. Needs restock soon"
+            />
+          </div>
+
+          {/* FOOTER ACTIONS */}
+          <div className="flex justify-end gap-3 pt-4 border-t border-gray-100">
+            <button
+              onClick={() => setOpenEdit(false)}
+              className="px-6 py-2.5 text-[10px] font-bold text-gray-400 uppercase tracking-widest hover:text-gray-900 transition-colors"
+            >
+              Discard
+            </button>
+            <button
+              onClick={handleUpdate}
+              className="px-10 py-2.5 bg-gray-900 text-white text-[10px] font-black uppercase tracking-[0.2em] rounded-sm hover:bg-black transition-all shadow-lg active:scale-95"
+            >
+              Update System Records
+            </button>
+          </div>
+        </div>
       </div>
     </div>
   );

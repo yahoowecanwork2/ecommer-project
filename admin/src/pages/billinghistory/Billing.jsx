@@ -35,50 +35,10 @@ const Billing = () => {
         </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-          
-          {/* LEFT: PAYMENT METHOD CARD */}
-          <div className="space-y-4">
-            <p className="text-[10px] font-bold text-gray-400 uppercase tracking-widest">Saved Payment Method</p>
-            <div className="bg-gray-900 rounded-sm p-6 text-white relative overflow-hidden shadow-lg">
-              {/* Background Decoration */}
-              <div className="absolute -right-4 -bottom-4 opacity-10 rotate-12">
-                <MdPayment size={120} />
-              </div>
 
-              <div className="relative z-10">
-                <div className="flex justify-between items-start mb-10">
-                  <FaCreditCard size={24} className="text-gray-400" />
-                  <span className="text-[9px] font-bold uppercase tracking-[0.2em] bg-white/10 px-2 py-0.5 rounded-sm">Primary</span>
-                </div>
-                
-                <div className="space-y-1 mb-6">
-                  <p className="text-[10px] text-gray-400 uppercase tracking-widest font-bold">Card Number</p>
-                  <p className="text-lg font-black tracking-[0.2em]">•••• •••• •••• 4242</p>
-                </div>
-
-                <div className="flex justify-between items-end">
-                  <div>
-                    <p className="text-[9px] text-gray-400 uppercase tracking-widest font-bold">Expiry</p>
-                    <p className="text-xs font-bold uppercase">12 / 28</p>
-                  </div>
-                  <button className="text-[10px] font-black uppercase tracking-widest border-b border-white/30 hover:border-white transition-all">
-                    Edit
-                  </button>
-                </div>
-              </div>
-            </div>
-            
-            <div className="bg-blue-50 border border-blue-100 p-4 rounded-sm flex gap-3">
-              <MdOutlineAutoDelete className="text-blue-500 mt-0.5" />
-              <div>
-                <p className="text-[10px] font-black text-blue-900 uppercase tracking-tight">Auto-Renew Active</p>
-                <p className="text-[10px] text-blue-700 font-medium mt-0.5">Next charge of ₹29,999 on Mar 01, 2027.</p>
-              </div>
-            </div>
-          </div>
 
           {/* RIGHT: INVOICE TABLE */}
-          <div className="lg:col-span-2 space-y-4">
+          <div className="lg:col-span-3 space-y-4">
             <p className="text-[10px] font-bold text-gray-400 uppercase tracking-widest">Billing History</p>
             <div className="bg-white border border-gray-200 rounded-sm overflow-hidden shadow-sm">
               <table className="w-full text-left">
