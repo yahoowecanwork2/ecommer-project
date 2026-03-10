@@ -2,18 +2,22 @@ import React from "react";
 import { Toaster } from "react-hot-toast";
 import Login from "../pages/auth/Login";
 import Register from "../pages/auth/Register";
-import Product from "../pages/product/Product";
-import Productdetail from "../pages/product/Productdetail";
-import User from "../pages/users/User";
-import Userdetail from "../pages/users/Userdetail";
 import Resetpassword from "../pages/auth/Resetpassword";
-import Orderdetails from "../pages/order/Orderdetails";
-import Order from "../pages/order/Order";
 import { Route, Routes } from "react-router-dom";
-import Home from "../pages/home/Home";
-import PlansAndBilling from "../pages/plans/PlansAndBilling";
-import Billing from "../pages/billinghistory/Billing";
-import Profile from "../pages/profile/Profile";
+import Protectedroutes from "../middleware/Protectedroutes";
+
+const User = lazy(()=> import("../pages/users/User"))
+const Product = lazy(()=> import("../pages/product/Product"))
+const Productdetail = lazy(()=> import("../pages/product/Productdetail"))
+const Userdetail = lazy(()=> import("../pages/users/Userdetail"))
+const Order = lazy(()=> import("../pages/order/Order"))
+const Orderdetails = lazy(()=> import("../pages/order/Orderdetails"))
+const Home = lazy(()=> import("../pages/home/Home"))
+const PlansAndBilling = lazy(()=> import("../pages/plans/PlansAndBilling"))
+const Billing = lazy(()=> import("../pages/billinghistory/Billing"))
+const Profile = lazy(()=> import("../pages/profile/Profile"))
+
+
 
 const Pagesroutes = () => {
   return (
@@ -23,16 +27,56 @@ const Pagesroutes = () => {
         <Route path="/" element={<Login />} />
         <Route path="/register" element={<Register />} />
         <Route path="/resetpassword" element={<Resetpassword />} />
-        <Route path="/user" element={<User />} />
-        <Route path="/user-detail/:id" element={<Userdetail />} />
-        <Route path="/product" element={<Product />} />
-        <Route path="/product-detail/:id" element={<Productdetail />} />
-        <Route path="/order" element={<Order />} />
-        <Route path="/order-detail/:id" element={<Orderdetails />} />
-        <Route path="/dashboard" element={<Home />} />
-        <Route path="/plans" element={<PlansAndBilling />} />
-        <Route path="/history" element={<Billing />} />
-        <Route path="/profile" element={<Profile />} />
+        <Route path="/user" element={
+          <Protectedroutes>
+            <User />
+          </Protectedroutes>
+          } />
+        <Route path="/user-detail/:id" element={
+          <Protectedroutes>
+            <Userdetail />
+          </Protectedroutes>
+          } />
+        <Route path="/product" element={
+          <Protectedroutes>
+            <Product />
+          </Protectedroutes>
+          } />
+        <Route path="/product-detail/:id" element={
+          <Protectedroutes>
+            <Productdetail />
+          </Protectedroutes>
+          } />
+        <Route path="/order" element={
+          <Protectedroutes>
+            <Order />
+          </Protectedroutes>
+          } />
+        <Route path="/order-detail/:id" element={
+          <Protectedroutes>
+            <Orderdetails />
+          </Protectedroutes>
+          } />
+        <Route path="/dashboard" element={
+          <Protectedroutes>
+            <Home />
+          </Protectedroutes>
+          } />
+        <Route path="/plans" element={
+          <Protectedroutes>
+            <PlansAndBilling />
+          </Protectedroutes>
+          } />
+        <Route path="/history" element={
+          <Protectedroutes>
+            <Billing />
+          </Protectedroutes>
+          } />
+        <Route path="/profile" element={
+          <Protectedroutes>
+            <Profile />
+          </Protectedroutes>
+          } />
         {/* <Route path="/payments" element={<Payments />} /> */}
       </Routes>
     </>
