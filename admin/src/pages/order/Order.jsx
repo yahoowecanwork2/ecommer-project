@@ -25,6 +25,8 @@ const Order = () => {
   const getStats = async () => {
     try {
       const res = await orderApis.stats();
+      console.log("stats-order ", res);
+
       if (res.success) {
         toast.success(res.message);
         setStats(res.stats);
