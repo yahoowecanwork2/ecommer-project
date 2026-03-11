@@ -1,5 +1,5 @@
 import express from 'express'
-import { adminLogin, adminRegister, adminResendLoginVerifyOtp, adminUpdateProfile, forgotPassword, getProfile, logout, registerOtpResend, resetPassword, sendEmailToUser, verifyAdmin, verifyLoginUser } from '../controllers/adminController.js';
+import { addSubscription, adminLogin, adminRegister, adminResendLoginVerifyOtp, adminUpdateProfile, checkAllow, forgotPassword, getProfile, logout, registerOtpResend, resetPassword, sendEmailToUser, verifyAdmin, verifyLoginUser } from '../controllers/adminController.js';
 import isAuthenticated from '../middleware/isAuthenticated.js';
 
 
@@ -18,6 +18,9 @@ adminRoutes.post("/login",adminLogin );
 adminRoutes.post("/login-otp-resend", adminResendLoginVerifyOtp);  
 adminRoutes.post("/login-otp-verify", verifyLoginUser);  
 adminRoutes.put("/logout",logout);  
+adminRoutes.get("/check-alllow",isAuthenticated,checkAllow);    
+adminRoutes.post("/update-subscription",isAuthenticated,addSubscription);    
+
 adminRoutes.get("/profile",isAuthenticated, getProfile);    
 adminRoutes.put("/profile-update",isAuthenticated, adminUpdateProfile);  
 adminRoutes.put("/send-mail",isAuthenticated, sendEmailToUser);  

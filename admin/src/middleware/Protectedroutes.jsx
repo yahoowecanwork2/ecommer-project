@@ -11,6 +11,9 @@ function Protectedroutes({ children }) {
   const token = localStorage.getItem("token");
   const [checkingAuth, setCheckingAuth] = useState(true);
 
+  // check user subscription latest if false open bluss modal on top
+
+
   const getProfile = async () => {
     try {
       const res = await adminApi.profile();
