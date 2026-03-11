@@ -251,7 +251,7 @@ export const getMyOrders = async (req, res) => {
 // };
 export const getSingleOrder = async (req, res) => {
   try {
-    console.log(req.params.orderId)
+    console.log(req.params.orderId);
     const order = await Order.findById(req.params.orderId)
       .select("-returnremark")
       .populate({
@@ -500,46 +500,30 @@ export const filterByStatus = async (req, res) => {
 // filter by date
 export const filterOrderByDate = async (req, res) => {
   try {
+    console.log("body", req.body);
+
     const { startDate, endDate } = req.body;
+
+    let filter = {};
+
     if (startDate && endDate) {
       filter.createdAt = {
         $gte: new Date(startDate),
-        $lte: new Date(endDate),
+        $lte: new Date(new Date(endDate).setHours(23, 59, 59, 999)),
       };
     }
-    const orders = await Order.find(filter)
-      .select(
-        `orderno 
-        customername 
-        phoneno 
-        shippingaddress 
-        pincode 
-        ordertotal 
-        delivereddate 
-        status 
-        cancelStatus 
-        return 
-        createdAt
-        items.name 
-        items.quantity 
-        items.productId
-        items.itemModel
-      `,
-      )
-      .sort({ createdAt: -1 });
-    const totalCount = await Order.countDocuments(filter);
-    return res.status(200).json({
+
+    const orders = await Order.find(filter).sort({ createdAt: -1 });
+
+    res.status(200).json({
       success: true,
-      totalCount,
-      returned: orders.length,
       orders,
     });
   } catch (error) {
-    console.error("Filter by date failed:", error);
-    return res.status(500).json({
+    console.log("Filter by date failed:", error);
+    res.status(500).json({
       success: false,
       message: "Error while filtering orders",
-      error: error.message,
     });
   }
 };
