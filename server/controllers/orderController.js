@@ -110,55 +110,7 @@ export const createOrder = async (req, res) => {
   }
 };
 
-// my orders
-// export const getMyOrders = async (req, res) => {
-//   try {
-//     const userId = req.id;
-//     const page = parseInt(req.query.page) || 1;
-//     const limit = parseInt(req.query.limit) || 10;
-//     const skip = (page - 1) * limit;
-//     const totalOrders = await Order.countDocuments(query);
-//     const query = { customerId: userId };
-
-//     const orders = await Order.find({ customerId: userId })
-//       .select(
-//         `
-//         orderno
-//         customername
-//         phoneno
-//         shippingaddress
-//         pincode
-//         ordertotal
-//         delivereddate
-//         status
-//         cancelStatus
-//         return
-//         createdAt
-//         items.name
-//         items.quantity
-//         items.itemId
-//         items.itemModel
-//       `,
-//       )
-//       .sort({ createdAt: -1 })
-//       .skip(skip)
-//       .limit(limit)
-//       .lean();
-
-//     return res.status(200).json({
-//       success: true,
-//       currentPage: page,
-//       totalPages: Math.ceil(totalOrders / limit),
-//       totalOrders,
-//       orders,
-//     });
-//   } catch (error) {
-//     return res.status(500).json({
-//       success: false,
-//       message: error.message,
-//     });
-//   }
-// };
+// my orders 
 export const getMyOrders = async (req, res) => {
   try {
     const userId = req.id;
@@ -213,42 +165,7 @@ export const getMyOrders = async (req, res) => {
   }
 };
 
-// get single order
-// export const getSingleOrder = async (req, res) => {
-//   try {
-//     const order = await Order.findById(req.params.orderId)
-//       .select(
-//         `
-//   -returnremark
-//   `,
-//       )
-//       .sort({ createdAt: -1 })
-//       .skip(skip)
-//       .limit(limit)
-//       .populate({
-//         path: "items.item",
-//         select: "name price image slug",
-//       })
-//       .populate("customerId", "name email")
-//       .populate("payment")
-//       .lean();
-//     if (!order) {
-//       return res.status(404).json({
-//         success: false,
-//         message: "Order not found",
-//       });
-//     }
-//     res.status(200).json({
-//       success: true,
-//       order,
-//     });
-//   } catch (err) {
-//     res.status(500).json({
-//       success: false,
-//       message: err.message,
-//     });
-//   }
-// };
+// get single order 
 export const getSingleOrder = async (req, res) => {
   try {
     console.log(req.params.orderId)

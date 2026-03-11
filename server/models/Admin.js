@@ -26,6 +26,20 @@ const adminSchema = new mongoose.Schema({
         type:Object,
         default:{}
     },
+    // add date,price,timeperiod (2 year) in object 
+    previousSubscriptions:{
+        type:[Object],
+        default:{}
+    },
+    currentSubscription:{
+        type:Object,
+        default:{}
+    },
+    allow: {
+            type: String,
+            default: "no",
+            enum: ["no","yes"],
+        },
     authenticated:{
         type:String,
         required:false

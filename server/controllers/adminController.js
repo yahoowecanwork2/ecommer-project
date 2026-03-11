@@ -135,6 +135,7 @@ export const verifyAdmin = async (req, res) => {
       authenticated: true,
       phoneno: verify.user.phoneno,
       email: verify.user.email,
+      allow:"no",
       password: verify.user.password,
     });
 
@@ -398,6 +399,86 @@ export const getProfile = async (req, res) => {
     });
   }
 };
+
+
+
+export const addSubscription = async (req, res) => {
+  try {
+    const userId = req.id;
+    const { price, timePeriod } = req.body;
+    const user = await Admin.findById(userId);
+    if (!user) {
+      return res.status(404).json({
+        success: false,
+        message: "User not found",
+      });
+    }
+    // create subscription object
+    const newSubscription = {
+      price,
+      timePeriod,
+      date: new Date(),
+    };
+    // move current subscription to previous if exists
+    if (user.currentSubscription && Object.keys(user.currentSubscription).length > 0) {
+      user.previousSubscriptions.push(user.currentSubscription);
+    }
+    // update current subscription
+    user.currentSubscription = newSubscription;
+    // allow access
+    user.allow = "yes";
+    await user.save();
+    return res.status(200).json({
+      success: true,
+      message: "Subscription added successfully",
+      user,
+    });
+  } catch (error) {
+    console.log(error);
+    return res.status(500).json({
+      success: false,
+      message: "Failed to add subscription",
+    });
+  }
+};
+
+
+
+export const checkAllow = async (req, res) => {
+  try {
+    const userId = req.id;
+    const user = await Admin.findById(userId).select("allow currentSubscription");
+    if (!user) {
+      return res.status(404).json({
+        success: false,
+        message: "User not found",
+      });
+    }
+
+    if (user.allow === "yes") {
+      return res.status(200).json({
+        success: true,
+        allow: true,
+        message: "Access allowed",
+        subscription: user.currentSubscription,
+      });
+    }
+    return res.status(403).json({
+      success: false,
+      allow: false,
+      message: "Subscription required",
+    });
+
+  } catch (error) {
+    console.log(error);
+    return res.status(500).json({
+      success: false,
+      message: "Failed to check access",
+    });
+  }
+};
+
+
 
 export const uploadProfilePic = async (req, res) => {
   try {
