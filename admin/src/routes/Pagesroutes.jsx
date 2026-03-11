@@ -5,6 +5,7 @@ import Register from "../pages/auth/Register";
 import Resetpassword from "../pages/auth/Resetpassword";
 import { Route, Routes } from "react-router-dom";
 import Protectedroutes from "../middleware/Protectedroutes";
+import { lazy } from "react";
 
 const User = lazy(()=> import("../pages/users/User"))
 const Product = lazy(()=> import("../pages/product/Product"))

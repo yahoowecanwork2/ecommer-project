@@ -1,8 +1,9 @@
 import { useEffect, useState } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { Navigate } from "react-router-dom";
-import { setUser, setAuth } from "../../redux/userSlice";
 import { adminApi } from "../apis/auth";
+import { setAuth, setUser } from "../redux/userSlice";
+
 
 function Protectedroutes({ children }) {
   const dispatch = useDispatch();
