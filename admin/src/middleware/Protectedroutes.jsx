@@ -4,7 +4,6 @@ import { Navigate } from "react-router-dom";
 import { adminApi } from "../apis/auth";
 import { setAuth, setUser } from "../redux/userSlice";
 
-
 function Protectedroutes({ children }) {
   const dispatch = useDispatch();
   const { auth } = useSelector((state) => state.user);
@@ -13,6 +12,15 @@ function Protectedroutes({ children }) {
 
   // check user subscription latest if false open bluss modal on top
 
+  const checkAllow = async () => {
+    try {
+      const res = await adminApi.checkAllow();
+      return res;
+    } catch (error) {
+      console.log("Allow check failed", error);
+      return null;
+    }
+  };
 
   const getProfile = async () => {
     try {
@@ -20,6 +28,10 @@ function Protectedroutes({ children }) {
       if (res?.success) {
         dispatch(setUser(res.user));
         dispatch(setAuth(true));
+
+        // check allow after profile load
+        const allowResponse = await checkAllow();
+        console.log("Allow response:", allowResponse);
       } else {
         localStorage.removeItem("token");
         dispatch(setAuth(false));
@@ -44,16 +56,19 @@ function Protectedroutes({ children }) {
       setCheckingAuth(false);
     }
   }, []);
+
   if (checkingAuth) {
-    return null; 
+    return null;
   }
 
   if (!token && !auth) {
     return <Navigate to="/login" replace />;
   }
+
   if (!auth) {
     return <Navigate to="/login" replace />;
   }
+
   return children;
 }
 
