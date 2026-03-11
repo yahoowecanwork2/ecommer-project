@@ -15,6 +15,11 @@ function Protectedroutes({ children }) {
   const checkAllow = async () => {
     try {
       const res = await adminApi.checkAllow();
+      console.log(res)
+      if(res.allow){
+        // open modal 
+        console.log("Access")
+      }
       return res;
     } catch (error) {
       console.log("Allow check failed", error);
