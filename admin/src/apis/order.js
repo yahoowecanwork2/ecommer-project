@@ -33,12 +33,12 @@ export const orderApis = {
     const res = await api.get("/order/admin/filter-by-status");
     return res.data;
   },
-  filterByDate: async () => {
-    const res = await api.get("/order/admin/filter-by-date");
+  filterByDate: async (data) => {
+    const res = await api.post("/order/admin/filter-by-date", data);
     return res.data;
   },
   filterByReturnStatus: async () => {
-    const res = await api.get("/order/admin/filter-by-returnstatus");
+    const res = await api.get("/order/admin/filter-by-returnstatus/");
     return res.data;
   },
   filterBYCancelStatus: async () => {

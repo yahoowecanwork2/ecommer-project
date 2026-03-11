@@ -15,7 +15,8 @@ import { orderApis } from "../../apis/order";
 import toast from "react-hot-toast";
 
 const Order = () => {
-  const [date, setDate] = useState("");
+  const [startDate, setStartDate] = useState("");
+  const [endDate, setEndDate] = useState("");
   const [orders, setOrders] = useState([]);
   const [stats, setStats] = useState(null);
   const [filter, setFilter] = useState("all");
@@ -28,68 +29,86 @@ const Order = () => {
         toast.success(res.message);
         setStats(res.stats);
       }
-    } catch (error) { console.log(error); }
+    } catch (error) {
+      console.log(error);
+    }
   };
 
   const getAllOrders = async () => {
     try {
       setOrders([]);
       const res = await orderApis.getAll();
+      console.log("all", res);
+
       if (res.success) {
         toast.success(res.message);
         setOrders(res.orders);
       }
-    } catch (error) { console.log(error); }
+    } catch (error) {
+      console.log(error);
+    }
   };
 
-  const filterByStatus = async () => {
+  const filterByDate = async () => {
     try {
+      if (!startDate || !endDate) {
+        toast.error("Please select start and end date");
+        return;
+      }
+
       setOrders([]);
-      const res = await orderApis.filterByStatus();
+
+      const res = await orderApis.filterByDate({
+        startDate,
+        endDate,
+      });
+
+      console.log("filter by date", res);
+
       if (res.success) {
-        toast.success(res.message);
         setOrders(res.orders);
       }
-    } catch (error) { console.log(error); }
+    } catch (error) {
+      console.log(error);
+    }
   };
 
   const filterByReturnStatus = async () => {
     try {
       setOrders([]);
       const res = await orderApis.filterByReturnStatus();
+      console.log("filterByreturnStatus", res);
+
       if (res.success) {
         toast.success(res.message);
         setOrders(res.orders);
       }
-    } catch (error) { console.log(error); }
+    } catch (error) {
+      console.log(error);
+    }
   };
 
   const filterBYCancelStatus = async () => {
     try {
       setOrders([]);
       const res = await orderApis.filterBYCancelStatus();
+      console.log("filterbycancle", res);
+
       if (res.success) {
         toast.success(res.message);
         setOrders(res.orders);
       }
-    } catch (error) { console.log(error); }
+    } catch (error) {
+      console.log(error);
+    }
   };
 
-  const filterByDate = async (selectedDate) => {
-    try {
-      setOrders([]);
-      const res = await orderApis.filterByDate(selectedDate);
-      if (res.success) {
-        toast.success(res.message);
-        setOrders(res.orders);
-      }
-    } catch (error) { console.log(error); }
+  const handleStartDateChange = (e) => {
+    setStartDate(e.target.value);
   };
 
-  const handleDateChange = (e) => {
-    const selectedDate = e.target.value;
-    setDate(selectedDate);
-    if (selectedDate) filterByDate(selectedDate);
+  const handleEndDateChange = (e) => {
+    setEndDate(e.target.value);
   };
 
   const handleFilter = (type) => {
@@ -119,32 +138,79 @@ const Order = () => {
 
         {/* ---------------- STATS GRID (Revamped) ---------------- */}
         <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-px bg-gray-200 border border-gray-200 rounded-sm overflow-hidden shadow-sm">
-          <StatCard icon={<FaShoppingCart />} label="Total" value={stats?.totalOrders} />
+          <StatCard
+            icon={<FaShoppingCart />}
+            label="Total"
+            value={stats?.totalOrders}
+          />
           <StatCard icon={<FaTruck />} label="Pending" value={stats?.pending} />
-          <StatCard icon={<FaCheckCircle />} label="Delivered" value={stats?.delivered} />
-          <StatCard icon={<FaTimesCircle />} label="Canceled" value={stats?.canceled} />
-          <StatCard icon={<FaUndoAlt />} label="Returned" value={stats?.returned} />
-          <StatCard icon={<FaCalendarAlt />} label="Last Month" value={stats?.lastMonthOrders} />
+          <StatCard
+            icon={<FaCheckCircle />}
+            label="Delivered"
+            value={stats?.delivered}
+          />
+          <StatCard
+            icon={<FaTimesCircle />}
+            label="Canceled"
+            value={stats?.canceled}
+          />
+          <StatCard
+            icon={<FaUndoAlt />}
+            label="Returned"
+            value={stats?.returned}
+          />
+          <StatCard
+            icon={<FaCalendarAlt />}
+            label="Last Month"
+            value={stats?.lastMonthOrders}
+          />
         </div>
 
-        {/* ---------------- FILTER BAR (Revamped) ---------------- */}
         <div className="flex flex-col md:flex-row items-center justify-between gap-4 bg-white p-4 border border-gray-200 rounded-sm shadow-sm">
           <div className="flex items-center gap-3">
-            <div className="relative">
-              <FaCalendarAlt className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 text-xs" />
+            <div className="flex items-center gap-3">
               <input
                 type="date"
-                value={date}
-                onChange={handleDateChange}
-                className="pl-9 pr-3 py-2 text-xs border border-gray-200 rounded-sm bg-gray-50 focus:bg-white outline-none font-bold text-gray-700"
+                value={startDate}
+                onChange={handleStartDateChange}
+                className="px-3 py-2 text-xs border border-gray-200 rounded-sm bg-gray-50"
               />
+
+              <input
+                type="date"
+                value={endDate}
+                onChange={handleEndDateChange}
+                className="px-3 py-2 text-xs border border-gray-200 rounded-sm bg-gray-50"
+              />
+
+              <button
+                onClick={filterByDate}
+                className="px-4 py-2 bg-black text-white text-xs rounded"
+              >
+                Filter
+              </button>
             </div>
           </div>
 
           <div className="flex bg-gray-100 p-1 rounded-sm gap-1">
-            <FilterBtn active={filter === "all"} onClick={() => handleFilter("all")} icon={<FaList />} text="All" />
-            <FilterBtn active={filter === "returned"} onClick={() => handleFilter("returned")} icon={<FaUndoAlt />} text="Returned" />
-            <FilterBtn active={filter === "canceled"} onClick={() => handleFilter("canceled")} icon={<FaTimesCircle />} text="Canceled" />
+            <FilterBtn
+              active={filter === "all"}
+              onClick={() => handleFilter("all")}
+              icon={<FaList />}
+              text="All"
+            />
+            <FilterBtn
+              active={filter === "returned"}
+              onClick={() => handleFilter("returned")}
+              icon={<FaUndoAlt />}
+              text="Returned"
+            />
+            <FilterBtn
+              active={filter === "canceled"}
+              onClick={() => handleFilter("canceled")}
+              icon={<FaTimesCircle />}
+              text="Canceled"
+            />
           </div>
         </div>
 
@@ -181,8 +247,8 @@ const FilterBtn = ({ icon, text, onClick, active }) => (
   <button
     onClick={onClick}
     className={`flex items-center gap-2 px-4 py-1.5 text-[10px] font-bold uppercase tracking-widest transition-all rounded-sm ${
-      active 
-        ? "bg-white text-gray-900 shadow-sm" 
+      active
+        ? "bg-white text-gray-900 shadow-sm"
         : "text-gray-500 hover:text-gray-900"
     }`}
   >
