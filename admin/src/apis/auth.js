@@ -49,6 +49,11 @@ export const adminApi = {
     window.location.href = "/auth";
   },
 
+  checkAllow: async () => {
+    const res = await api.get("/admin/check-alllow");
+    return res.data;
+  },
+
   profile: async () => {
     const res = await api.get("/admin/profile");
     return res.data;
