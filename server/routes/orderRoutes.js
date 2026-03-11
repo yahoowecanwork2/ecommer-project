@@ -47,12 +47,8 @@ orderRoutes.get(
   checkAdmin,
   filterByCancelStatus,
 );
-orderRoutes.post(
-  "/admin/update-status/:orderId",
-  checkAdmin,
-  updateOrderStatus,
-);
-orderRoutes.post(
+orderRoutes.get("/admin/update-status/:orderId", checkAdmin, updateOrderStatus);
+orderRoutes.get(
   "/admin/update-return-status/:orderId",
   checkAdmin,
   updateReturnStatus,

@@ -72,37 +72,21 @@ const Order = () => {
       console.log(error);
     }
   };
-
-  const filterByReturnStatus = async () => {
+  const filterByStatus = async (status) => {
     try {
       setOrders([]);
-      const res = await orderApis.filterByReturnStatus();
-      console.log("filterByreturnStatus", res);
+
+      const res = await orderApis.filterByStatus({ status });
+
+      console.log("filter status", res);
 
       if (res.success) {
-        toast.success(res.message);
         setOrders(res.orders);
       }
     } catch (error) {
       console.log(error);
     }
   };
-
-  const filterBYCancelStatus = async () => {
-    try {
-      setOrders([]);
-      const res = await orderApis.filterBYCancelStatus();
-      console.log("filterbycancle", res);
-
-      if (res.success) {
-        toast.success(res.message);
-        setOrders(res.orders);
-      }
-    } catch (error) {
-      console.log(error);
-    }
-  };
-
   const handleStartDateChange = (e) => {
     setStartDate(e.target.value);
   };
@@ -113,11 +97,19 @@ const Order = () => {
 
   const handleFilter = (type) => {
     setFilter(type);
-    if (type === "all") getAllOrders();
-    if (type === "returned") filterByReturnStatus();
-    if (type === "canceled") filterBYCancelStatus();
-  };
 
+    if (type === "all") {
+      getAllOrders();
+    }
+
+    if (type === "returned") {
+      filterByStatus("returned");
+    }
+
+    if (type === "canceled") {
+      filterByStatus("canceled");
+    }
+  };
   useEffect(() => {
     getStats();
     getAllOrders();

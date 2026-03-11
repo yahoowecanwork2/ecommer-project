@@ -28,9 +28,8 @@ export const orderApis = {
     console.log(res);
     return res.data;
   },
-
-  filterByStatus: async () => {
-    const res = await api.get("/order/admin/filter-by-status");
+  filterByStatus: async (data) => {
+    const res = await api.post("/order/admin/filter-by-status", data);
     return res.data;
   },
   filterByDate: async (data) => {
