@@ -1,4 +1,4 @@
-import React from "react";
+import React, { lazy } from "react";
 import { Toaster } from "react-hot-toast";
 import Register from "../pages/auth/Register";
 import { Route, Routes } from "react-router-dom";
