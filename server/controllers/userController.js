@@ -1,16 +1,14 @@
-// user login bu otp 
-// not from email and password 
+// user login bu otp
+// not from email and password
 import { generateToken } from "../utils/generateUserToken.js";
-import { sendMailtoUser} from "../middleware/notifyMail.js";
+import { sendMailtoUser } from "../middleware/notifyMail.js";
 import User from "../models/User.js";
-
-
 
 //-------------------------------------- user controlers ----------------------------------
 export const checkUserExist = async (req, res) => {
   try {
     const { phone } = req.body;
-    const userExists = await User.findOne({ phoneno:phone})
+    const userExists = await User.findOne({ phoneno: phone });
     if (userExists) {
       return res.status(400).json({
         success: false,
@@ -30,18 +28,15 @@ export const checkUserExist = async (req, res) => {
   }
 };
 
-
-
-
 // verify user for register  and send token
 export const registerUser = async (req, res) => {
   try {
-    const {phone} = req.body;
+    const { phone } = req.body;
     await User.create({
-      name:"E-commerce Module user",
-      phoneno:phone,
+      name: "E-commerce Module user",
+      phoneno: phone,
     });
-      const user = await User.findOne({phoneno:phone}).select(
+    const user = await User.findOne({ phoneno: phone }).select(
       "name phoneno email photoUrl",
     );
     //  generate token function call
@@ -59,14 +54,12 @@ export const registerUser = async (req, res) => {
   }
 };
 
-
-
 // verify login otp and generate token
 export const loginUser = async (req, res) => {
   try {
-    const {phone } = req.body;
+    const { phone } = req.body;
     const phoneno = phone;
-    const user = await User.findOne({ phoneno:phone }).select(
+    const user = await User.findOne({ phoneno: phone }).select(
       "name phoneno email photoUrl",
     );
     await generateToken(res, user, `Welcome back ${user.name}`);
@@ -93,7 +86,6 @@ export const logout = async (req, res) => {
     });
   }
 };
-
 
 // give user profile detail
 export const getProfile = async (req, res) => {
@@ -249,9 +241,7 @@ export const sendEmailToUser = async (req, res) => {
   }
 };
 
-
-
-// get my cart 
+// get my cart
 export const getMyCartItems = async (req, res) => {
   try {
     const userId = req.id;
@@ -275,7 +265,6 @@ export const getMyCartItems = async (req, res) => {
       totalAmount,
       cart: user.cart,
     });
-
   } catch (error) {
     console.error("Get cart error:", error);
     return res.status(500).json({
@@ -285,23 +274,14 @@ export const getMyCartItems = async (req, res) => {
   }
 };
 
-
-
-// get my cart 
+// get my cart
 export const addItemToCart = async (req, res) => {
   try {
     const userId = req.id;
-    const {
-      productId,
-      imageUrl,
-      quantity,
-      price,
-      slug,
-      name,
-      description,
-    } = req.body;
-   console.log(userId)
-   console.log(req.body)
+    const { productId, imageUrl, quantity, price, slug, name, description } =
+      req.body;
+    console.log(userId);
+    console.log(req.body);
     if (!productId) {
       return res.status(400).json({
         success: false,
@@ -316,7 +296,7 @@ export const addItemToCart = async (req, res) => {
       });
     }
     const existingItem = user.cart.find(
-      (item) => item.slug.toString() === slug
+      (item) => item.slug.toString() === slug,
     );
     if (existingItem) {
       existingItem.quantity += 1;
@@ -339,7 +319,6 @@ export const addItemToCart = async (req, res) => {
         : "Item added to cart",
       cart: user.cart,
     });
-
   } catch (error) {
     console.error("Add to cart error:", error);
     return res.status(500).json({
@@ -349,14 +328,12 @@ export const addItemToCart = async (req, res) => {
   }
 };
 
-
-
 // remove item to cart
 export const removeFromCart = async (req, res) => {
   try {
     const userId = req.id;
     const { productId } = req.body;
-    console.log(req.body)
+    console.log(req.body);
     if (!productId) {
       return res.status(400).json({
         success: false,
@@ -370,7 +347,7 @@ export const removeFromCart = async (req, res) => {
           cart: { productId: productId },
         },
       },
-      { new: true }
+      { new: true },
     ).select("cart");
     if (!user) {
       return res.status(404).json({
@@ -390,8 +367,7 @@ export const removeFromCart = async (req, res) => {
       message: "Failed to remove item from cart",
     });
   }
-}; 
-
+};
 
 export const updateCartQuantity = async (req, res) => {
   try {
@@ -421,7 +397,7 @@ export const updateCartQuantity = async (req, res) => {
     }
 
     const itemIndex = user.cart.findIndex(
-      (item) => item.productId.toString() === productId
+      (item) => item.productId.toString() === productId,
     );
 
     if (itemIndex === -1) {
@@ -441,12 +417,9 @@ export const updateCartQuantity = async (req, res) => {
     return res.status(200).json({
       success: true,
       message:
-        quantity === 0
-          ? "Item removed from cart"
-          : "Cart quantity updated",
+        quantity === 0 ? "Item removed from cart" : "Cart quantity updated",
       cart: user.cart,
     });
-
   } catch (error) {
     console.error("Update cart quantity error:", error);
     return res.status(500).json({
@@ -456,16 +429,14 @@ export const updateCartQuantity = async (req, res) => {
   }
 };
 
-
-
-// clear cart 
+// clear cart
 export const clearCart = async (req, res) => {
   try {
     const userId = req.id;
     const user = await User.findByIdAndUpdate(
       userId,
       { $set: { cart: [] } },
-      { new: true }
+      { new: true },
     ).select("cart");
     if (!user) {
       return res.status(404).json({
@@ -487,9 +458,7 @@ export const clearCart = async (req, res) => {
   }
 };
 
-
-
-// my wishlist 
+// my wishlist
 export const getMyWishlistItems = async (req, res) => {
   try {
     const userId = req.id;
@@ -505,7 +474,6 @@ export const getMyWishlistItems = async (req, res) => {
       count: user.wishlist.length,
       cart: user.wishlist,
     });
-
   } catch (error) {
     console.error("Get cart error:", error);
     return res.status(500).json({
@@ -515,20 +483,11 @@ export const getMyWishlistItems = async (req, res) => {
   }
 };
 
-
-
-// add itme to wishlist 
+// add itme to wishlist
 export const addItemToWishlist = async (req, res) => {
   try {
     const userId = req.id;
-    const {
-      productId,
-      imageUrl,
-      price,
-      slug,
-      name,
-      description,
-    } = req.body;
+    const { productId, imageUrl, price, slug, name, description } = req.body;
     if (!productId) {
       return res.status(400).json({
         success: false,
@@ -543,7 +502,7 @@ export const addItemToWishlist = async (req, res) => {
       });
     }
     const existingItem = user.wishlist.find(
-      (item) => item.productId.toString() === productId
+      (item) => item.productId.toString() === productId,
     );
     if (existingItem) {
       return res.status(200).json({
@@ -575,13 +534,12 @@ export const addItemToWishlist = async (req, res) => {
   }
 };
 
-
-// remove item to wishlist 
+// remove item to wishlist
 export const removeFromWishlist = async (req, res) => {
   try {
     const userId = req.id;
     const { productId } = req.body;
-    console.log(productId)
+    console.log(productId);
     if (!productId) {
       return res.status(400).json({
         success: false,
@@ -595,7 +553,7 @@ export const removeFromWishlist = async (req, res) => {
           wishlist: { productId: productId },
         },
       },
-      { new: true }
+      { new: true },
     ).select("wishlist");
     if (!user) {
       return res.status(404).json({
@@ -615,16 +573,16 @@ export const removeFromWishlist = async (req, res) => {
       message: "Failed to remove item from wishlist",
     });
   }
-}; 
+};
 
-// clear wihslist 
+// clear wihslist
 export const clearWishlist = async (req, res) => {
   try {
     const userId = req.id;
     const user = await User.findByIdAndUpdate(
       userId,
       { $set: { wishlist: [] } },
-      { new: true }
+      { new: true },
     ).select("wishlist");
     if (!user) {
       return res.status(404).json({
@@ -646,10 +604,7 @@ export const clearWishlist = async (req, res) => {
   }
 };
 
-
-
-
-// admin apis 
+// admin apis
 export const getAllUsers = async (req, res) => {
   try {
     const page = parseInt(req.query.page) || 1;
@@ -658,7 +613,7 @@ export const getAllUsers = async (req, res) => {
     const totalUsers = await User.countDocuments();
     const users = await User.find({})
       .select("-password -orders -wishlist -cart -address")
-      .sort({ createdAt: -1 }) 
+      .sort({ createdAt: -1 })
       .skip(skip)
       .limit(limit);
     const totalPages = Math.ceil(totalUsers / limit);
@@ -682,8 +637,6 @@ export const getAllUsers = async (req, res) => {
     });
   }
 };
-
-
 
 export const getSingleUser = async (req, res) => {
   try {
@@ -711,7 +664,6 @@ export const getSingleUser = async (req, res) => {
   } catch (error) {
     console.error("Get single user error:", error);
 
-
     if (error.name === "CastError") {
       return res.status(400).json({
         success: false,
@@ -725,8 +677,6 @@ export const getSingleUser = async (req, res) => {
     });
   }
 };
-
-
 
 export const getSingleUserOrders = async (req, res) => {
   try {
@@ -769,9 +719,6 @@ export const getSingleUserOrders = async (req, res) => {
   }
 };
 
-
-
-
 export const getUserCartItems = async (req, res) => {
   try {
     const { userId } = req.params;
@@ -790,9 +737,8 @@ export const getUserCartItems = async (req, res) => {
       });
     }
     const subtotal = user.cart.reduce(
-      (acc, item) =>
-        acc + Number(item.price || 0) * Number(item.quantity || 0),
-      0
+      (acc, item) => acc + Number(item.price || 0) * Number(item.quantity || 0),
+      0,
     );
 
     return res.status(200).json({
@@ -818,8 +764,6 @@ export const getUserCartItems = async (req, res) => {
     });
   }
 };
-
-
 
 export const getUserWishlistItems = async (req, res) => {
   try {
@@ -855,6 +799,46 @@ export const getUserWishlistItems = async (req, res) => {
     return res.status(500).json({
       success: false,
       message: "Failed to fetch cart",
+    });
+  }
+};
+
+export const SearchUser = async (req, res) => {
+  try {
+    const { q } = req.query;
+
+    if (!q) {
+      return res.status(400).json({
+        success: false,
+        message: "Search query is required",
+      });
+    }
+
+    const user = await User.findOne({
+      $or: [
+        { email: { $regex: q, $options: "i" } },
+        { name: { $regex: q, $options: "i" } },
+        { phoneno: { $regex: q, $options: "i" } },
+      ],
+    }).select("_id name email phoneno");
+
+    if (!user) {
+      return res.status(404).json({
+        success: false,
+        data: [],
+        message: "User not found",
+      });
+    }
+
+    res.json({
+      success: true,
+      data: user,
+    });
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      data: [],
+      message: error.message,
     });
   }
 };

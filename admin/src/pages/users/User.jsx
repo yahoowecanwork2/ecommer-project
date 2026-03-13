@@ -2,8 +2,16 @@ import React, { useEffect, useState } from "react";
 import Layout from "../../componets/common/Layout";
 import { userApi } from "../../apis/user";
 import UserCard from "./component/Card";
-import { FaUsers, FaSearch, FaChevronLeft, FaChevronRight, FaUserCircle, FaEnvelope, FaPhone, FaArrowRight } from "react-icons/fa";
-
+import {
+  FaUsers,
+  FaSearch,
+  FaChevronLeft,
+  FaChevronRight,
+  FaUserCircle,
+  FaEnvelope,
+  FaPhone,
+  FaArrowRight,
+} from "react-icons/fa";
 
 const UserSkeleton = () => (
   <tr className="animate-pulse border-b border-gray-100 last:border-0">
@@ -36,13 +44,16 @@ const Users = () => {
   const [page, setPage] = useState(1);
   const [loading, setLoading] = useState(false);
   const [pagination, setPagination] = useState({});
+  const [searchQuery, setSearchQuery] = useState("");
 
-    // Mock Fetching Logic (Replace with your actual API call)
+  // Mock Fetching Logic (Replace with your actual API call)
   useEffect(() => {
     const loadData = async () => {
       setLoading(true);
       // await userApi.getUsers(page)...
-      setTimeout(() => { setLoading(false); }, 1500); // Simulated delay
+      setTimeout(() => {
+        setLoading(false);
+      }, 1500); // Simulated delay
     };
     loadData();
   }, [page]);
@@ -62,6 +73,22 @@ const Users = () => {
     }
   };
 
+  const searchUser = async (q) => {
+    try {
+      setLoading(true);
+      const res = await userApi.searchUser(q);
+      console.log(res);
+    } catch (error) {
+      console.error("User search failed:", error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    searchUser(searchQuery);
+  }, [searchQuery]);
+
   useEffect(() => {
     fetchUsers();
   }, [page]);
@@ -74,18 +101,27 @@ const Users = () => {
           <div>
             <div className="flex items-center gap-2 mb-1">
               <FaUsers className="text-gray-900 text-lg" />
-              <h2 className="text-lg font-bold text-gray-900 tracking-tight">User Management</h2>
+              <h2 className="text-lg font-bold text-gray-900 tracking-tight">
+                User Management
+              </h2>
             </div>
             <p className="text-[11px] text-gray-500 font-medium uppercase tracking-wider flex items-center gap-2">
-              Total Users: {loading ? <span className="w-8 h-3 bg-gray-100 animate-pulse rounded-sm" /> : pagination.totalUsers}
+              Total Users:{" "}
+              {loading ? (
+                <span className="w-8 h-3 bg-gray-100 animate-pulse rounded-sm" />
+              ) : (
+                pagination.totalUsers
+              )}
             </p>
           </div>
 
           <div className="relative">
             <FaSearch className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 text-xs" />
-            <input 
-              type="text" 
-              placeholder="Search users..." 
+            <input
+              type="text"
+              placeholder="Search users..."
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
               className="pl-9 pr-4 py-2 text-xs border border-gray-200 rounded-sm w-full sm:w-64 bg-gray-50 focus:bg-white focus:ring-1 focus:ring-gray-900 outline-none transition-all"
             />
           </div>
@@ -104,11 +140,11 @@ const Users = () => {
                 </tr>
               </thead>
               <tbody className="divide-y divide-gray-100">
-                {loading ? (
-                  [...Array(6)].map((_, i) => <UserSkeleton key={i} />)
-                ) : (
-                  users?.map((user) => <UserCard key={user._id} user={user} />)
-                )}
+                {loading
+                  ? [...Array(6)].map((_, i) => <UserSkeleton key={i} />)
+                  : users?.map((user) => (
+                      <UserCard key={user._id} user={user} />
+                    ))}
               </tbody>
             </table>
           </div>
@@ -122,14 +158,14 @@ const Users = () => {
           <div className="flex items-center gap-2">
             <button
               disabled={loading || page === 1}
-              onClick={() => setPage(p => p - 1)}
+              onClick={() => setPage((p) => p - 1)}
               className="px-4 py-2 text-[10px] font-bold uppercase tracking-widest border border-gray-200 rounded-sm hover:bg-gray-900 hover:text-white transition-all disabled:opacity-30"
             >
               <FaChevronLeft className="inline mr-1" /> Previous
             </button>
             <button
               disabled={loading || page === pagination.totalPages}
-              onClick={() => setPage(p => p + 1)}
+              onClick={() => setPage((p) => p + 1)}
               className="px-4 py-2 text-[10px] font-bold uppercase tracking-widest bg-gray-900 text-white rounded-sm hover:bg-gray-800 transition-all disabled:opacity-30"
             >
               Next <FaChevronRight className="inline ml-1" />
@@ -142,5 +178,3 @@ const Users = () => {
 };
 
 export default Users;
-
-
