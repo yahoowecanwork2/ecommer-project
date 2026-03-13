@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { Navigate } from "react-router-dom";
 
-import { adminApi } from "../apis/auth";
+import { authApi } from "../apis/auth";
 import { setAuth, setUser } from "../redux/userSlice";
 
 function Protectedroutes({ children }) {
@@ -13,7 +13,7 @@ function Protectedroutes({ children }) {
 
   const getProfile = async () => {
     try {
-      const res = await adminApi.profile();
+      const res = await authApi.profile();
       if (res?.success) {
         dispatch(setUser(res.user));
         dispatch(setAuth(true));
@@ -42,7 +42,7 @@ function Protectedroutes({ children }) {
     }
   }, []);
   if (checkingAuth) {
-    return null; 
+    return null;
   }
 
   if (!token && !auth) {
