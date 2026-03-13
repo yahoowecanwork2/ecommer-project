@@ -105,7 +105,7 @@ const Orderdetails = () => {
             <div className="flex flex-wrap justify-center md:justify-start gap-4 text-xs text-gray-500 font-medium">
               <span className="flex items-center gap-1.5">
                 <FaRegCalendarAlt className="text-gray-300" /> Placed on{" "}
-                {order?.createdAt}
+                {new Date(order?.createdAt).toLocaleString("en-IN")}{" "}
               </span>
               <span className="flex items-center gap-1.5">
                 <FaHashtag className="text-gray-300" /> ID: {order?._id}
