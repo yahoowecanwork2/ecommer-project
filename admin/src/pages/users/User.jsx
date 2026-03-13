@@ -73,17 +73,24 @@ const Users = () => {
     }
   };
 
-  const searchUser = async (q) => {
-    try {
-      setLoading(true);
-      const res = await userApi.searchUser(q);
-      console.log(res);
-    } catch (error) {
-      console.error("User search failed:", error);
-    } finally {
-      setLoading(false);
+const searchUser = async (q) => {
+  try {
+    setLoading(true);
+
+    const res = await userApi.searchUser(q);
+
+    if (res.status === 404) {
+      return; // user not found
     }
-  };
+
+    console.log(res.data);
+
+  } catch (error) {
+    console.error("User search failed:", error);
+  } finally {
+    setLoading(false);
+  }
+};
 
   useEffect(() => {
     searchUser(searchQuery);

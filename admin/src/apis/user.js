@@ -28,7 +28,13 @@ export const userApi = {
     return res.data;
   },
   searchUser: async (query, data) => {
-    const res = await api.get(`/user/search?q=${query}`, data);
+    const res = await api.get(
+      `/user/search?q=${query}`,
+      {
+        validateStatus: (status) => status < 500,
+      },
+      data,
+    );
     return res.data;
   },
 };
