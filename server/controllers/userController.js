@@ -820,7 +820,7 @@ export const SearchUser = async (req, res) => {
         { name: { $regex: q, $options: "i" } },
         { phoneno: { $regex: q, $options: "i" } },
       ],
-    }).select("_id name email phoneno");
+    }).select("_id name email phoneno").limit(10);
 
     if (!user) {
       return res.status(404).json({

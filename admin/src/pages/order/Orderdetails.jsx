@@ -37,6 +37,18 @@ const Orderdetails = () => {
     }
   };
 
+  const markAsDelivered = async () => {
+    try {
+      setLoading(true);
+      const res = await orderApis.updateStatus(id, {status:"delivered"});
+      console.log("response", res);
+      setLoading(false);
+    } catch (error) {
+      setLoading(false);
+      console.log(error);
+    }
+  };
+
   useEffect(() => {
     getSingleOrder();
   }, [id]);
@@ -79,10 +91,7 @@ const Orderdetails = () => {
           </button>
 
           <div className="flex gap-2">
-            <button className="px-4 py-2 text-[11px] font-bold uppercase tracking-widest bg-red-600 text-white rounded-sm hover:bg-red-700 transition-all">
-              Cancel Order
-            </button>
-            <button className="px-4 py-2 text-[11px] font-bold uppercase tracking-widest bg-green-600 text-white rounded-sm hover:bg-green-700 transition-all">
+            <button onClick={markAsDelivered} className="px-4 py-2 text-[11px] font-bold uppercase tracking-widest bg-green-600 text-white rounded-sm hover:bg-green-700 transition-all">
               Mark Delivered
             </button>
           </div>
