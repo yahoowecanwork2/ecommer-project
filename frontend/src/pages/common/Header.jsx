@@ -102,7 +102,7 @@ const Header = () => {
           <div className="mt-12 space-y-8">
             <p className="text-[10px] font-black uppercase tracking-[0.5em] text-[#D16B92]">Navigation</p>
             <nav className="flex flex-col gap-6">
-              {["Home", "About", "Shop", "Collections", "Contact"].map((item) => (
+              {["Home", "About", "Product", "Contact"].map((item) => (
                 <Link 
                   key={item}
                   to={item === "Home" ? "/" : `/${item.toLowerCase()}`}
