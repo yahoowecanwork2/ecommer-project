@@ -6,400 +6,151 @@ import Header from "../common/Header";
 const Home = () => {
   return (
     <>
-      <div className="font-google">
+      <div className="font-google bg-[#FFF9FB] text-[#2D1B2D] selection:bg-[#F3E5F5] selection:text-[#7B1FA2]">
         <Header />
-        <section className="relative w-full min-h-screen bg-[#f5f5f3] overflow-hidden">
-          <div className="max-w-7xl mx-auto px-6 py-32 grid lg:grid-cols-2 items-center">
-            {/* LEFT */}
-            <div className="space-y-10 z-10">
-              <p className="text-xs tracking-[0.4em] uppercase text-gray-500 fade-up">
-                New Drop 2026
-              </p>
 
-              <h1 className="text-6xl md:text-7xl lg:text-8xl font-medium leading-[0.95] text-black fade-up-delay">
-                Move
-                <br />
-                Different.
-              </h1>
-
-              <p className="text-lg text-gray-600 max-w-md leading-relaxed fade-up-delay-2">
-                Contemporary silhouettes built for presence. Designed for the
-                ones who don’t blend in.
-              </p>
-
-              <div className="flex items-center gap-8 pt-4 fade-up-delay-2">
-                <Link
-                  to="/product"
-                  className="px-10 py-3 bg-black text-white text-sm font-medium rounded-full hover:bg-gray-800 transition"
-                >
-                  Shop Now
+        {/* --- SECTION 1: HERO --- */}
+        <section className="relative min-h-[85vh] flex items-center pt-24 pb-12 overflow-hidden bg-[#FAF9F6]">
+          <div className="absolute inset-0 opacity-10 pointer-events-none">
+            <img src="https://images.unsplash.com/photo-1490481651871-ab68de25d43d?q=80&w=2070" className="w-full h-full object-cover" alt="Texture" />
+          </div>
+          <div className="max-w-7xl mx-auto px-8 grid lg:grid-cols-2 items-center gap-12 relative z-10 w-full">
+            <div className="space-y-8 text-center lg:text-left">
+              <div className="flex items-center justify-center lg:justify-start gap-4">
+                <span className="w-10 h-[1px] bg-[#D16B92]"></span>
+                <p className="text-[10px] tracking-[0.4em] uppercase font-bold text-[#D16B92]">EST. 2026 • Summer Edit</p>
+              </div>
+              <h1 className="text-[12vw] lg:text-[110px] font-serif italic leading-[0.9] tracking-tighter">Effortless <br /><span className="not-italic font-light text-[#D16B92]">Grace.</span></h1>
+              <p className="text-lg text-gray-500 max-w-md mx-auto lg:mx-0 font-light leading-relaxed">Curated collections that blend traditional art with modern silhouettes.</p>
+              <div className="flex flex-col sm:flex-row items-center justify-center lg:justify-start gap-6 pt-2">
+                <Link to="/product" className="group relative px-12 py-4 bg-[#D16B92] text-white text-[11px] font-bold uppercase tracking-[0.2em] overflow-hidden rounded-full shadow-lg">
+                  <span className="relative z-10">Shop Collection</span>
+                  <div className="absolute inset-0 bg-[#A34D6F] translate-y-full group-hover:translate-y-0 transition-transform duration-500"></div>
                 </Link>
-
-                <Link
-                  to="/about"
-                  className="text-sm font-medium border-b border-black pb-1 hover:opacity-70 transition"
-                >
-                  Lookbook
-                </Link>
+                <Link to="/about" className="text-[11px] font-bold uppercase tracking-[0.2em] border-b border-[#D16B92]/30 pb-1 hover:text-[#D16B92] transition-all">Our Story</Link>
               </div>
             </div>
-
-            {/* RIGHT */}
-            <div className="relative mt-16 lg:mt-0 overflow-hidden">
-              <img
-                src="/src/assets/images/image.png"
-                alt="Fashion Model"
-                className="w-full h-[700px] object-cover image-zoom image-hover"
-              />
+            <div className="relative flex justify-center items-center mt-12 lg:mt-0">
+              <div className="relative w-full max-w-md aspect-[3/4] rounded-t-[200px] rounded-b-3xl overflow-hidden shadow-2xl border-[12px] border-white z-10">
+                <img src="https://images.pexels.com/photos/10183350/pexels-photo-10183350.jpeg?auto=compress&cs=tinysrgb&w=1260" className="w-full h-full object-cover" alt="Hero" />
+              </div>
             </div>
           </div>
         </section>
-        {/* <section className="w-full bg-[#faf7f2] py-28">
-          <div className="max-w-7xl mx-auto px-6">
-            Heading
-            <div className="mb-16 text-center">
-              <p className="text-xs tracking-[0.4em] uppercase text-rose-400 mb-4">
-                Our Collections
-              </p>
-              <h2 className="text-4xl md:text-5xl font-medium text-gray-900">
-                Find Your Perfect Kurti
-              </h2>
-            </div>
 
-            Grid
-            <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-8">
-              {[
-                { name: "Festive Wear", img: "/src/assets/images/festive.jpg" },
-                { name: "Daily Wear", img: "/src/assets/images/daily.jpg" },
-                { name: "Office Wear", img: "/src/assets/images/office.jpg" },
-                { name: "Party Wear", img: "/src/assets/images/party.jpg" },
-              ].map((item, i) => (
-                <Link
-                  key={i}
-                  to={`/category/${item.name.toLowerCase().replace(" ", "-")}`}
-                  className="group relative overflow-hidden rounded-2xl"
-                >
-                  <img
-                    src={item.img}
-                    alt={item.name}
-                    className="w-full h-[420px] object-cover transition duration-700 group-hover:scale-105"
-                  />
-
-                  <div className="absolute inset-0 bg-black/10 group-hover:bg-black/20 transition"></div>
-
-                  <div className="absolute bottom-6 left-6 text-white">
-                    <h3 className="text-xl font-medium">{item.name}</h3>
-                  </div>
-                </Link>
-              ))}
-            </div>
-          </div>
-        </section> */}
-        <section className="w-full bg-white py-28">
-          <div className="max-w-7xl mx-auto px-6">
-            {/* Heading */}
-            <div className="flex items-end justify-between mb-16">
-              <div>
-                <p className="text-xs tracking-[0.4em] uppercase text-rose-400 mb-4">
-                  Fresh Drop
-                </p>
-                <h2 className="text-4xl md:text-5xl font-medium text-gray-900">
-                  New Arrivals
-                </h2>
+        {/* --- NEW SECTION: BRAND PERKS (Increases Trust & Length) --- */}
+        <section className="py-16 bg-white border-y border-pink-50">
+          <div className="max-w-7xl mx-auto px-8 grid grid-cols-2 md:grid-cols-4 gap-8 text-center">
+            {[
+              { label: "Free Shipping", sub: "On orders above ₹2999" },
+              { label: "Organic Fabric", sub: "100% Breathable Cotton" },
+              { label: "Handcrafted", sub: "Made with love in India" },
+              { label: "Easy Returns", sub: "7-day hassle free policy" }
+            ].map((perk, i) => (
+              <div key={i} className="space-y-1">
+                <h5 className="text-[11px] font-black uppercase tracking-widest text-[#D16B92]">{perk.label}</h5>
+                <p className="text-[10px] text-gray-400 uppercase tracking-tighter">{perk.sub}</p>
               </div>
-
-              <Link
-                to="/product"
-                className="text-sm font-medium border-b border-gray-900 pb-1 hover:opacity-70 transition"
-              >
-                View All →
-              </Link>
-            </div>
-
-            {/* Product Grid */}
-            <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-10">
-              {[
-                {
-                  name: "Floral Cotton Kurti",
-                  price: "₹1,299",
-                  img: "/src/assets/images/product1.jpg",
-                },
-                {
-                  name: "Pastel Printed Kurti",
-                  price: "₹1,499",
-                  img: "/src/assets/images/product2.jpg",
-                },
-                {
-                  name: "Festive Embroidered Kurti",
-                  price: "₹1,999",
-                  img: "/src/assets/images/product3.jpg",
-                },
-                {
-                  name: "Minimal Office Kurti",
-                  price: "₹1,599",
-                  img: "/src/assets/images/product4.jpg",
-                },
-              ].map((item, i) => (
-                <div key={i} className="group cursor-pointer">
-                  {/* Image */}
-                  <div className="relative overflow-hidden rounded-2xl bg-[#f7f5f1]">
-                    <img
-                      src={item.img}
-                      alt={item.name}
-                      className="w-full h-[420px] object-cover transition duration-700 group-hover:scale-105"
-                    />
-                  </div>
-
-                  {/* Info */}
-                  <div className="mt-6 space-y-2">
-                    <h3 className="text-base font-medium text-gray-900">
-                      {item.name}
-                    </h3>
-                    <p className="text-sm text-gray-600">{item.price}</p>
-                  </div>
-                </div>
-              ))}
-            </div>
+            ))}
           </div>
         </section>
-        <section className="w-full bg-[#faf7f2] py-28">
-          <div className="max-w-7xl mx-auto px-6 grid lg:grid-cols-2 gap-20 items-center">
-            {/* Left Image */}
-            <div className="relative">
-              <img
-                src="/src/assets/images/fabric.jpg"
-                alt="Premium Fabric"
-                className="w-full h-[550px] object-cover rounded-2xl"
-              />
-            </div>
 
-            {/* Right Content */}
+        {/* --- SECTION 2: THE CRAFT --- */}
+        <section className="py-24 bg-white relative">
+          <div className="max-w-7xl mx-auto px-8 grid lg:grid-cols-2 gap-16 items-center">
+            <div className="relative grid grid-cols-2 gap-5">
+               <img src="https://images.unsplash.com/photo-1616423640778-28d1b53229bd?q=80&w=1974" className="w-full h-[380px] object-cover rounded-[50px] shadow-xl" alt="1" />
+               <img src="https://images.unsplash.com/photo-1627483262268-9c2b5b2834b5?q=80&w=2070" className="w-full h-[380px] object-cover rounded-[50px] shadow-xl mt-12" alt="2" />
+            </div>
             <div className="space-y-8">
-              <p className="text-xs tracking-[0.4em] uppercase text-rose-400">
-                Our Promise
-              </p>
-
-              <h2 className="text-4xl md:text-5xl font-medium text-gray-900 leading-tight">
-                Crafted with comfort,
-                <br />
-                designed with elegance.
-              </h2>
-
-              <p className="text-lg text-gray-600 leading-relaxed">
-                Every kurti is thoughtfully tailored using breathable fabrics,
-                refined stitching, and timeless patterns — ensuring you feel
-                confident and comfortable throughout the day.
-              </p>
-
-              {/* Features */}
-              <div className="space-y-4 text-gray-700 text-sm">
-                <div className="flex items-center gap-3">
-                  <span>✓</span>
-                  <p>Premium cotton & blended fabrics</p>
-                </div>
-
-                <div className="flex items-center gap-3">
-                  <span>✓</span>
-                  <p>Skin-friendly & breathable materials</p>
-                </div>
-
-                <div className="flex items-center gap-3">
-                  <span>✓</span>
-                  <p>Fine stitching & durable finishing</p>
-                </div>
-
-                <div className="flex items-center gap-3">
-                  <span>✓</span>
-                  <p>Easy returns & secure payments</p>
-                </div>
-              </div>
+              <h2 className="text-4xl md:text-5xl font-serif italic text-[#3D2B3D]">Designed for <br /><span className="not-italic text-[#D16B92]">Modern Comfort.</span></h2>
+              <p className="text-lg text-gray-500 font-light leading-relaxed">Har ek dhaaga ek kahani kehta hai. Humne chuna hai duniya ka sabse behtareen organic cotton, taaki aap khush rahein.</p>
+              <Link to="/about" className="inline-block px-10 py-4 border border-[#D16B92] text-[#D16B92] text-[10px] font-bold uppercase tracking-widest rounded-full hover:bg-[#D16B92] hover:text-white transition-all">Read Our Promise</Link>
             </div>
           </div>
         </section>
-        <section className="w-full bg-white py-28">
-          <div className="max-w-6xl mx-auto px-6 text-center">
-            {/* Heading */}
-            <p className="text-xs tracking-[0.4em] uppercase text-rose-400 mb-4">
-              Loved by Women
-            </p>
 
-            <h2 className="text-4xl md:text-5xl font-medium text-gray-900 mb-16">
-              What Our Customers Say
-            </h2>
+        {/* --- NEW SECTION: LARGE CINEMATIC LOOKBOOK BANNER (Fills Space) --- */}
+        <section className="relative h-[70vh] flex items-center justify-center overflow-hidden">
+           <img src="https://images.unsplash.com/photo-1490481651871-ab68de25d43d?q=80&w=2070" className="absolute inset-0 w-full h-full object-cover scale-110" alt="Cinematic" />
+           <div className="absolute inset-0 bg-black/30"></div>
+           <div className="relative text-center text-white space-y-6 px-4">
+              <p className="text-[12px] font-bold uppercase tracking-[0.8em]">The New Era of Ethnic</p>
+              <h2 className="text-5xl md:text-7xl font-serif italic tracking-tighter">Minimalism meets <br /> Tradition.</h2>
+              <Link to="/product" className="inline-block mt-4 px-12 py-5 bg-white text-black text-[11px] font-bold uppercase tracking-widest rounded-full hover:bg-[#D16B92] hover:text-white transition-all">View Lookbook</Link>
+           </div>
+        </section>
 
-            {/* Reviews Grid */}
-            <div className="grid md:grid-cols-3 gap-10 text-left">
+        {/* --- SECTION 3: TRENDING NOW --- */}
+        <section className="py-24 bg-[#FFF9FB]">
+          <div className="max-w-7xl mx-auto px-8">
+            <div className="flex flex-col md:flex-row justify-between items-end mb-12 gap-4">
+              <div className="space-y-2">
+                <p className="text-[10px] font-bold uppercase tracking-[0.4em] text-[#D16B92]">The Edit</p>
+                <h2 className="text-4xl font-serif italic text-[#3D2B3D]">The Modern Muse</h2>
+              </div>
+              <Link to="/product" className="text-xs font-bold uppercase tracking-widest border-b border-[#D16B92] pb-1 transition-colors">Shop All Arrivals →</Link>
+            </div>
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
               {[
-                {
-                  name: "Priya Sharma",
-                  review:
-                    "The fabric feels so soft and breathable. Perfect for daily wear and still looks elegant.",
-                },
-                {
-                  name: "Anjali Mehta",
-                  review:
-                    "The fitting was exactly as shown. I wore it to a family function and got so many compliments!",
-                },
-                {
-                  name: "Ritika Jain",
-                  review:
-                    "Beautiful designs and amazing quality. Definitely ordering more for the festive season.",
-                },
+                { name: "Sage Garden Kurti", price: "₹1,299", img: "https://images.unsplash.com/photo-1612459284970-e8f027596582" },
+                { name: "Pastel Blossom Set", price: "₹1,499", img: "https://images.unsplash.com/photo-1621285853634-713b8dd6b5ee" },
+                { name: "Ivory Linen Grace", price: "₹1,999", img: "https://images.unsplash.com/photo-1610030469915-9a88e479c97d" },
+                { name: "Midnight Rose Silk", price: "₹1,599", img: "https://images.unsplash.com/photo-1595967734996-c1265319e825" },
               ].map((item, i) => (
-                <div key={i} className="bg-[#faf7f2] p-8 rounded-2xl space-y-4">
-                  <p className="text-gray-600 text-sm leading-relaxed">
-                    “{item.review}”
-                  </p>
-
-                  <div className="pt-4 border-t border-gray-200">
-                    <p className="text-sm font-medium text-gray-900">
-                      {item.name}
-                    </p>
+                <div key={i} className="group bg-white p-4 rounded-[2.5rem] shadow-sm hover:shadow-xl transition-all duration-700">
+                  <div className="relative overflow-hidden aspect-[4/5] rounded-[2rem] mb-5">
+                    <img src={item.img} alt={item.name} className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-1000" />
+                    <div className="absolute inset-x-0 bottom-0 p-4 hidden md:block translate-y-full group-hover:translate-y-0 transition-all duration-500">
+                      <button className="w-full py-3 bg-white/95 backdrop-blur-md text-[#D16B92] text-[10px] font-bold uppercase rounded-xl">Quick Add +</button>
+                    </div>
+                  </div>
+                  <div className="px-2 text-center space-y-2">
+                    <h4 className="text-sm font-semibold text-[#3D2B3D]">{item.name}</h4>
+                    <p className="text-sm font-serif italic text-[#D16B92]">{item.price}</p>
+                    <button className="w-full py-3 md:hidden bg-[#D16B92] text-white text-[10px] font-bold uppercase rounded-xl">Add to bag +</button>
                   </div>
                 </div>
               ))}
             </div>
           </div>
         </section>
-        <section className="w-full bg-[#faf7f2] py-28">
-          <div className="max-w-7xl mx-auto px-6">
-            {/* Heading */}
-            <div className="text-center mb-16">
-              <p className="text-xs tracking-[0.4em] uppercase text-rose-400 mb-4">
-                Community
-              </p>
-              <h2 className="text-4xl md:text-5xl font-medium text-gray-900">
-                #StyledByYou
-              </h2>
-              <p className="mt-4 text-gray-600 text-sm">
-                Real women. Real elegance. Tag us to get featured.
-              </p>
-            </div>
 
-            {/* Grid */}
-            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
-              {[
-                "/src/assets/images/insta1.jpg",
-                "/src/assets/images/insta2.jpg",
-                "/src/assets/images/insta3.jpg",
-                "/src/assets/images/insta4.jpg",
-                "/src/assets/images/insta5.jpg",
-                "/src/assets/images/insta6.jpg",
-                "/src/assets/images/insta7.jpg",
-                "/src/assets/images/insta8.jpg",
-              ].map((img, i) => (
-                <div
-                  key={i}
-                  className="relative overflow-hidden rounded-xl group cursor-pointer"
-                >
-                  <img
-                    src={img}
-                    alt="Customer wearing kurti"
-                    className="w-full h-[260px] object-cover transition duration-700 group-hover:scale-110"
-                  />
+        {/* --- SECTION 4: CINEMATIC TILES --- */}
+        <section className="py-24 bg-white">
+          <div className="max-w-7xl mx-auto px-6 grid md:grid-cols-3 gap-4 h-[550px]">
+             <Link to="/product" className="relative group overflow-hidden rounded-[30px]"><img src="https://images.unsplash.com/photo-1583337130417-3346a1be7dee" className="w-full h-full object-cover group-hover:scale-110 transition-all" alt="1" /><div className="absolute inset-0 bg-pink-900/10 flex items-center justify-center"><h3 className="text-white text-3xl font-serif italic">Festive Bloom</h3></div></Link>
+             <div className="grid grid-rows-2 gap-4">
+                <Link to="/product" className="relative group overflow-hidden rounded-[30px]"><img src="https://images.unsplash.com/photo-1515378791036-0648a3ef77b2" className="w-full h-full object-cover" /><div className="absolute inset-0 bg-purple-900/10 flex items-center justify-center text-white font-serif italic">Soft Office</div></Link>
+                <Link to="/product" className="relative group overflow-hidden rounded-[30px]"><img src="https://images.unsplash.com/photo-1617175548998-573828c04967" className="w-full h-full object-cover" /><div className="absolute inset-0 bg-rose-900/10 flex items-center justify-center text-white font-serif italic">Summer Daily</div></Link>
+             </div>
+             <Link to="/product" className="relative group overflow-hidden rounded-[30px]"><img src="https://images.unsplash.com/photo-1610030469668-93530c176cce" className="w-full h-full object-cover group-hover:scale-110 transition-all" /><div className="absolute inset-0 bg-[#4a148c]/10 flex items-center justify-center text-white text-3xl font-serif italic">Luxe Petals</div></Link>
+          </div>
+        </section>
 
-                  <div className="absolute inset-0 bg-black/0 group-hover:bg-black/20 transition"></div>
-                </div>
-              ))}
+        {/* --- SECTION 5: TESTIMONIALS --- */}
+        <section className="py-24 bg-[#FFF5F7]">
+          <div className="max-w-4xl mx-auto px-8 text-center space-y-8">
+            <p className="text-[9px] tracking-[0.4em] uppercase font-bold text-pink-300">Voices of Grace</p>
+            <p className="text-2xl md:text-3xl font-serif italic text-[#4A148C]">"The fabric feels like a soft whisper against the skin. Best boutique experience!"</p>
+            <p className="text-[10px] font-black uppercase text-[#880E4F]">— Ananya Panday</p>
+          </div>
+        </section>
+
+        {/* --- SECTION 6: GALLERY --- */}
+        <section className="py-24 bg-white">
+          <div className="max-w-7xl mx-auto px-8 space-y-12 text-center">
+            <h2 className="text-[10px] font-bold uppercase tracking-[0.5em] text-[#D16B92]">The Muse Gallery</h2>
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+              <div className="space-y-4"><img src="https://images.unsplash.com/photo-1520006403909-838d6b92c22e" className="w-full h-64 object-cover rounded-2xl shadow-sm" /><img src="https://images.unsplash.com/photo-1631215112106-96350f38b43a" className="w-full h-80 object-cover rounded-2xl shadow-sm" /></div>
+              <div className="space-y-4 pt-8"><img src="https://images.unsplash.com/photo-1483985988355-763728e1935b" className="w-full h-80 object-cover rounded-2xl shadow-sm" /><img src="https://images.unsplash.com/photo-1609505848912-b7c3b8b4beda" className="w-full h-64 object-cover rounded-2xl shadow-sm" /></div>
+              <div className="space-y-4"><img src="https://images.unsplash.com/photo-1621285853634-713b8dd6b5ee" className="w-full h-64 object-cover rounded-2xl shadow-sm" /><img src="https://images.unsplash.com/photo-1544441893-675973e31985" className="w-full h-80 object-cover rounded-2xl shadow-sm" /></div>
+              <div className="space-y-4 pt-8"><img src="https://images.unsplash.com/photo-1612459284970-e8f027596582" className="w-full h-80 object-cover rounded-2xl shadow-sm" /><img src="https://images.unsplash.com/photo-1581044777550-4cfa60707c03" className="w-full h-64 object-cover rounded-2xl shadow-sm" /></div>
             </div>
           </div>
         </section>
-        <section className="w-full bg-[#f3e9dc] py-28">
-          <div className="max-w-6xl mx-auto px-6 text-center">
-            <p className="text-xs tracking-[0.4em] uppercase text-rose-500 mb-6">
-              Limited Edition
-            </p>
 
-            <h2 className="text-4xl md:text-6xl font-medium text-gray-900 leading-tight max-w-3xl mx-auto">
-              Festive Collection 2026
-            </h2>
-
-            <p className="mt-6 text-gray-600 max-w-2xl mx-auto leading-relaxed">
-              Handpicked festive kurtis crafted in rich fabrics and elegant
-              silhouettes. Available for a limited time only.
-            </p>
-
-            <div className="mt-10">
-              <Link
-                to="/category/festive-wear"
-                className="px-12 py-4 bg-black text-white text-sm font-medium rounded-full hover:bg-gray-800 transition"
-              >
-                Explore Collection
-              </Link>
-            </div>
-          </div>
-        </section>
-        <section className="w-full bg-white py-20 border-t border-gray-100">
-          <div className="max-w-7xl mx-auto px-6">
-            <div className="grid md:grid-cols-4 gap-10 text-center">
-              <div className="space-y-3">
-                <div className="text-2xl">🚚</div>
-                <h3 className="text-sm font-medium text-gray-900">
-                  Free Shipping
-                </h3>
-                <p className="text-xs text-gray-600">On all prepaid orders</p>
-              </div>
-
-              <div className="space-y-3">
-                <div className="text-2xl">↩️</div>
-                <h3 className="text-sm font-medium text-gray-900">
-                  Easy Returns
-                </h3>
-                <p className="text-xs text-gray-600">
-                  7-day hassle-free policy
-                </p>
-              </div>
-
-              <div className="space-y-3">
-                <div className="text-2xl">🧵</div>
-                <h3 className="text-sm font-medium text-gray-900">
-                  Premium Fabric
-                </h3>
-                <p className="text-xs text-gray-600">
-                  Breathable & skin-friendly
-                </p>
-              </div>
-
-              <div className="space-y-3">
-                <div className="text-2xl">💬</div>
-                <h3 className="text-sm font-medium text-gray-900">
-                  Dedicated Support
-                </h3>
-                <p className="text-xs text-gray-600">We're here to help</p>
-              </div>
-            </div>
-          </div>
-        </section>
-        <section className="w-full bg-[#faf7f2] py-28">
-          <div className="max-w-3xl mx-auto px-6 text-center">
-            <p className="text-xs tracking-[0.4em] uppercase text-rose-400 mb-6">
-              Stay Connected
-            </p>
-
-            <h2 className="text-4xl md:text-5xl font-medium text-gray-900 leading-tight">
-              Be the first to know
-            </h2>
-
-            <p className="mt-6 text-gray-600 leading-relaxed">
-              Get early access to new arrivals, festive drops, and exclusive
-              offers. No spam — just timeless elegance delivered to your inbox.
-            </p>
-
-            {/* Email Form */}
-            <div className="mt-10 flex flex-col sm:flex-row gap-4 justify-center">
-              <input
-                type="email"
-                placeholder="Enter your email"
-                className="px-6 py-4 rounded-full border border-gray-300 text-sm w-full sm:w-80 focus:outline-none focus:border-gray-900"
-              />
-
-              <button className="px-10 py-4 bg-black text-white text-sm font-medium rounded-full hover:bg-gray-800 transition">
-                Subscribe
-              </button>
-            </div>
-          </div>
-        </section>
-        <Footer/>
+        <Footer />
       </div>
     </>
   );

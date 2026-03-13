@@ -2,122 +2,166 @@ import React from "react";
 import Header from "../common/Header";
 import { Link } from "react-router-dom";
 import Footer from "../common/Footer";
+import CountUp from "react-countup";
+import { useInView } from "react-intersection-observer";
 
 const About = () => {
+  const { ref, inView } = useInView({
+    triggerOnce: true,
+    threshold: 0.3,
+  });
+
   return (
-    <div className="font-google">
+    <div className="font-google bg-[#FFFBFB]">
       <Header />
-      <section className="w-full bg-[#f5f1ea] py-32">
-        <div className="max-w-5xl mx-auto px-6 text-center">
-          <p className="text-xs tracking-[0.4em] uppercase text-rose-400 mb-6">
-            About Us
-          </p>
 
-          <h1 className="text-5xl md:text-6xl font-medium text-gray-900 leading-tight">
-            Crafted for women
-            <br />
-            who carry grace effortlessly.
+      {/* --- SECTION 1: HERO --- */}
+      <section className="relative w-full bg-[#FAF9F6] pt-44 pb-24 overflow-hidden">
+        <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-[#FCE4EC] rounded-full blur-[150px] opacity-30"></div>
+        <div className="max-w-6xl mx-auto px-6 text-center relative z-10">
+          <p className="text-[10px] tracking-[0.5em] uppercase font-black text-[#D16B92] mb-8">Established 2026</p>
+          <h1 className="text-6xl md:text-8xl font-serif italic text-[#3D2B3D] leading-[1.1] tracking-tighter">
+            Where tradition <br />
+            <span className="not-italic font-light text-[#D16B92]">meets modern soul.</span>
           </h1>
-
-          <p className="mt-8 text-lg text-gray-600 max-w-2xl mx-auto leading-relaxed">
-            We design timeless kurtis that blend comfort, culture, and
-            contemporary elegance — made for everyday confidence.
+          <p className="mt-10 text-xl text-gray-400 max-w-2xl mx-auto font-light leading-relaxed">
+            Navi Clothing is more than a brand; it’s a celebration of the modern woman who values her roots while embracing the future.
           </p>
         </div>
       </section>
-      <section className="w-full bg-white py-28">
-        <div className="max-w-7xl mx-auto px-6 grid lg:grid-cols-2 gap-20 items-center">
-          <div>
-            <img
-              src="/src/assets/images/about-story.jpg"
-              alt="Our Story"
-              className="w-full h-[550px] object-cover rounded-2xl"
+
+      {/* --- SECTION 2: THE STORY --- */}
+      <section className="py-32 bg-white">
+        <div className="max-w-7xl mx-auto px-8 grid lg:grid-cols-2 gap-24 items-center">
+          <div className="relative">
+            <div className="relative z-10 overflow-hidden rounded-[40px] shadow-2xl">
+              <img
+                src="https://images.unsplash.com/photo-1544441893-675973e31985?q=80&w=2070"
+                alt="Our Story"
+                className="w-full h-[600px] object-cover"
+              />
+            </div>
+            <div className="absolute -top-10 -left-10 w-40 h-40 bg-[#FCE4EC] rounded-full -z-0"></div>
+          </div>
+          <div className="space-y-8">
+            <h2 className="text-5xl font-serif italic text-[#3D2B3D]">Our Humble Beginnings</h2>
+            <div className="space-y-6 text-lg text-gray-500 font-light leading-relaxed">
+              <p>Every design began with a dream—a vision where every woman could wear her culture with unparalleled comfort and sophistication.</p>
+              <p>We collaborated with master artisans who have preserved this heritage for generations. Their craftsmanship, combined with our modern vision, defines Navi Clothing.</p>
+              <p>Today, we stand for quality over quantity. We don't believe in fleeting trends; we believe in "Timeless Fashion" that lasts a lifetime.</p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* --- SECTION: THE GREEN THREAD (SUSTAINABILITY) --- */}
+      <section className="py-32 bg-white border-y border-pink-50/50">
+        <div className="max-w-7xl mx-auto px-8 grid lg:grid-cols-2 gap-24 items-center">
+          <div className="order-2 lg:order-1 space-y-8">
+            <div className="space-y-4">
+              <span className="text-[10px] font-black uppercase tracking-[0.3em] text-[#D16B92]">Our Responsibility</span>
+              <h2 className="text-4xl md:text-5xl font-serif italic text-[#3D2B3D]">The Green Thread</h2>
+            </div>
+            <p className="text-lg text-gray-500 font-light leading-relaxed">
+              We understand the environmental impact of fashion. That’s why at Navi Clothing, we utilize **Zero-Waste Cutting** techniques and **Natural Dyes**. Our mission isn't just to make you look beautiful, but to ensure our planet remains vibrant for generations to come.
+            </p>
+            <div className="grid grid-cols-2 gap-8 pt-4">
+               <div className="space-y-2">
+                  <h4 className="font-serif italic text-xl text-[#D16B92]">Organic Soul</h4>
+                  <p className="text-xs text-gray-400 leading-relaxed uppercase tracking-tighter">Pesticide-free cotton ethically harvested by local farmers.</p>
+               </div>
+               <div className="space-y-2">
+                  <h4 className="font-serif italic text-xl text-[#D16B92]">Eco-Dyes</h4>
+                  <p className="text-xs text-gray-400 leading-relaxed uppercase tracking-tighter">Vibrant colors extracted from petals and seeds, 100% toxin-free.</p>
+               </div>
+            </div>
+          </div>
+          <div className="order-1 lg:order-2">
+            <img 
+              src="https://images.unsplash.com/photo-1590736704728-f4730bb30770?q=80&w=1974" 
+              className="w-full h-[500px] object-cover rounded-[100px_40px_100px_40px] shadow-xl" 
+              alt="Sustainable Fabric" 
             />
           </div>
+        </div>
+      </section>
 
-          <div className="space-y-6">
-            <h2 className="text-4xl font-medium text-gray-900">Our Story</h2>
-
-            <p className="text-gray-600 leading-relaxed">
-              Born from a love for traditional Indian craftsmanship, our brand
-              began with a simple belief — clothing should feel as beautiful as
-              it looks.
-            </p>
-
-            <p className="text-gray-600 leading-relaxed">
-              We work closely with skilled artisans and trusted fabric suppliers
-              to create kurtis that are breathable, versatile, and thoughtfully
-              tailored for modern women.
-            </p>
+      {/* --- SECTION 3: THE CRAFT PROCESS --- */}
+      <section className="py-32 bg-[#FAF9F6]">
+        <div className="max-w-7xl mx-auto px-8">
+          <div className="text-center mb-20 space-y-4">
+            <h2 className="text-4xl font-serif italic text-[#3D2B3D]">From Seed to Stitch</h2>
+            <div className="w-20 h-[1px] bg-[#D16B92] mx-auto"></div>
+          </div>
+          <div className="grid md:grid-cols-3 gap-16">
+            {[
+              { step: "01", title: "Ethical Sourcing", desc: "We exclusively select fabrics that are environmentally friendly and feel like a gentle whisper against the skin." },
+              { step: "02", title: "Artisan Craft", desc: "Our designs are hand-finished by expert artisans, ensuring that every piece remains a unique work of art." },
+              { step: "03", title: "Quality Check", desc: "Before delivery, every garment undergoes a rigorous 5-level quality inspection to ensure absolute perfection." }
+            ].map((item, i) => (
+              <div key={i} className="space-y-6 group">
+                <span className="text-6xl font-serif italic text-pink-100 group-hover:text-[#FCE4EC] transition-colors">{item.step}</span>
+                <h4 className="text-xl font-serif text-[#3D2B3D]">{item.title}</h4>
+                <p className="text-gray-400 font-light leading-relaxed">{item.desc}</p>
+              </div>
+            ))}
           </div>
         </div>
       </section>
-      <section className="w-full bg-[#faf7f2] py-28">
-        <div className="max-w-4xl mx-auto px-6 text-center">
-          <h2 className="text-4xl font-medium text-gray-900 mb-10">
-            Thoughtful Craftsmanship
-          </h2>
 
-          <p className="text-lg text-gray-600 leading-relaxed">
-            From selecting breathable fabrics to ensuring fine stitching, every
-            piece goes through careful quality checks. We focus on fit, finish,
-            and fabric — because details define elegance.
-          </p>
+      {/* --- SECTION: BEYOND BORDERS (GLOBAL VISION) --- */}
+      <section className="py-32 bg-white">
+        <div className="max-w-5xl mx-auto px-8 text-center space-y-12">
+           <h2 className="text-5xl font-serif italic text-[#3D2B3D]">Beyond Borders</h2>
+           <p className="text-xl text-gray-500 font-light leading-relaxed">
+             Navi Clothing has evolved from an Indian boutique into a **Global Movement**. We bring our refined designs to confident, elegant women across the world. From London to New York, our collections have become a global symbol of effortless grace.
+           </p>
+           <div className="flex flex-wrap justify-center gap-12 pt-8 opacity-40 grayscale group-hover:grayscale-0 transition-all">
+              <span className="text-2xl font-serif italic">New Delhi</span>
+              <span className="text-2xl font-serif italic">Dubai</span>
+              <span className="text-2xl font-serif italic">Singapore</span>
+              <span className="text-2xl font-serif italic">Sydney</span>
+           </div>
         </div>
       </section>
-      <section className="w-full bg-white py-28">
-        <div className="max-w-6xl mx-auto px-6">
-          <div className="grid md:grid-cols-3 gap-12 text-center">
-            <div className="space-y-4">
-              <h3 className="text-lg font-medium text-gray-900">
-                Comfort First
-              </h3>
-              <p className="text-sm text-gray-600">
-                Designed for all-day ease and breathable wear.
-              </p>
-            </div>
 
-            <div className="space-y-4">
-              <h3 className="text-lg font-medium text-gray-900">
-                Timeless Design
-              </h3>
-              <p className="text-sm text-gray-600">
-                Classic silhouettes with modern detailing.
-              </p>
+      {/* --- SECTION 4: STATS (COUNTABLE) --- */}
+      <section ref={ref} className="py-24 bg-[#FFF5F7]">
+        <div className="max-w-7xl mx-auto px-8 grid grid-cols-2 md:grid-cols-4 gap-12 text-center">
+          {[
+            { num: 10, suffix: "k+", label: "Happy Muses" },
+            { num: 50, suffix: "+", label: "Master Artisans" },
+            { num: 100, suffix: "%", label: "Organic Cotton" },
+            { num: 24, suffix: "/7", label: "Care Support" }
+          ].map((stat, i) => (
+            <div key={i} className="space-y-2">
+               <p className="text-4xl md:text-5xl font-serif text-[#D16B92]">
+                {inView ? <CountUp start={0} end={stat.num} duration={3} /> : 0}
+                <span>{stat.suffix}</span>
+               </p>
+               <p className="text-[10px] font-bold uppercase tracking-widest text-gray-400">{stat.label}</p>
             </div>
-
-            <div className="space-y-4">
-              <h3 className="text-lg font-medium text-gray-900">
-                Quality Promise
-              </h3>
-              <p className="text-sm text-gray-600">
-                Premium fabrics and durable finishing.
-              </p>
-            </div>
-          </div>
+          ))}
         </div>
       </section>
-      <section className="w-full bg-[#f3e9dc] py-24 text-center">
-        <div className="max-w-3xl mx-auto px-6">
-          <h2 className="text-4xl font-medium text-gray-900">
-            Discover the Collection
-          </h2>
 
-          <p className="mt-6 text-gray-600">
-            Explore our latest designs crafted with elegance and care.
-          </p>
-
-          <div className="mt-10">
+      {/* --- FINAL CALL TO ACTION --- */}
+      <section className="py-40 bg-white text-center">
+        <div className="max-w-3xl mx-auto px-8 space-y-12">
+          <h2 className="text-5xl md:text-6xl font-serif italic text-[#3D2B3D]">Be a part of our <span className="not-italic font-light text-[#D16B92]">Story.</span></h2>
+          <div className="pt-6">
             <Link
               to="/product"
-              className="px-12 py-4 bg-black text-white text-sm font-medium rounded-full hover:bg-gray-800 transition"
+              className="group relative inline-block px-14 py-5 bg-[#D16B92] text-white text-[11px] font-black uppercase tracking-[0.3em] overflow-hidden rounded-full shadow-2xl shadow-pink-200"
             >
-              Shop Now
+              <span className="relative z-10">Shop the Collection</span>
+              <div className="absolute inset-0 bg-[#A34D6F] translate-y-full group-hover:translate-y-0 transition-transform duration-500"></div>
             </Link>
           </div>
         </div>
       </section>
-      <Footer/>
+
+      <Footer />
     </div>
   );
 };
