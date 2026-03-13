@@ -532,23 +532,31 @@ export const updateOrderStatus = async (req, res) => {
   try {
     const { orderId } = req.params;
     const { status } = req.body;
-    // console.log(id)
-    // console.log(status)
+
+    if (!status) {
+      return res.status(400).json({
+        success: false,
+        message: "Status is required"
+      });
+    }
+
     const order = await Order.findByIdAndUpdate(
       orderId,
       { status },
-      { new: true },
+      { new: true }
     );
-    res.status(201).json({
-      status: "success",
+
+    res.status(200).json({
+      success: true,
       message: "Order status updated successfully",
-      order,
+      order
     });
+
   } catch (error) {
     console.error(error);
-    return res.status(500).json({
+    res.status(500).json({
       success: false,
-      message: "Failed to update order",
+      message: "Failed to update order"
     });
   }
 };

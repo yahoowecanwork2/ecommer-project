@@ -1,4 +1,4 @@
-   import bcrypt from "bcryptjs";
+import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
 import { generateToken } from "../utils/generateUserToken.js";
 import { Admin } from "../models/Admin.js";

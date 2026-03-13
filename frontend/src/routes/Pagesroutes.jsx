@@ -9,19 +9,16 @@ import Privacy from "../pages/static/Privacy";
 import Shipping from "../pages/static/Shipping";
 import Return from "../pages/static/Return";
 import Contact from "../pages/static/Contact";
-const User = lazy(()=> import("../pages/users/User"))
-const Userdetail = lazy(()=> import("../pages/users/Userdetail"))
-const Product = lazy(()=> import("../pages/product/Product"))
-const Productdetail = lazy(()=> import("../pages/product/Productdetail"))
-const Orderdetails = lazy(()=> import("../pages/order/Orderdetails"))
-const Home = lazy(()=> import("../pages/home/Home"))
-const Myorders = lazy(()=> import("../pages/order/Myorders"))
-const Order = lazy(()=> import("../pages/users/User"))
-const Whishlist = lazy(()=> import("../pages/whishlist/Whishlist"))
-const Cart = lazy(()=> import("../pages/cart/Cart"))
-
-
-
+const User = lazy(() => import("../pages/users/User"));
+const Userdetail = lazy(() => import("../pages/users/Userdetail"));
+const Product = lazy(() => import("../pages/product/Product"));
+const Productdetail = lazy(() => import("../pages/product/Productdetail"));
+const Orderdetails = lazy(() => import("../pages/order/Orderdetails"));
+const Home = lazy(() => import("../pages/home/Home"));
+const Myorders = lazy(() => import("../pages/order/Myorders"));
+// const Order = lazy(() => import("../pages/users/User"));
+const Whishlist = lazy(() => import("../pages/whishlist/Whishlist"));
+const Cart = lazy(() => import("../pages/cart/Cart"));
 
 const Pagesroutes = () => {
   return (
@@ -36,56 +33,86 @@ const Pagesroutes = () => {
         <Route path="/return-policy" element={<Return />} />
         <Route path="/contact" element={<Contact />} />
         {/* private pages */}
-        <Route path="/user" element={
-          <Protectedroutes>
-            <User />
-          </Protectedroutes>
-          } />
-        <Route path="/user-detail/:id" element={
-          <Protectedroutes>
-            <Userdetail />
-          </Protectedroutes>
-          } />
-        <Route path="/product" element={
-          <Protectedroutes>
-            <Product />
-          </Protectedroutes>
-          } />
-        <Route path="/product-detail/:slug" element={
-          <Protectedroutes>
-            <Productdetail />
-          </Protectedroutes>
-          } />
-        <Route path="/my-order" element={
-          <Protectedroutes>
-            <Myorders />
-          </Protectedroutes>
-          } />
-        <Route path="/order-detail/:orderId" element={
-          <Protectedroutes>
-            <Orderdetails />
-          </Protectedroutes>
-          } />
-        <Route path="/about" element={
-          <Protectedroutes>
-            <About />
-          </Protectedroutes>
-          } />
-        <Route path="/wishlist" element={
-          <Protectedroutes>
-            <Whishlist />
-          </Protectedroutes>
-          } />
-        <Route path="/cart" element={
-          <Protectedroutes>
-            <Cart />
-          </Protectedroutes>
-          } />
-        <Route path="/order" element={
-          <Protectedroutes>
-            <Order />
-          </Protectedroutes>
-          } />
+        <Route
+          path="/user"
+          element={
+            <Protectedroutes>
+              <User />
+            </Protectedroutes>
+          }
+        />
+        <Route
+          path="/user-detail/:id"
+          element={
+            <Protectedroutes>
+              <Userdetail />
+            </Protectedroutes>
+          }
+        />
+        <Route
+          path="/product"
+          element={
+            <Protectedroutes>
+              <Product />
+            </Protectedroutes>
+          }
+        />
+        <Route
+          path="/product-detail/:slug"
+          element={
+            <Protectedroutes>
+              <Productdetail />
+            </Protectedroutes>
+          }
+        />
+        <Route
+          path="/my-order"
+          element={
+            <Protectedroutes>
+              <Myorders />
+            </Protectedroutes>
+          }
+        />
+        <Route
+          path="/order-detail/:orderId"
+          element={
+            <Protectedroutes>
+              <Orderdetails />
+            </Protectedroutes>
+          }
+        />
+        <Route
+          path="/about"
+          element={
+            <Protectedroutes>
+              <About />
+            </Protectedroutes>
+          }
+        />
+        <Route
+          path="/wishlist"
+          element={
+            <Protectedroutes>
+              <Whishlist />
+            </Protectedroutes>
+          }
+        />
+        <Route
+          path="/cart"
+          element={
+            <Protectedroutes>
+              <Cart />
+            </Protectedroutes>
+          }
+        />
+        <Route
+          path="/order"
+          element={
+            <Protectedroutes>
+              <Order />
+            </Protectedroutes>
+          }
+        />
       </Routes>
     </>
   );

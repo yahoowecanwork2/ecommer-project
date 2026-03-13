@@ -18,6 +18,7 @@ import {
   registerUser,
   removeFromCart,
   removeFromWishlist,
+  SearchUser,
   sendEmailToUser,
   updateCartQuantity,
   userUpdateProfile,
@@ -56,5 +57,6 @@ userRoutes.get("/get-single/:userId", checkAdmin, getSingleUser);
 userRoutes.get("/user-order/:userId", checkAdmin, getSingleUserOrders);
 userRoutes.get("/user-cart/:userId", checkAdmin, getUserCartItems);
 userRoutes.get("/user-wishlist/:userId", checkAdmin, getUserWishlistItems);
+userRoutes.get("/search", checkAdmin, SearchUser);
 
 export default userRoutes;

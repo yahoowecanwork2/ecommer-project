@@ -42,7 +42,7 @@ function Protectedroutes({ children }) {
     }
   }, []);
   if (checkingAuth) {
-    return null; 
+    return null;
   }
 
   if (!token && !auth) {
