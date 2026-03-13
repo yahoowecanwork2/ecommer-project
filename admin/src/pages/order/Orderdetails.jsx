@@ -25,6 +25,8 @@ const Orderdetails = () => {
     try {
       setLoading(true);
       const res = await orderApis.getSingle(id);
+      console.log("single order", res);
+
       if (res.order) {
         setOrder(res.order);
       }
@@ -40,16 +42,28 @@ const Orderdetails = () => {
   }, [id]);
 
   const getStatusStyle = (status) => {
-    const base = "px-2 py-0.5 rounded-sm border text-[10px] font-bold uppercase tracking-tight ";
+    const base =
+      "px-2 py-0.5 rounded-sm border text-[10px] font-bold uppercase tracking-tight ";
     switch (status?.toLowerCase()) {
-      case "pending": return base + "bg-orange-50 text-orange-700 border-orange-200";
-      case "delivered": return base + "bg-green-50 text-green-700 border-green-200";
-      case "cancelled": return base + "bg-red-50 text-red-700 border-red-200";
-      default: return base + "bg-gray-50 text-gray-700 border-gray-200";
+      case "pending":
+        return base + "bg-orange-50 text-orange-700 border-orange-200";
+      case "delivered":
+        return base + "bg-green-50 text-green-700 border-green-200";
+      case "cancelled":
+        return base + "bg-red-50 text-red-700 border-red-200";
+      default:
+        return base + "bg-gray-50 text-gray-700 border-gray-200";
     }
   };
 
-  if (loading) return <Layout><div className="p-8 text-[11px] font-bold uppercase tracking-widest text-gray-400 animate-pulse">Loading Order Data...</div></Layout>;
+  if (loading)
+    return (
+      <Layout>
+        <div className="p-8 text-[11px] font-bold uppercase tracking-widest text-gray-400 animate-pulse">
+          Loading Order Data...
+        </div>
+      </Layout>
+    );
   // if (!order) return null;
 
   return (
@@ -63,7 +77,7 @@ const Orderdetails = () => {
           >
             <FaArrowLeft size={10} /> Back to Orders
           </button>
-          
+
           <div className="flex gap-2">
             <button className="px-4 py-2 text-[11px] font-bold uppercase tracking-widest bg-red-600 text-white rounded-sm hover:bg-red-700 transition-all">
               Cancel Order
@@ -89,8 +103,13 @@ const Orderdetails = () => {
               </span>
             </div>
             <div className="flex flex-wrap justify-center md:justify-start gap-4 text-xs text-gray-500 font-medium">
-              <span className="flex items-center gap-1.5"><FaRegCalendarAlt className="text-gray-300" /> Placed on {order?.createdAt}</span>
-              <span className="flex items-center gap-1.5"><FaHashtag className="text-gray-300" /> ID: {order?._id}</span>
+              <span className="flex items-center gap-1.5">
+                <FaRegCalendarAlt className="text-gray-300" /> Placed on{" "}
+                {order?.createdAt}
+              </span>
+              <span className="flex items-center gap-1.5">
+                <FaHashtag className="text-gray-300" /> ID: {order?._id}
+              </span>
             </div>
           </div>
         </div>
@@ -100,17 +119,23 @@ const Orderdetails = () => {
           {/* Customer Details */}
           <div className="bg-white border border-gray-200 rounded-sm">
             <div className="px-4 py-3 border-b border-gray-100 flex items-center justify-between bg-gray-50/50">
-              <h3 className="text-xs font-bold text-gray-900 uppercase tracking-widest">Customer Information</h3>
+              <h3 className="text-xs font-bold text-gray-900 uppercase tracking-widest">
+                Customer Information
+              </h3>
               <FaUser className="text-gray-300 text-xs" />
             </div>
             <div className="p-4 space-y-4">
               <div className="flex items-center justify-between text-xs">
                 <span className="text-gray-400 font-medium">Full Name</span>
-                <span className="text-gray-900 font-bold">{order?.customername}</span>
+                <span className="text-gray-900 font-bold">
+                  {order?.customername}
+                </span>
               </div>
               <div className="flex items-center justify-between text-xs">
                 <span className="text-gray-400 font-medium">Phone Number</span>
-                <span className="text-gray-900 font-bold">{order?.phoneno}</span>
+                <span className="text-gray-900 font-bold">
+                  {order?.phoneno}
+                </span>
               </div>
             </div>
           </div>
@@ -118,7 +143,9 @@ const Orderdetails = () => {
           {/* Shipping Address */}
           <div className="bg-white border border-gray-200 rounded-sm">
             <div className="px-4 py-3 border-b border-gray-100 flex items-center justify-between bg-gray-50/50">
-              <h3 className="text-xs font-bold text-gray-900 uppercase tracking-widest">Shipping Address</h3>
+              <h3 className="text-xs font-bold text-gray-900 uppercase tracking-widest">
+                Shipping Address
+              </h3>
               <FaMapMarkerAlt className="text-gray-300 text-xs" />
             </div>
             <div className="p-4">
@@ -134,7 +161,9 @@ const Orderdetails = () => {
         {/* ITEMS TABLE */}
         <div className="bg-white border border-gray-200 rounded-sm shadow-sm overflow-hidden">
           <div className="px-4 py-3 border-b border-gray-100 bg-gray-50/50">
-            <h3 className="text-xs font-bold text-gray-900 uppercase tracking-widest">Order Manifest</h3>
+            <h3 className="text-xs font-bold text-gray-900 uppercase tracking-widest">
+              Order Manifest
+            </h3>
           </div>
           <table className="w-full text-left border-collapse">
             <thead>
@@ -146,21 +175,27 @@ const Orderdetails = () => {
               </tr>
             </thead>
             <tbody className="divide-y divide-gray-50">
-              {order?.items.map((item, index) => (
+              {order?.items?.map((item, index) => (
                 <tr key={index} className="text-xs text-gray-700">
-                  <td className="px-6 py-4 font-bold text-gray-900">{item.name}</td>
+                  <td className="px-6 py-4 font-bold text-gray-900">
+                    {item.name}
+                  </td>
                   <td className="px-6 py-4 font-medium">{item?.quantity}</td>
                   <td className="px-6 py-4 font-medium">₹{item?.price}</td>
-                  <td className="px-6 py-4 text-right font-bold text-gray-900">₹{item?.price * item?.quantity}</td>
+                  <td className="px-6 py-4 text-right font-bold text-gray-900">
+                    ₹₹{item?.productId?.price * item?.quantity}
+                  </td>
                 </tr>
               ))}
             </tbody>
           </table>
-          
+
           {/* TOTAL FOOTER */}
           <div className="bg-gray-50 px-6 py-4 border-t border-gray-100 flex justify-end">
             <div className="flex items-center gap-4">
-              <span className="text-[10px] font-bold text-gray-400 uppercase tracking-[0.2em]">Grand Total</span>
+              <span className="text-[10px] font-bold text-gray-400 uppercase tracking-[0.2em]">
+                Grand Total
+              </span>
               <span className="text-xl font-black text-gray-900 flex items-center">
                 <FaRupeeSign size={14} className="mt-1" /> {order?.ordertotal}
               </span>

@@ -110,7 +110,7 @@ export const createOrder = async (req, res) => {
   }
 };
 
-// my orders 
+// my orders
 export const getMyOrders = async (req, res) => {
   try {
     const userId = req.id;
@@ -165,7 +165,7 @@ export const getMyOrders = async (req, res) => {
   }
 };
 
-// get single order 
+// get single order
 export const getSingleOrder = async (req, res) => {
   try {
     console.log(req.params.orderId);
@@ -330,44 +330,45 @@ export const getUserOrderById = async (req, res) => {
     const order = await Order.findById(req.params.orderId)
       .select(
         `
-    orderno 
-    customerId
-    customername 
-    phoneno 
-    shippingaddress 
-    pincode 
-    ordertotal 
-    delivereddate 
-    status 
-    cancelStatus 
-    return 
-    createdAt
-    items
-  `,
+        orderno 
+        customerId
+        customername 
+        phoneno 
+        shippingaddress 
+        pincode 
+        ordertotal 
+        delivereddate 
+        status 
+        cancelStatus 
+        return 
+        createdAt
+        items
+      `,
       )
-      .sort({ createdAt: -1 })
-      .skip(skip)
-      .limit(limit)
       .populate({
-        path: "items.item",
-        select: "name price image slug", // select only needed fields
+        path: "items.productId",
+        select: "name price image slug",
       })
       .populate("customerId", "name email")
       .populate("payment")
       .lean();
+
     if (!order) {
       return res.status(404).json({
         success: false,
         message: "Order not found",
       });
     }
+
     console.log(order);
+
     res.status(200).json({
       success: true,
       message: "Single order fetched successfully",
       order,
     });
   } catch (err) {
+    console.log(err);
     res.status(500).json({
       success: false,
       message: err.message,
