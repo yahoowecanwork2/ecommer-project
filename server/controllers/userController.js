@@ -820,12 +820,12 @@ export const SearchUser = async (req, res) => {
         { name: { $regex: q, $options: "i" } },
         { phoneno: { $regex: q, $options: "i" } },
       ],
-    }).select("_id name email phoneno").limit(10);
+    }).select("_id name email phoneno");
 
     if (!user) {
       return res.status(404).json({
         success: false,
-        data: [],
+        data: null,
         message: "User not found",
       });
     }
@@ -837,7 +837,7 @@ export const SearchUser = async (req, res) => {
   } catch (error) {
     res.status(500).json({
       success: false,
-      data: [],
+      data: null,
       message: error.message,
     });
   }

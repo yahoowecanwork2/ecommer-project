@@ -73,27 +73,32 @@ const Users = () => {
     }
   };
 
-const searchUser = async (q) => {
-  try {
-    setLoading(true);
+  const searchUser = async (q) => {
+    try {
+      setLoading(true);
 
-    const res = await userApi.searchUser(q);
+      const res = await userApi.searchUser(q);
+      console.log("search", res);
 
-    if (res.status === 404) {
-      return; // user not found
+      if (!res.success) {
+        setUsers([]);
+        return;
+      }
+
+      setUsers([res.data]); // single user ko array me convert
+    } catch (error) {
+      console.error("User search failed:", error);
+    } finally {
+      setLoading(false);
     }
-
-    console.log(res.data);
-
-  } catch (error) {
-    console.error("User search failed:", error);
-  } finally {
-    setLoading(false);
-  }
-};
+  };
 
   useEffect(() => {
-    searchUser(searchQuery);
+    if (searchQuery.trim() === "") {
+      fetchUsers();
+    } else {
+      searchUser(searchQuery);
+    }
   }, [searchQuery]);
 
   useEffect(() => {
