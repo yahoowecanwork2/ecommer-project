@@ -89,22 +89,28 @@ export const userGetProductsByCategoy = async (req, res) => {
 export const filterProduct = async (req, res) => {
   try {
     const { keyword } = req.params;
+
     if (!keyword) {
       return res.status(400).json({
         success: false,
         message: "Keyword is required",
       });
     }
-    const products = await Product.find({
+
+    const product = await Product.findOne({
       keywords: { $regex: keyword, $options: "i" },
-    })
-      .select(
-        "name slug uniqueId description keywords stock image discount price available insale",
-      )
-      .sort({ createdAt: sortDirection })
-      .skip(startIndex)
-      .limit(limit);
-    const formattedProducts = products.map((product) => ({
+    }).select(
+      "name slug uniqueId description keywords stock image discount price available insale",
+    );
+
+    if (!product) {
+      return res.status(404).json({
+        success: false,
+        message: "Product not found",
+      });
+    }
+
+    const formattedProduct = {
       _id: product._id,
       name: product.name,
       slug: product.slug,
@@ -117,18 +123,69 @@ export const filterProduct = async (req, res) => {
       available: product.available,
       insale: product.insale,
       image: product.image?.length > 0 ? product.image[0] : null,
-    }));
+    };
 
     return res.status(200).json({
       success: true,
-      totalProducts: formattedProducts.length,
-      products: formattedProducts,
+      product: formattedProduct,
     });
   } catch (error) {
     console.error(error);
     return res.status(500).json({
       success: false,
-      message: "Failed to get products by keyword",
+      message: "Failed to get product",
+    });
+  }
+};
+// search by single name
+export const filterProductByName = async (req, res) => {
+  try {
+    const { name } = req.params;
+
+    if (!name) {
+      return res.status(400).json({
+        success: false,
+        message: "Product name is required",
+      });
+    }
+
+    const product = await Product.findOne({
+      name: { $regex: name, $options: "i" },
+    }).select(
+      "name slug uniqueId description keywords stock image discount price available insale",
+    );
+
+    if (!product) {
+      return res.status(404).json({
+        success: false,
+        message: "Product not found",
+      });
+    }
+
+    const formattedProduct = {
+      _id: product._id,
+      name: product.name,
+      slug: product.slug,
+      uniqueId: product.uniqueId,
+      description: product.description,
+      keywords: product.keywords,
+      stock: product.stock,
+      discount: product.discount,
+      price: product.price,
+      available: product.available,
+      insale: product.insale,
+      image: product.image?.length > 0 ? product.image[0] : null,
+    };
+
+    return res.status(200).json({
+      success: true,
+      product: formattedProduct,
+    });
+  } catch (error) {
+    console.error(error);
+    return res.status(500).json({
+      success: false,
+      message: "Failed to get product",
     });
   }
 };

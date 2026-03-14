@@ -12,14 +12,18 @@ export const productApi = {
     const res = await api.get(`/category/get-all`);
     return res.data;
   },
-  filterByCategories: async (categoryId, page = 1, limit = 4) => {
+  filterByCategories: async (categoryId, startIndex = 0, limit = 8) => {
     const res = await api.get(
-      `/product/filter-by-cat/${categoryId}?page=${page}&limit=${limit}`,
+      `/product/filter-by-cat/${categoryId}?startIndex=${startIndex}&limit=${limit}`,
     );
     return res.data;
   },
   filterByKeyword: async (keyword) => {
     const res = await api.get(`/product/filter/${keyword}`);
+    return res.data;
+  },
+  filterByName: async (name) => {
+    const res = await api.get(`/product/filter-by/${name}`);
     return res.data;
   },
   getSingle: async (slug) => {
