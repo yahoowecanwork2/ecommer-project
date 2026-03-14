@@ -27,7 +27,7 @@ const Product = () => {
   const [startIndex, setStartIndex] = useState(0);
   const [loading, setLoading] = useState(false);
   const [activeCategory, setActiveCategory] = useState(null);
-
+  const [sortOption, setSortOption] = useState("recommended");
   const [categories, setCategories] = useState([]);
   const [search, setSearch] = useState(null);
   const [filterByCat, setFilterByCat] = useState([]);
@@ -109,9 +109,30 @@ const Product = () => {
     getProducts();
     fetchCategories();
   }, [startIndex]);
+  const getSortedProducts = (arr) => {
+    if (!arr) return [];
+
+    let sorted = [...arr];
+
+    if (sortOption === "low") {
+      sorted.sort((a, b) => a.price - b.price);
+    }
+
+    if (sortOption === "high") {
+      sorted.sort((a, b) => b.price - a.price);
+    }
+
+    if (sortOption === "newest") {
+      sorted.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+    }
+
+    return sorted;
+  };
+  // const renderCards = (arr) =>
+  //   arr?.length > 0 &&
+  //   arr?.map((item) => <Cards key={`${item._id}`} item={item} />);
   const renderCards = (arr) =>
-    arr?.length > 0 &&
-    arr?.map((item) => <Cards key={`${item._id}`} item={item} />);
+    getSortedProducts(arr)?.map((item) => <Cards key={item._id} item={item} />);
   const noProductFound =
     !loading &&
     products?.length === 0 &&
@@ -188,11 +209,15 @@ const Product = () => {
               </span>
             </h3>
 
-            <select className="border border-gray-300 rounded-lg px-4 py-2 text-sm bg-white">
-              <option>Sort: Recommended</option>
-              <option>Price: Low to High</option>
-              <option>Price: High to Low</option>
-              <option>Newest</option>
+            <select
+              value={sortOption}
+              onChange={(e) => setSortOption(e.target.value)}
+              className="border border-gray-300 rounded-lg px-4 py-2 text-sm bg-white"
+            >
+              <option value="recommended">Sort: Recommended</option>
+              <option value="low">Price: Low to High</option>
+              <option value="high">Price: High to Low</option>
+              <option value="newest">Newest</option>
             </select>
           </div>
 
