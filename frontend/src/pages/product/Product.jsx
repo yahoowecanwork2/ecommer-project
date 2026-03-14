@@ -112,6 +112,11 @@ const Product = () => {
   const renderCards = (arr) =>
     arr?.length > 0 &&
     arr?.map((item) => <Cards key={`${item._id}`} item={item} />);
+  const noProductFound =
+    !loading &&
+    products?.length === 0 &&
+    (!search || search?.length === 0) &&
+    filterByCat?.length === 0;
   return (
     <div className="w-full bg-white min-h-screen font-google">
       <Header />
@@ -192,10 +197,21 @@ const Product = () => {
           </div>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-8">
-            {renderCards(products, "all")}
-            {renderCards(search, "search")}
-            {renderCards(filterByCat, "filter by cat")}
+            {renderCards(products)}
+            {renderCards(search)}
+            {renderCards(filterByCat)}
           </div>
+
+          {noProductFound && (
+            <div className="flex flex-col items-center justify-center mt-16 text-center">
+              <h2 className="text-2xl font-semibold text-gray-700">
+                No Product Found
+              </h2>
+              <p className="text-gray-500 mt-2">
+                Try searching with another keyword or category.
+              </p>
+            </div>
+          )}
 
           <div className="flex justify-center items-center gap-6 mt-12">
             <button
