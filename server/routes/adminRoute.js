@@ -25,7 +25,9 @@ adminRoutes.get("/profile",isAuthenticated, getProfile);
 adminRoutes.put("/profile-update",isAuthenticated, adminUpdateProfile);  
 adminRoutes.put("/send-mail",isAuthenticated, sendEmailToUser);  
 
-                 
+adminRoutes.post("/create",isAuthenticated, createSubscription);
+adminRoutes.get("/check/:userId",isAuthenticated, createSubscription);
+adminRoutes.post("/renew",isAuthenticated, createSubscription);
 
 
 export default adminRoutes;

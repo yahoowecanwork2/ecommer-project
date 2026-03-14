@@ -58,11 +58,6 @@ const productSchema = new mongoose.Schema({
         type:Number,
         required:true
     },
-    available:{
-        type:String,
-        enum:["yes","no"],
-        default:"no"
-    },
     insale:{
         type:String,
         enum:["yes","no"],

@@ -174,9 +174,7 @@ const Layout = ({ children }) => {
 
         {/* SCROLLABLE CONTENT */}
         <div className="flex-1 overflow-y-auto">
-          <div className="mx-auto">
-            <div className="bg-white  p-6 min-h-full">{children}</div>
-          </div>
+            <div className="bg-white  p-6 min-h-full relative">{children}</div>
         </div>
       </main>
     </div>

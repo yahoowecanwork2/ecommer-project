@@ -651,3 +651,42 @@ export const deleteProduct = async (req, res) => {
     });
   }
 };
+
+export const productStats = async (req, res) => {
+  try {
+    const stats = await Product.aggregate([
+      {
+        $group: {
+          _id: null,
+
+          totalProducts: { $sum: 1 },
+
+          availableProducts: {
+            $sum: {
+              $cond: [{ $gt: ["$stock", 0] }, 1, 0],
+            },
+          },
+
+          outOfStockProducts: {
+            $sum: {
+              $cond: [{ $eq: ["$stock", 0] }, 1, 0],
+            },
+          },
+        },
+      },
+    ]);
+
+    const result = stats[0] || {
+      totalProducts: 0,
+      availableProducts: 0,
+      outOfStockProducts: 0,
+    };
+
+    res.status(200).json(result);
+  } catch (error) {
+    res.status(500).json({
+      message: "Error fetching product stats",
+      error: error.message,
+    });
+  }
+};
