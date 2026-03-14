@@ -27,7 +27,9 @@ const Product = () => {
   const [startIndex, setStartIndex] = useState(0);
   const [loading, setLoading] = useState(false);
   const [categories, setCategories] = useState([]);
-
+  const [search, setSearch] = useState(null);
+  const [keyword, setKeyword] = useState("");
+  const [name, setName] = useState("");
   const limit = 8;
   const categoryIcons = {
     mobiles: <FaMobileAlt />,
@@ -40,7 +42,7 @@ const Product = () => {
   const getProducts = async () => {
     try {
       setLoading(true);
-
+      setSearch(null);
       const res = await productApi.get(startIndex, limit);
       console.log("all-products", res);
 
@@ -62,13 +64,27 @@ const Product = () => {
       console.log("Category fetch error", error);
     }
   };
+  // search
+  const handleSearch = async () => {
+    try {
+      setProducts([]);
+      const res = await productApi.filterByName(name);
+      console.log("search", res);
+
+      if (res.success) {
+        setSearch([res.product]);
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  };
   useEffect(() => {
     getProducts();
     fetchCategories();
   }, [startIndex]);
   const renderCards = (arr) =>
-    arr.length > 0 &&
-    arr.map((item) => <Cards key={`${item._id}`} item={item} />);
+    arr?.length > 0 &&
+    arr?.map((item) => <Cards key={`${item._id}`} item={item} />);
   return (
     <div className="w-full bg-white min-h-screen font-google">
       <Header />
@@ -79,11 +95,15 @@ const Product = () => {
           <div className="flex gap-3 max-w-xl mb-12">
             <input
               type="text"
+              value={name}
+              onChange={(e) => setName(e.target.value)}
               placeholder="Search products..."
               className="w-full px-5 py-3 rounded-full border border-gray-300 focus:outline-none focus:border-gray-900 text-sm"
             />
-
-            <button className="px-6 py-3 bg-black text-white rounded-full text-sm font-medium hover:bg-gray-800 transition">
+            <button
+              onClick={handleSearch}
+              className="px-6 py-3 bg-black text-white rounded-full text-sm font-medium hover:bg-gray-800 transition"
+            >
               Search
             </button>
           </div>
@@ -137,6 +157,7 @@ const Product = () => {
           {/* Products Grid */}
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-8">
             {renderCards(products, "all")}
+            {renderCards(search, "search")}
           </div>
 
           {/* Pagination */}

@@ -22,6 +22,10 @@ export const productApi = {
     const res = await api.get(`/product/filter/${keyword}`);
     return res.data;
   },
+  filterByName: async (name) => {
+    const res = await api.get(`/product/filter-by/${name}`);
+    return res.data;
+  },
   getSingle: async (slug) => {
     const res = await api.get(`/product/get-single/${slug}`);
     return res.data;

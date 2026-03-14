@@ -4,7 +4,7 @@ import Register from "../pages/auth/Register";
 import { Route, Routes } from "react-router-dom";
 import Protectedroutes from "../middleware/Protectedroutes";
 import About from "../pages/static/About";
-import Order from "../pages/order/Order";
+// import Order from "../pages/order/Order";
 import Privacy from "../pages/static/Privacy";
 import Shipping from "../pages/static/Shipping";
 import Return from "../pages/static/Return";
