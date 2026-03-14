@@ -10,6 +10,7 @@ import {
   filterProduct,
   filterProductByName,
   getProductBySlug,
+  productStats,
   updateProductFields,
   updateProductImages,
   updateProductRefund,
@@ -72,5 +73,6 @@ productRoutes.put(
   updateProductRefund,
 );
 productRoutes.delete("/admin/delete/:productId", checkAdmin, deleteProduct);
+productRoutes.get("/stats", checkAdmin, productStats);
 
 export default productRoutes;
