@@ -9,6 +9,7 @@ import Privacy from "../pages/static/Privacy";
 import Shipping from "../pages/static/Shipping";
 import Return from "../pages/static/Return";
 import Contact from "../pages/static/Contact";
+import Profile from "../pages/profile/Profile";
 const User = lazy(() => import("../pages/users/User"));
 const Userdetail = lazy(() => import("../pages/users/Userdetail"));
 const Product = lazy(() => import("../pages/product/Product"));
@@ -113,6 +114,7 @@ const Pagesroutes = () => {
             </Protectedroutes>
           }
         />
+        <Route path="/profile" element={<Profile />} />
       </Routes>
     </>
   );
