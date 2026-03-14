@@ -26,6 +26,8 @@ const Product = () => {
   const [products, setProducts] = useState([]);
   const [startIndex, setStartIndex] = useState(0);
   const [loading, setLoading] = useState(false);
+  const [activeCategory, setActiveCategory] = useState(null);
+
   const [categories, setCategories] = useState([]);
   const [search, setSearch] = useState(null);
   const [filterByCat, setFilterByCat] = useState([]);
@@ -88,6 +90,8 @@ const Product = () => {
       setLoading(true);
       setSearch(null);
       setProducts([]);
+      setActiveCategory(categoryId);
+
       const res = await productApi.filterByCategories(categoryId, 0, limit);
       console.log("filterbycategories", res);
 
@@ -143,13 +147,26 @@ const Product = () => {
                   <div
                     key={cat._id}
                     onClick={() => handleCategoryFilter(cat._id)}
-                    className="flex flex-col items-center cursor-pointer group min-w-[70px]"
+                    className={`flex flex-col items-center cursor-pointer min-w-[70px]`}
                   >
-                    <div className="w-16 h-16 rounded-full bg-white border border-gray-200 flex items-center justify-center text-xl shadow-sm group-hover:bg-black group-hover:text-white transition">
+                    <div
+                      className={`w-16 h-16 rounded-full border flex items-center justify-center text-xl shadow-sm transition
+    ${
+      activeCategory === cat._id
+        ? "bg-black text-white border-black"
+        : "bg-white border-gray-200 hover:bg-black hover:text-white"
+    }`}
+                    >
                       {categoryIcons[key] || <FaTshirt />}
                     </div>
 
-                    <p className="text-sm mt-3 text-gray-700 group-hover:text-black">
+                    <p
+                      className={`text-sm mt-3 ${
+                        activeCategory === cat._id
+                          ? "text-black font-semibold"
+                          : "text-gray-700"
+                      }`}
+                    >
                       {cat.name}
                     </p>
                   </div>
