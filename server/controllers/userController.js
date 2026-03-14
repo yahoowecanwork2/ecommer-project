@@ -3,6 +3,7 @@
 import { generateToken } from "../utils/generateUserToken.js";
 import { sendMailtoUser } from "../middleware/notifyMail.js";
 import User from "../models/User.js";
+import Order from "../models/Order.js";
 
 //-------------------------------------- user controlers ----------------------------------
 export const checkUserExist = async (req, res) => {
@@ -833,6 +834,76 @@ export const SearchUser = async (req, res) => {
     res.json({
       success: true,
       data: user,
+    });
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      data: null,
+      message: error.message,
+    });
+  }
+};
+
+export const Stats = async (req, res) => {
+  try {
+    const thirtyDaysAgo = new Date();
+    thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
+    const revenueStats = await Order.aggregate([
+      {
+        $match: { status: "delivered" },
+      },
+      {
+        $group: {
+          _id: null,
+          totalOrders: { $sum: 1 },
+          totalRevenue: { $sum: { $toDouble: "$ordertotal" } },
+        },
+      },
+    ]);
+
+    const productStats = await Order.aggregate([
+      {
+        $match: { status: "delivered" },
+      },
+      {
+        $unwind: "$items",
+      },
+      {
+        $group: {
+          _id: null,
+          totalProducts: { $sum: "$items.quantity" },
+        },
+      },
+    ]);
+
+    const activeUsers = await User.aggregate([
+      {
+        $lookup: {
+          from: "orders",
+          localField: "_id",
+          foreignField: "customerId",
+          as: "orders",
+        },
+      },
+      {
+        $addFields: {
+          lastOrderDate: { $max: "$orders.createdAt" },
+        },
+      },
+      {
+        $match: {
+          lastOrderDate: { $gte: thirtyDaysAgo },
+        },
+      },
+      {
+        $count: "activeUsers",
+      },
+    ]);
+
+    return res.status(200).json({
+      revenueStats,
+      productStats,
+      activeUsers,
     });
   } catch (error) {
     res.status(500).json({
