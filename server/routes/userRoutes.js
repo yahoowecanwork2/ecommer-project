@@ -20,6 +20,7 @@ import {
   removeFromWishlist,
   SearchUser,
   sendEmailToUser,
+  Stats,
   updateCartQuantity,
   userUpdateProfile,
 } from "../controllers/userController.js";
@@ -58,5 +59,6 @@ userRoutes.get("/user-order/:userId", checkAdmin, getSingleUserOrders);
 userRoutes.get("/user-cart/:userId", checkAdmin, getUserCartItems);
 userRoutes.get("/user-wishlist/:userId", checkAdmin, getUserWishlistItems);
 userRoutes.get("/search", checkAdmin, SearchUser);
+userRoutes.get("/stats", checkAdmin, Stats);
 
 export default userRoutes;

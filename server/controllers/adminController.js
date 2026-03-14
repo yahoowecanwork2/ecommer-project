@@ -4,9 +4,10 @@ import { generateToken } from "../utils/generateUserToken.js";
 import { Admin } from "../models/Admin.js";
 import sendRegisterAndResendOtpMail, {
   loginAndresendOtpEmail,
-  sendForgotMail
+  sendForgotMail,
 } from "../middleware/sendMail.js";
 import { sendMailtoUser, sendVerifyUser } from "../middleware/notifyMail.js";
+import Order from "../models/Order.js";
 
 //-------------------------------------- owner apis ----------------------------------
 
@@ -32,7 +33,7 @@ export const adminRegister = async (req, res) => {
       phoneno,
       password: hashedpassword,
     };
-      const otp = Math.floor(100000 + Math.random() * 900000);
+    const otp = Math.floor(100000 + Math.random() * 900000);
 
     const activationToken = jwt.sign(
       {
@@ -54,7 +55,7 @@ export const adminRegister = async (req, res) => {
       data,
     );
     res.status(201).json({
-      success:true,
+      success: true,
       status: "success",
       message: "Otp send to your mail successfully",
       token: activationToken,
@@ -81,7 +82,7 @@ export const registerOtpResend = async (req, res) => {
       phoneno,
       password: hashedpassword,
     };
-      const otp = Math.floor(100000 + Math.random() * 900000);
+    const otp = Math.floor(100000 + Math.random() * 900000);
     const activationToken = jwt.sign(
       {
         user,
@@ -102,7 +103,7 @@ export const registerOtpResend = async (req, res) => {
       data,
     );
     res.status(201).json({
-      success:true,
+      success: true,
       status: "success",
       message: "Otp send to your mail successfully",
       token: activationToken,
@@ -115,7 +116,6 @@ export const registerOtpResend = async (req, res) => {
     });
   }
 };
-
 
 export const verifyAdmin = async (req, res) => {
   try {
@@ -135,7 +135,7 @@ export const verifyAdmin = async (req, res) => {
       authenticated: true,
       phoneno: verify.user.phoneno,
       email: verify.user.email,
-      allow:"no",
+      allow: "no",
       password: verify.user.password,
     });
 
@@ -168,7 +168,7 @@ export const forgotPassword = async (req, res) => {
     await user.save();
 
     res.status(200).json({
-      success:true,
+      success: true,
       status: "success",
       message: "Reset password send to your mail",
     });
@@ -183,8 +183,8 @@ export const forgotPassword = async (req, res) => {
 
 export const resetPassword = async (req, res) => {
   try {
-    console.log(req.query.token)
-    const {token,password} = req.body
+    console.log(req.query.token);
+    const { token, password } = req.body;
     const decodedData = jwt.verify(token, process.env.Forgot_Secret);
     const user = await Admin.findOne({ email: decodedData.email });
     if (!user)
@@ -199,7 +199,7 @@ export const resetPassword = async (req, res) => {
 
     if (user.resetPasswordExpire < Date.now()) {
       return res.status(400).json({
-        success:false,
+        success: false,
         message: "Token Expired",
       });
     }
@@ -208,9 +208,9 @@ export const resetPassword = async (req, res) => {
     user.resetPasswordExpire = null;
     await user.save();
     res.json({
-      success:true,
-      message: "Password Reset" 
-      });
+      success: true,
+      message: "Password Reset",
+    });
   } catch (error) {
     console.log(error);
     return res.status(500).json({
@@ -268,7 +268,7 @@ export const adminLogin = async (req, res) => {
     };
     await loginAndresendOtpEmail(email, "Study material application", data);
     res.status(201).json({
-      success:true,
+      success: true,
       status: "success",
       message: "Login Otp send to your mail successfully",
       token: activationToken,
@@ -315,7 +315,7 @@ export const adminResendLoginVerifyOtp = async (req, res) => {
     };
     await loginAndresendOtpEmail(email, "Study material application", data);
     res.status(201).json({
-      success:true,
+      success: true,
       status: "success",
       message: "Login Otp resend to your mail successfully",
       token: activationToken,
@@ -400,8 +400,6 @@ export const getProfile = async (req, res) => {
   }
 };
 
-
-
 export const addSubscription = async (req, res) => {
   try {
     const userId = req.id;
@@ -420,7 +418,10 @@ export const addSubscription = async (req, res) => {
       date: new Date(),
     };
     // move current subscription to previous if exists
-    if (user.currentSubscription && Object.keys(user.currentSubscription).length > 0) {
+    if (
+      user.currentSubscription &&
+      Object.keys(user.currentSubscription).length > 0
+    ) {
       user.previousSubscriptions.push(user.currentSubscription);
     }
     // update current subscription
@@ -442,12 +443,12 @@ export const addSubscription = async (req, res) => {
   }
 };
 
-
-
 export const checkAllow = async (req, res) => {
   try {
     const userId = req.id;
-    const user = await Admin.findById(userId).select("allow currentSubscription");
+    const user = await Admin.findById(userId).select(
+      "allow currentSubscription",
+    );
     if (!user) {
       return res.status(404).json({
         success: false,
@@ -468,7 +469,6 @@ export const checkAllow = async (req, res) => {
       allow: false,
       message: "Subscription required",
     });
-
   } catch (error) {
     console.log(error);
     return res.status(500).json({
@@ -477,8 +477,6 @@ export const checkAllow = async (req, res) => {
     });
   }
 };
-
-
 
 export const uploadProfilePic = async (req, res) => {
   try {
@@ -607,4 +605,14 @@ export const sendEmailToUser = async (req, res) => {
       error: error.message,
     });
   }
+};
+
+export const stats = async (req, res) => {
+  try {
+    const orders = await Order.find({ status: "delivered" });
+    const stats = await Order.aggregate([
+      { $match: { status: "delivered" } },
+      { $group: { _id: null, total: { $sum: "$ordertotal" } } },
+    ]);
+  } catch (error) {}
 };
