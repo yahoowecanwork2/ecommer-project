@@ -28,7 +28,7 @@ const Product = () => {
   const [loading, setLoading] = useState(false);
   const [categories, setCategories] = useState([]);
   const [search, setSearch] = useState(null);
-  const [keyword, setKeyword] = useState("");
+  const [filterByCat, setFilterByCat] = useState([]);
   const [name, setName] = useState("");
   const limit = 8;
   const categoryIcons = {
@@ -42,6 +42,7 @@ const Product = () => {
   const getProducts = async () => {
     try {
       setLoading(true);
+      setFilterByCat([]);
       setSearch(null);
       const res = await productApi.get(startIndex, limit);
       console.log("all-products", res);
@@ -68,6 +69,8 @@ const Product = () => {
   const handleSearch = async () => {
     try {
       setProducts([]);
+      setFilterByCat([]);
+
       const res = await productApi.filterByName(name);
       console.log("search", res);
 
@@ -76,6 +79,26 @@ const Product = () => {
       }
     } catch (error) {
       console.log(error);
+    }
+  };
+
+  // filter by categories
+  const handleCategoryFilter = async (categoryId) => {
+    try {
+      setLoading(true);
+      setSearch(null);
+      setProducts([]);
+      const res = await productApi.filterByCategories(categoryId, 0, limit);
+      console.log("filterbycategories", res);
+
+      if (res.success) {
+        setFilterByCat(res.products);
+      }
+
+      setLoading(false);
+    } catch (error) {
+      console.log(error);
+      setLoading(false);
     }
   };
   useEffect(() => {
@@ -91,7 +114,6 @@ const Product = () => {
 
       <div className="bg-[#faf7f2] min-h-screen font-google pt-28 pb-20">
         <div className="max-w-7xl mx-auto px-6">
-          {/* Search */}
           <div className="flex gap-3 max-w-xl mb-12">
             <input
               type="text"
@@ -108,7 +130,6 @@ const Product = () => {
             </button>
           </div>
 
-          {/* Categories */}
           <div className="mb-14">
             <h3 className="text-2xl font-semibold text-gray-900 mb-6">
               Shop by Category
@@ -121,6 +142,7 @@ const Product = () => {
                 return (
                   <div
                     key={cat._id}
+                    onClick={() => handleCategoryFilter(cat._id)}
                     className="flex flex-col items-center cursor-pointer group min-w-[70px]"
                   >
                     <div className="w-16 h-16 rounded-full bg-white border border-gray-200 flex items-center justify-center text-xl shadow-sm group-hover:bg-black group-hover:text-white transition">
@@ -136,7 +158,6 @@ const Product = () => {
             </div>
           </div>
 
-          {/* Product Header */}
           <div className="flex justify-between items-center mb-8">
             <h3 className="text-2xl font-semibold text-gray-900">
               All Products
@@ -145,7 +166,6 @@ const Product = () => {
               </span>
             </h3>
 
-            {/* Sort */}
             <select className="border border-gray-300 rounded-lg px-4 py-2 text-sm bg-white">
               <option>Sort: Recommended</option>
               <option>Price: Low to High</option>
@@ -154,13 +174,12 @@ const Product = () => {
             </select>
           </div>
 
-          {/* Products Grid */}
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-8">
             {renderCards(products, "all")}
             {renderCards(search, "search")}
+            {renderCards(filterByCat, "filter by cat")}
           </div>
 
-          {/* Pagination */}
           <div className="flex justify-center items-center gap-6 mt-12">
             <button
               disabled={startIndex === 0}
