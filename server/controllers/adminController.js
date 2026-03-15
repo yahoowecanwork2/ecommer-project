@@ -8,6 +8,9 @@ import sendRegisterAndResendOtpMail, {
 } from "../middleware/sendMail.js";
 import { sendMailtoUser, sendVerifyUser } from "../middleware/notifyMail.js";
 import Order from "../models/Order.js";
+import Subscription from "../models/Subscription.js";
+import Razorpay from "razorpay";
+import crypto from "crypto";
 
 //-------------------------------------- owner apis ----------------------------------
 
@@ -615,4 +618,201 @@ export const stats = async (req, res) => {
       { $group: { _id: null, total: { $sum: "$ordertotal" } } },
     ]);
   } catch (error) {}
+};
+
+
+export const createSubscription = async (req, res) => {
+  try {
+
+    const { userId, plan, billingCycle, price } = req.body;
+
+    const startDate = new Date();
+    let endDate = new Date();
+
+    if (billingCycle === "monthly") {
+      endDate.setMonth(endDate.getMonth() + 1);
+    }
+
+    if (billingCycle === "yearly") {
+      endDate.setFullYear(endDate.getFullYear() + 1);
+    }
+
+    const subscription = await Subscription.create({
+      userId,
+      plan,
+      billingCycle,
+      price,
+      startDate,
+      endDate
+    });
+
+    res.status(201).json({
+      success: true,
+      subscription
+    });
+
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      message: error.message
+    });
+  }
+};
+
+export const checkSubscription = async (req, res) => {
+  try {
+
+    const { userId } = req.params;
+
+    const subscription = await Subscription.findOne({ userId });
+
+    if (!subscription) {
+      return res.json({
+        active: false,
+        message: "No subscription found"
+      });
+    }
+
+    const now = new Date();
+
+    if (subscription.endDate < now) {
+      subscription.status = "expired";
+      await subscription.save();
+
+      return res.json({
+        active: false,
+        message: "Subscription expired"
+      });
+    }
+
+    res.json({
+      active: true,
+      subscription
+    });
+
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
+
+export const renewSubscription = async (req, res) => {
+  try {
+
+    const { userId } = req.body;
+
+    const subscription = await Subscription.findOne({ userId });
+
+    if (!subscription) {
+      return res.status(404).json({ message: "Subscription not found" });
+    }
+
+    let newEnd = new Date(subscription.endDate);
+
+    if (subscription.billingCycle === "monthly") {
+      newEnd.setMonth(newEnd.getMonth() + 1);
+    }
+
+    if (subscription.billingCycle === "yearly") {
+      newEnd.setFullYear(newEnd.getFullYear() + 1);
+    }
+
+    subscription.endDate = newEnd;
+    subscription.status = "active";
+
+    await subscription.save();
+
+    res.json({
+      message: "Subscription renewed",
+      subscription
+    });
+
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
+
+
+export const createOrder = async (req, res) => {
+  try {
+
+    const { plan } = req.body;
+
+    const plans = {
+      monthly: 999,
+      yearly: 9999
+    };
+
+    const amount = plans[plan] * 100; // paisa
+
+    const options = {
+      amount,
+      currency: "INR",
+      receipt: `receipt_${Date.now()}`
+    };
+
+    const order = await Razorpay.orders.create(options);
+
+    res.json({
+      success: true,
+      order
+    });
+
+  } catch (error) {
+    res.status(500).json({
+      message: error.message
+    });
+  }
+};
+
+
+
+
+export const verifyPayment = async (req, res) => {
+
+  const {
+    razorpay_order_id,
+    razorpay_payment_id,
+    razorpay_signature,
+    userId,
+    plan
+  } = req.body;
+
+  const body = razorpay_order_id + "|" + razorpay_payment_id;
+
+  const expectedSignature = crypto
+    .createHmac("sha256", process.env.RAZORPAY_KEY_SECRET)
+    .update(body.toString())
+    .digest("hex");
+
+  const isValid = expectedSignature === razorpay_signature;
+
+  if (!isValid) {
+    return res.status(400).json({
+      success: false,
+      message: "Payment verification failed"
+    });
+  }
+
+  // create subscription
+
+  const startDate = new Date();
+  let endDate = new Date();
+
+  if (plan === "monthly") endDate.setMonth(endDate.getMonth() + 1);
+  if (plan === "yearly") endDate.setFullYear(endDate.getFullYear() + 1);
+
+  const subscription = await Subscription.create({
+    userId,
+    plan,
+    billingCycle: plan,
+    price: plan === "monthly" ? 999 : 9999,
+    startDate,
+    endDate
+  });
+
+  res.json({
+    success: true,
+    message: "Subscription activated",
+    subscription
+  });
 };

@@ -1,5 +1,5 @@
 import express from 'express'
-import { addSubscription, adminLogin, adminRegister, adminResendLoginVerifyOtp, adminUpdateProfile, checkAllow, forgotPassword, getProfile, logout, registerOtpResend, resetPassword, sendEmailToUser, verifyAdmin, verifyLoginUser } from '../controllers/adminController.js';
+import { addSubscription, adminLogin, adminRegister, adminResendLoginVerifyOtp, adminUpdateProfile, checkAllow, checkSubscription, createOrder, createSubscription, forgotPassword, getProfile, logout, registerOtpResend, renewSubscription, resetPassword, sendEmailToUser, verifyAdmin, verifyLoginUser, verifyPayment } from '../controllers/adminController.js';
 import isAuthenticated from '../middleware/isAuthenticated.js';
 
 
@@ -26,8 +26,11 @@ adminRoutes.put("/profile-update",isAuthenticated, adminUpdateProfile);
 adminRoutes.put("/send-mail",isAuthenticated, sendEmailToUser);  
 
 adminRoutes.post("/create",isAuthenticated, createSubscription);
-adminRoutes.get("/check/:userId",isAuthenticated, createSubscription);
-adminRoutes.post("/renew",isAuthenticated, createSubscription);
+adminRoutes.get("/check/:userId",isAuthenticated, checkSubscription);
+adminRoutes.post("/renew",isAuthenticated, renewSubscription);
+
+adminRoutes.post("/create-order", createOrder);
+adminRoutes.post("/verify-payment", verifyPayment);
 
 
 export default adminRoutes;
