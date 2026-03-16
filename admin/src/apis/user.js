@@ -17,6 +17,10 @@ export const userApi = {
     const res = await api.put(`/user/user-order/${useId}`);
     return res.data;
   },
+  allStats: async () => {
+    const res = await api.get(`/user/stats`);
+    return res.data;
+  },
 
   userWishlist: async (data, userId) => {
     const res = await api.put(`/user/user-wishlist/${userId}`, data);
