@@ -1,170 +1,121 @@
 import React, { useEffect, useState } from "react";
-import { FaBox, FaUser, FaMapMarkerAlt, FaMoneyBillWave } from "react-icons/fa";
 import { useParams } from "react-router-dom";
 import { orderApi } from "../../apis/order";
+import Header from "../common/Header";
+import Footer from "../common/Footer";
 
 const Orderdetails = () => {
   const { orderId } = useParams();
   const [order, setOrder] = useState(null);
   const [loading, setLoading] = useState(true);
+
   const fetchOrder = async () => {
     try {
       const res = await orderApi.myOrderSingle(orderId);
-      console.log("detail", res);
-
-      if (res.success) {
-        setOrder(res.order);
-      }
-    } catch (error) {
-      console.log(error);
-    } finally {
-      setLoading(false);
-    }
+      if (res.success) setOrder(res.order);
+    } catch (error) { console.log(error); } finally { setLoading(false); }
   };
-  // status
+
   const cancelOrder = async () => {
+    if (!window.confirm("Cancel this curation?")) return;
     try {
-      const res = await orderApi.myOrderStatus(orderId, {
-        cancelStatus: "yes",
-      });
-
-      if (res.success) {
-        alert("Order canceled successfully");
-
-        setOrder(res.order);
-      }
-    } catch (error) {
-      console.log(error);
-    }
+      const res = await orderApi.myOrderStatus(orderId, { cancelStatus: "yes" });
+      if (res.success) setOrder(res.order);
+    } catch (error) { console.log(error); }
   };
-  useEffect(() => {
-    fetchOrder();
-  }, []);
-  if (loading) {
-    return <div className="text-center mt-20">Loading...</div>;
-  }
 
-  if (!order) {
-    return <div className="text-center mt-20">Order not found</div>;
-  }
+  useEffect(() => { fetchOrder(); }, []);
+
+  if (loading) return <div className="h-screen flex items-center justify-center text-[10px] uppercase tracking-widest text-gray-400">Loading...</div>;
+  if (!order) return <div className="h-screen flex items-center justify-center text-sm">Order not found.</div>;
+
   return (
-    <div className="min-h-screen bg-white p-6">
-      <div className="max-w-5xl mx-auto">
-        <h2 className="text-3xl font-bold text-[#160059] mb-6">
-          Order Details
-        </h2>
-
-        <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
-          <div>
-            <p className="text-gray-500 text-sm">Order No</p>
-            <h3 className="text-xl font-bold text-[#160059]">
-              {order?.orderno}
-            </h3>
-
-            <p className="text-gray-500 text-sm">
-              Date: {new Date(order?.createdAt).toLocaleDateString()}
+    <div className="min-h-screen bg-white text-[#3D2B3D]">
+      <Header />
+      
+      <main className="max-w-4xl mx-auto pt-28 pb-10 px-6">
+        
+        {/* HEADER: No extra padding */}
+        <div className="flex justify-between items-center border-b border-gray-100 pb-4 mb-6">
+          <div className="space-y-0.5">
+            <h1 className="text-xl font-serif italic text-[#3D2B3D]">Order #{order?.orderno}</h1>
+            <p className="text-[10px] text-gray-400 uppercase tracking-tighter">
+              {new Date(order?.createdAt).toLocaleDateString()}
             </p>
           </div>
-
-          <div className="flex items-center gap-3">
-            <span
-              className={`px-4 py-1 rounded-full text-sm font-medium
-      ${
-        order?.status === "pending"
-          ? "bg-yellow-100 text-yellow-700"
-          : order?.status === "canceled"
-            ? "bg-red-100 text-red-600"
-            : "bg-green-100 text-green-700"
-      }`}
-            >
+          <div className="flex items-center gap-4 font-sans">
+            <span className="text-[9px] font-black uppercase tracking-widest text-gray-400 bg-gray-50 px-2 py-1">
               {order?.status}
             </span>
-
-            {/* Cancel Button */}
             {order?.status === "pending" && (
-              <button
-                onClick={cancelOrder}
-                className="flex items-center gap-2 px-4 py-2 text-sm font-medium text-white bg-[#160059] rounded-lg shadow hover:bg-red-600 transition"
-              >
-                Cancel Order
+              <button onClick={cancelOrder} className="text-[9px] font-bold uppercase tracking-widest text-gray-300 hover:text-[#3D2B3D] transition-all">
+                Cancel
               </button>
             )}
           </div>
         </div>
 
-        <div className="border rounded-xl p-6 mb-6 shadow-sm">
-          <h3 className="text-lg font-semibold text-[#160059] mb-4 flex items-center gap-2">
-            <FaBox /> Items
-          </h3>
+        {/* INFO GRID: Tight 3-column layout */}
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8 py-2">
+          <div className="space-y-1">
+            <h2 className="text-[9px] font-black uppercase tracking-widest text-gray-300">Shipping</h2>
+            <div className="text-[12px] text-gray-600 leading-snug">
+              <p className="font-bold text-[#3D2B3D]">{order?.customername}</p>
+              <p className="truncate">{order?.shippingaddress}</p>
+              <p>Pin: {order?.pincode}</p>
+            </div>
+          </div>
 
-          <div className="space-y-4">
-            {order?.items?.map((item, index) => (
-              <div
-                key={index}
-                className="flex gap-4 border-b pb-4 last:border-b-0"
-              >
-                <img
-                  src={item?.productId?.image?.[0]?.url}
-                  alt={item?.productId?.name}
-                  className="w-24 h-24 object-cover rounded-lg border"
-                />
+          <div className="space-y-1">
+            <h2 className="text-[9px] font-black uppercase tracking-widest text-gray-300">Contact</h2>
+            <div className="text-[12px] text-gray-600 leading-snug">
+              <p>{order?.phoneno}</p>
+              <p className="text-gray-400">{order?.emailid}</p>
+            </div>
+          </div>
 
-                <div className="flex-1">
-                  <h4 className="font-semibold text-gray-800">
-                    {item?.productId?.name}
-                  </h4>
+          <div className="space-y-1 md:text-right">
+            <h2 className="text-[9px] font-black uppercase tracking-widest text-gray-300">Payment</h2>
+            <div className="text-[12px] text-gray-600 space-y-0.5">
+              <p className="capitalize font-medium">{order?.paymentType}</p>
+              <p className="text-[10px] font-bold uppercase text-gray-400">{order?.paymentstatus}</p>
+            </div>
+          </div>
+        </div>
 
-                  <p className="text-gray-500">Qty: {item?.quantity}</p>
-
-                  <p className="text-[#160059] font-bold">
-                    ₹{item?.productId?.price}
-                  </p>
+        {/* ITEMS: Compact List View */}
+        <div className="mb-8">
+          <h2 className="text-[9px] font-black uppercase tracking-widest text-gray-300 mb-4 border-b border-gray-50 pb-1">Line Items</h2>
+          {order?.items?.map((item, index) => (
+            <div key={index} className="flex justify-between items-center py-3 border-b border-gray-50 last:border-0">
+              <div className="flex gap-4 items-center">
+                <img src={item?.productId?.image?.[0]?.url} className="w-10 h-14 object-cover bg-gray-50" alt="" />
+                <div className="space-y-0.5">
+                  <p className="text-[12px] font-bold text-[#3D2B3D] tracking-tight">{item?.productId?.name}</p>
+                  <p className="text-[10px] text-gray-400 uppercase">Qty: {item?.quantity}</p>
                 </div>
               </div>
-            ))}
+              <p className="text-[13px] font-bold text-[#3D2B3D]">₹{item?.productId?.price}</p>
+            </div>
+          ))}
+        </div>
+
+        {/* TOTAL: Simple & Right-aligned */}
+        <div className="flex justify-end pt-4 border-t border-[#3D2B3D]/10">
+          <div className="w-48 space-y-1">
+            <div className="flex justify-between text-[11px] text-gray-400">
+              <span>Subtotal</span>
+              <span>₹{order?.ordertotal}</span>
+            </div>
+            <div className="flex justify-between items-baseline pt-2 border-t border-gray-50">
+              <span className="text-[10px] font-black uppercase tracking-widest text-[#3D2B3D]">Total</span>
+              <span className="text-xl text-[#3D2B3D]">₹{order?.ordertotal}</span>
+            </div>
           </div>
         </div>
 
-        <div className="border rounded-xl p-6 mb-6 shadow-sm grid grid-cols-1 md:grid-cols-2 gap-6">
-          <div>
-            <h3 className="text-lg font-semibold text-[#160059] flex items-center gap-2 mb-3">
-              <FaUser /> Customer Info
-            </h3>
-            <p>
-              <b>Name:</b> {order?.customername}
-            </p>
-            <p>
-              <b>Phone:</b> {order?.phoneno}
-            </p>
-            <p>
-              <b>Email:</b> {order?.emailid}
-            </p>
-          </div>
-
-          <div>
-            <h3 className="text-lg font-semibold text-[#160059] flex items-center gap-2 mb-3">
-              <FaMapMarkerAlt /> Shipping Address
-            </h3>
-            <p>{order?.shippingaddress}</p>
-            <p>Pincode: {order?.pincode}</p>
-          </div>
-        </div>
-
-        <div className="border rounded-xl p-6 shadow-sm">
-          <h3 className="text-lg font-semibold text-[#160059] flex items-center gap-2 mb-3">
-            <FaMoneyBillWave /> Payment Info
-          </h3>
-          <p>
-            <b>Payment Type:</b> {order?.paymentType}
-          </p>
-          <p>
-            <b>Payment Status:</b> {order?.paymentstatus}
-          </p>
-          <p className="text-xl font-bold text-[#160059] mt-2">
-            Total: ₹{order?.ordertotal}
-          </p>
-        </div>
-      </div>
+      </main>
+      <Footer />
     </div>
   );
 };

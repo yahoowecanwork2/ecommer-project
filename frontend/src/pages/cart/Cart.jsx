@@ -10,8 +10,14 @@ import {
 } from "../../redux/cartSlice";
 import HeaderHome from "../common/Header";
 import { useNavigate } from "react-router-dom";
-import { FaPlus, FaMinus, FaTrash } from "react-icons/fa";
-import { IoBagHandleOutline, IoTrashOutline, IoArrowForwardOutline } from "react-icons/io5";
+import {
+  IoBagOutline,
+  IoTrashOutline,
+  IoAddOutline,
+  IoRemoveOutline,
+  IoArrowForward,
+  IoShieldCheckmarkOutline,
+} from "react-icons/io5";
 
 const Cart = () => {
   const navigate = useNavigate();
@@ -35,33 +41,23 @@ const Cart = () => {
     }
   }, []);
 
-  const increaseQty = async (item) => {
+  // API Logic Helpers
+  const updateQty = async (item, newQty) => {
+    if (newQty < 1) return;
     try {
-      const currentItem = cartItems.find(
-        (cartItem) => cartItem.productId === item.productId
-      );
-      if (!currentItem) return;
-      const newQty = currentItem.quantity + 1;
-      const payload = { productId: item.productId, quantity: newQty };
-      await authApi.updateQuantity(payload);
-      dispatch(addOrIncrementInCart({ productId: item.productId, quantity: newQty }));
+      await authApi.updateQuantity({
+        productId: item.productId,
+        quantity: newQty,
+      });
+      if (newQty > item.quantity) {
+        dispatch(
+          addOrIncrementInCart({ productId: item.productId, quantity: newQty }),
+        );
+      } else {
+        dispatch(decrementOrRemoveInCart({ productId: item.productId }));
+      }
     } catch (error) {
-      console.error("Increase qty error:", error);
-    }
-  };
-
-  const decreaseQty = async (item) => {
-    try {
-      const currentItem = cartItems.find(
-        (cartItem) => cartItem.productId === item.productId
-      );
-      if (!currentItem || currentItem.quantity <= 1) return;
-      const newQty = currentItem.quantity - 1;
-      const payload = { productId: item.productId, quantity: newQty };
-      await authApi.updateQuantity(payload);
-      dispatch(decrementOrRemoveInCart({ productId: item.productId }));
-    } catch (error) {
-      console.error("Decrease qty error:", error);
+      console.error("Update qty error:", error);
     }
   };
 
@@ -74,159 +70,154 @@ const Cart = () => {
     }
   };
 
-  const handleClearCart = async () => {
-    try {
-      await authApi.clearCart();
-      dispatch(clearCart());
-    } catch (error) {
-      console.error("Clear cart error:", error);
-    }
-  };
-
-  // --- EMPTY CART STATE ---
+  // EMPTY STATE
   if (!cartItems || cartItems.length === 0) {
     return (
-      <div className="min-h-screen bg-[#FCFBF9] font-google">
+      <div className="min-h-screen bg-white">
         <HeaderHome />
-        <div className="flex flex-col items-center justify-center h-screen text-center px-6">
-          <div className="w-24 h-24 bg-pink-50 rounded-full flex items-center justify-center mb-8">
-            <IoBagHandleOutline className="text-5xl text-[#D16B92]" />
-          </div>
-          <h2 className="text-4xl font-serif italic text-[#2D1B2D] mb-4">Your Bag is Empty</h2>
-          <p className="text-gray-400 mb-10 max-w-xs font-light tracking-wide uppercase text-[10px]">
-            The pieces you love are waiting to be found. Explore our summer archive.
+        <div className="flex flex-col items-center justify-center pt-40 px-6">
+          <IoBagOutline className="text-6xl text-gray-200 mb-6" />
+          <h2 className="text-2xl font-semibold text-gray-900 mb-2">
+            Your cart is empty
+          </h2>
+          <p className="text-gray-500 mb-8 text-center max-w-sm">
+            Looks like you haven't added anything to your cart yet.
           </p>
           <button
             onClick={() => navigate("/product")}
-            className="px-12 py-4 bg-[#2D1B2D] text-white text-[10px] font-black uppercase tracking-[0.3em] rounded-full hover:bg-[#D16B92] transition-all shadow-xl"
+            className="bg-black text-white px-8 py-3 rounded-full font-medium hover:bg-gray-800 transition-all text-sm"
           >
-            Explore Collection
+            Continue Shopping
           </button>
         </div>
       </div>
     );
   }
 
-  // --- CALCULATE TOTAL (Internal helper for design) ---
-  const subtotal = cartItems.reduce((acc, item) => acc + (item.price * item.quantity), 0);
+  const subtotal = cartItems.reduce(
+    (acc, item) => acc + item.price * item.quantity,
+    0,
+  );
 
   return (
-    <div className="min-h-screen bg-[#FCFBF9] font-google pb-24">
+    <div className="min-h-screen bg-gray-50/50 font-sans">
       <HeaderHome />
 
-      <main className="max-w-[1440px] mx-auto px-6 lg:px-20 pt-32 lg:pt-44">
-        
-        {/* Header Section */}
-        <div className="flex flex-col md:flex-row justify-between items-end gap-6 mb-16 border-b border-gray-100 pb-10">
-          <div className="space-y-4">
-             <div className="flex items-center gap-3">
-                <span className="w-8 h-[1px] bg-[#D16B92]"></span>
-                <p className="text-[10px] font-black uppercase tracking-[0.4em] text-[#D16B92]">Shopping Bag</p>
-             </div>
-             <h1 className="text-5xl lg:text-7xl font-serif italic text-[#2D1B2D]">Your Selection.</h1>
-          </div>
-          <button
-            onClick={handleClearCart}
-            className="text-[10px] font-black uppercase tracking-widest text-gray-400 hover:text-red-500 transition-colors flex items-center gap-2"
-          >
-            <IoTrashOutline size={16} /> Empty Bag
-          </button>
+      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-32 pb-20">
+        <div className="flex items-baseline justify-between mb-10 border-b border-gray-200 pb-6">
+          <h1 className="text-3xl font-bold tracking-tight text-gray-900">
+            Shopping Cart
+          </h1>
+          <p className="text-sm text-gray-500">{cartItems.length} Items</p>
         </div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-16">
-          
-          {/* LEFT: CART ITEMS LIST */}
-          <div className="lg:col-span-8 space-y-10">
-            {cartItems?.map((item) => (
-              <div
-                key={item?.productId}
-                className="group flex flex-col sm:flex-row gap-8 items-center bg-white p-6 rounded-[2rem] border border-gray-50 hover:shadow-2xl transition-all duration-700"
-              >
-                {/* Image Box */}
-                <div className="w-full sm:w-44 h-56 rounded-[1.5rem] overflow-hidden bg-[#FAF9F6]">
-                  <img
-                    src={item?.imageUrl}
-                    alt={item?.name}
-                    className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
-                  />
-                </div>
-
-                {/* Details Box */}
-                <div className="flex-1 space-y-4 w-full text-center sm:text-left">
-                  <div>
-                    <p className="text-[9px] font-black uppercase tracking-widest text-[#D16B92] mb-1 opacity-70">Boutique Edit</p>
-                    <h3 className="text-xl font-serif italic text-[#2D1B2D]">{item?.name}</h3>
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-12">
+          {/* LEFT: ITEMS LIST */}
+          <div className="lg:col-span-8">
+            <div className="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
+              {cartItems.map((item) => (
+                <div
+                  key={item.productId}
+                  className="p-6 sm:p-8 flex flex-col sm:flex-row gap-6 border-b border-gray-100 last:border-0"
+                >
+                  {/* Image */}
+                  <div className="w-full sm:w-32 h-40 bg-gray-50 rounded-xl overflow-hidden flex-shrink-0">
+                    <img
+                      src={item.imageUrl}
+                      className="w-full h-full object-cover"
+                      alt={item.name}
+                    />
                   </div>
 
-                  <p className="text-lg font-light text-[#2D1B2D]">₹{item?.price}.00</p>
-
-                  <div className="flex flex-col sm:flex-row items-center justify-between gap-6 pt-2">
-                    {/* Compact Quantity Controls */}
-                    <div className="flex items-center gap-6 bg-[#FCFBF9] border border-gray-100 rounded-full px-6 py-2">
-                      <button
-                        onClick={() => decreaseQty(item)}
-                        className="text-gray-400 hover:text-[#D16B92] transition-colors"
-                      >
-                        <FaMinus size={10} />
-                      </button>
-                      <span className="text-[12px] font-black text-[#2D1B2D]">{item?.quantity}</span>
-                      <button
-                        onClick={() => increaseQty(item)}
-                        className="text-gray-400 hover:text-[#D16B92] transition-colors"
-                      >
-                        <FaPlus size={10} />
-                      </button>
+                  {/* Details */}
+                  <div className="flex-1 flex flex-col justify-between">
+                    <div className="flex justify-between items-start">
+                      <div>
+                        <h3 className="text-lg font-medium text-gray-900">
+                          {item.name}
+                        </h3>
+                        <p className="text-sm text-gray-400 mt-1 uppercase tracking-wider">
+                          Premium Selection
+                        </p>
+                      </div>
+                      <p className="text-lg font-semibold text-gray-900">
+                        ₹{item.price.toLocaleString()}
+                      </p>
                     </div>
 
-                    {/* Minimal Remove Button */}
-                    <button
-                      onClick={() => handleRemoveItem(item?.productId)}
-                      className="text-[9px] font-black uppercase tracking-widest text-gray-300 hover:text-red-500 transition-colors flex items-center gap-2"
-                    >
-                      <FaTrash size={10} /> Remove
-                    </button>
+                    <div className="flex items-center justify-between mt-6">
+                      {/* Modern Qty Controls */}
+                      <div className="flex items-center border border-gray-200 rounded-lg">
+                        <button
+                          onClick={() => updateQty(item, item.quantity - 1)}
+                          className="p-2 hover:bg-gray-50 transition-colors text-gray-600"
+                        >
+                          <IoRemoveOutline size={18} />
+                        </button>
+                        <span className="px-4 text-sm font-medium w-10 text-center">
+                          {item.quantity}
+                        </span>
+                        <button
+                          onClick={() => updateQty(item, item.quantity + 1)}
+                          className="p-2 hover:bg-gray-50 transition-colors text-gray-600"
+                        >
+                          <IoAddOutline size={18} />
+                        </button>
+                      </div>
+
+                      <button
+                        onClick={() => handleRemoveItem(item.productId)}
+                        className="flex items-center gap-1 text-xs font-medium text-gray-400 hover:text-red-500 transition-colors"
+                      >
+                        <IoTrashOutline size={16} /> Remove
+                      </button>
+                    </div>
                   </div>
                 </div>
-              </div>
-            ))}
-          </div>
-
-          {/* RIGHT: SUMMARY & CHECKOUT */}
-          <div className="lg:col-span-4 h-fit sticky top-40">
-            <div className="bg-[#2D1B2D] text-white p-10 rounded-[3rem] shadow-2xl space-y-8 relative overflow-hidden">
-               {/* Aesthetic Background Detail */}
-               <div className="absolute -top-10 -right-10 w-32 h-32 bg-[#D16B92] rounded-full opacity-20 blur-3xl"></div>
-               
-               <h4 className="text-[11px] font-black uppercase tracking-[0.4em] text-[#D16B92] border-b border-white/10 pb-6">Bag Summary</h4>
-               
-               <div className="space-y-4">
-                  <div className="flex justify-between text-sm font-light text-gray-300 italic">
-                    <span>Subtotal</span>
-                    <span>₹{subtotal}.00</span>
-                  </div>
-                  <div className="flex justify-between text-sm font-light text-gray-300 italic">
-                    <span>Estimated Shipping</span>
-                    <span className="text-green-400 uppercase text-[10px] font-black tracking-widest">Complimentary</span>
-                  </div>
-                  <div className="pt-6 border-t border-white/10 flex justify-between items-end">
-                    <p className="text-[10px] font-black uppercase tracking-widest text-gray-400">Total Due</p>
-                    <p className="text-3xl font-serif italic">₹{subtotal}.00</p>
-                  </div>
-               </div>
-
-               <button
-                onClick={() => navigate(`/order`)}
-                className="group w-full py-5 bg-[#D16B92] text-white text-[10px] font-black uppercase tracking-[0.3em] rounded-2xl flex items-center justify-center gap-3 hover:bg-white hover:text-[#2D1B2D] transition-all duration-500 shadow-xl active:scale-95"
-               >
-                Proceed to Checkout <IoArrowForwardOutline className="group-hover:translate-x-2 transition-transform" size={16} />
-               </button>
-               
-               <p className="text-[8px] text-center text-gray-500 uppercase tracking-widest leading-loose">
-                  Secure Checkout by Navi Clothing Heritage
-               </p>
+              ))}
             </div>
           </div>
 
+          {/* RIGHT: ORDER SUMMARY */}
+          <div className="lg:col-span-4">
+            <div className="bg-white rounded-2xl p-8 border border-gray-100 shadow-sm sticky top-32">
+              <h2 className="text-lg font-semibold text-gray-900 mb-6">
+                Order Summary
+              </h2>
+
+              <div className="space-y-4 mb-8">
+                <div className="flex justify-between text-sm text-gray-600">
+                  <span>Subtotal</span>
+                  <span>₹{subtotal.toLocaleString()}</span>
+                </div>
+                <div className="flex justify-between text-sm text-gray-600">
+                  <span>Shipping</span>
+                  <span className="text-green-600 font-medium">Free</span>
+                </div>
+                <div className="pt-4 border-t border-gray-100 flex justify-between items-baseline">
+                  <span className="text-base font-semibold text-gray-900">
+                    Total
+                  </span>
+                  <span className="text-2xl font-bold text-gray-900">
+                    ₹{subtotal.toLocaleString()}
+                  </span>
+                </div>
+              </div>
+
+              <button
+                onClick={() => navigate(`/order`)}
+                className="w-full bg-[#3D2B3D] text-white py-4 rounded-full text-[11px] font-black uppercase tracking-[0.3em] flex items-center justify-center gap-3 hover:bg-[#D16B92] transition-all duration-500 shadow-xl shadow-pink-50/50 group active:scale-95 mb-6"
+              >
+                Checkout Now
+                <IoArrowForward className="text-sm group-hover:translate-x-2 transition-transform duration-500" />
+              </button>
+
+              <div className="flex items-center justify-center gap-2 text-gray-400 text-[11px] uppercase tracking-widest">
+                <IoShieldCheckmarkOutline className="text-green-500" /> Secure
+                Payment
+              </div>
+            </div>
+          </div>
         </div>
       </main>
     </div>

@@ -35,8 +35,8 @@ userRoutes.post("/register", registerUser);
 userRoutes.post("/login", loginUser);
 userRoutes.put("/logout", logout);
 userRoutes.get("/profile", isAuthenticated, getProfile);
-userRoutes.put("/profile-update", isAuthenticated);
-userUpdateProfile;
+userRoutes.put("/profile-update", isAuthenticated, userUpdateProfile);
+// userUpdateProfile;
 userRoutes.put("/send-mail", isAuthenticated, sendEmailToUser);
 
 // cart
