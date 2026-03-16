@@ -10,11 +10,14 @@ import {
 } from "react-icons/md";
 import { FaRegFilePdf, FaCreditCard } from "react-icons/fa";
 import { billingApi } from "../../apis/billing";
+import { useSelector } from "react-redux";
 
 const Billing = () => {
   // Hardcoded Invoice History
   const [payments, setPayments] = useState([]);
   const [loading, setLoading] = useState(false);
+  const { user } = useSelector((state) => state.user);
+  console.log(user);
 
   const getPayments = async () => {
     try {
