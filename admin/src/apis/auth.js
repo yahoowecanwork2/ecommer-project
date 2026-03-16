@@ -72,4 +72,12 @@ export const adminApi = {
     const res = await api.get(`/admin/check/${data}`, );
     return res.data;
   },
+  createOrder: async (data) => {
+    const res = await api.post(`/admin/create-order`, data );
+    return res.data;
+  },
+  verifyPayment: async (data) => {
+    const res = await api.post(`/admin/verify-payment`, data );
+    return res.data;
+  },
 };

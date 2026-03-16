@@ -12,20 +12,20 @@ function Protectedroutes({ children }) {
 
   // check user subscription latest if false open bluss modal on top
 
-  const checkAllow = async () => {
-    try {
-      const res = await adminApi.checkAllow();
-      console.log(res);
-      if (res.allow) {
-        // open modal
-        console.log("Access");
-      }
-      return res;
-    } catch (err) {
-      console.log("Allow check failed", err);
-      return null;
-    }
-  };
+  // const checkAllow = async () => {
+  //   try {
+  //     const res = await adminApi.checkAllow();
+  //     console.log(res);
+  //     if (res.allow) {
+  //       // open modal
+  //       console.log("Access");
+  //     }
+  //     return res;
+  //   } catch (err) {
+  //     console.log("Allow check failed", err);
+  //     return null;
+  //   }
+  // };
 
   const getProfile = async () => {
     try {
@@ -35,8 +35,8 @@ function Protectedroutes({ children }) {
         dispatch(setAuth(true));
 
         // check allow after profile load
-        const allowResponse = await checkAllow();
-        console.log("Allow response:", allowResponse);
+        // const allowResponse = await checkAllow();
+        // console.log("Allow response:", allowResponse);
       } else {
         localStorage.removeItem("token");
         dispatch(setAuth(false));

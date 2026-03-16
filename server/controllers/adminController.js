@@ -8,9 +8,9 @@ import sendRegisterAndResendOtpMail, {
 } from "../middleware/sendMail.js";
 import { sendMailtoUser, sendVerifyUser } from "../middleware/notifyMail.js";
 import Order from "../models/Order.js";
-import Subscription from "../models/Subscription.js";
-import Razorpay from "razorpay";
 import crypto from "crypto";
+import Subscription from "../models/Subscription.js";
+import { razorpay } from "../config/razorpay.js";
 
 //-------------------------------------- owner apis ----------------------------------
 
@@ -760,81 +760,90 @@ export const renewSubscription = async (req, res) => {
   }
 };
 
+
 export const createOrder = async (req, res) => {
   try {
-    const { plan } = req.body;
-
-    const plans = {
-      monthly: 999,
-      yearly: 9999,
-    };
-
-    const amount = plans[plan] * 100; // paisa
+    const { amount } = req.body;
 
     const options = {
-      amount,
+      amount: amount * 100, // convert to paise
       currency: "INR",
       receipt: `receipt_${Date.now()}`,
     };
 
-    const order = await Razorpay.orders.create(options);
+    const order = await razorpay.orders.create(options);
 
     res.json({
       success: true,
       order,
     });
+
   } catch (error) {
     res.status(500).json({
+      success: false,
       message: error.message,
     });
   }
 };
 
 export const verifyPayment = async (req, res) => {
-  const {
-    razorpay_order_id,
-    razorpay_payment_id,
-    razorpay_signature,
-    userId,
-    plan,
-  } = req.body;
+  try {
+    const {
+      razorpay_order_id,
+      razorpay_payment_id,
+      razorpay_signature,
+      userId,
+      plan,
+      billingCycle
+    } = req.body;
 
-  const body = razorpay_order_id + "|" + razorpay_payment_id;
+    const generatedSignature = crypto
+      .createHmac("sha256", process.env.RAZORPAY_SECRET)
+      .update(razorpay_order_id + "|" + razorpay_payment_id)
+      .digest("hex");
 
-  const expectedSignature = crypto
-    .createHmac("sha256", process.env.RAZORPAY_KEY_SECRET)
-    .update(body.toString())
-    .digest("hex");
+    if (generatedSignature !== razorpay_signature) {
+      return res.status(400).json({
+        success: false,
+        message: "Payment verification failed",
+      });
+    }
 
-  const isValid = expectedSignature === razorpay_signature;
+    // Calculate subscription dates
+    const startDate = new Date();
+    const endDate = new Date();
 
-  if (!isValid) {
-    return res.status(400).json({
+    if (billingCycle === "monthly") {
+      endDate.setMonth(endDate.getMonth() + 1);
+    } else {
+      endDate.setFullYear(endDate.getFullYear() + 1);
+    }
+
+    const subscription = await Subscription.findOneAndUpdate(
+      { userId },
+      {
+        userId,
+        plan,
+        billingCycle,
+        paymentId: razorpay_payment_id,
+        startDate,
+        endDate,
+        status: "active",
+      },
+      { upsert: true, new: true }
+    );
+
+    res.json({
+      success: true,
+      message: "Payment verified and subscription activated",
+      subscription,
+    });
+
+  } catch (error) {
+    res.status(500).json({
       success: false,
-      message: "Payment verification failed",
+      message: error.message,
     });
   }
-
-  // create subscription
-
-  const startDate = new Date();
-  let endDate = new Date();
-
-  if (plan === "monthly") endDate.setMonth(endDate.getMonth() + 1);
-  if (plan === "yearly") endDate.setFullYear(endDate.getFullYear() + 1);
-
-  const subscription = await Subscription.create({
-    userId,
-    plan,
-    billingCycle: plan,
-    price: plan === "monthly" ? 999 : 9999,
-    startDate,
-    endDate,
-  });
-
-  res.json({
-    success: true,
-    message: "Subscription activated",
-    subscription,
-  });
 };
+

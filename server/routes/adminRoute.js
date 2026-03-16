@@ -29,8 +29,8 @@ adminRoutes.post("/create",isAuthenticated, createSubscription);
 adminRoutes.get("/check/:userId",isAuthenticated, checkSubscription);
 adminRoutes.post("/renew",isAuthenticated, renewSubscription);
 
-adminRoutes.post("/create-order", createOrder);
-adminRoutes.post("/verify-payment", verifyPayment);
+adminRoutes.post("/create-order",isAuthenticated, createOrder);
+adminRoutes.post("/verify-payment",isAuthenticated, verifyPayment);
 
 
 export default adminRoutes;
