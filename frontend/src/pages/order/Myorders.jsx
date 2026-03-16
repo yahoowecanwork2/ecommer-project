@@ -1,6 +1,8 @@
 import React, { useEffect, useState } from "react";
 import Card from "./components/Card";
 import { orderApi } from "../../apis/order";
+import Header from "../common/Header";
+import Footer from "../common/Footer";
 
 const Myorders = () => {
   const [orders, setOrders] = useState([]);
@@ -10,14 +12,8 @@ const Myorders = () => {
     try {
       setLoading(true);
       const res = await orderApi.myOrder();
-      console.log("my-order", res);
-
-      if (res.success) {
-        setOrders(res.orders);
-        setLoading(false);
-      }
+      if (res.success) setOrders(res.orders);
     } catch (error) {
-      setLoading(false);
       console.log(error);
     } finally {
       setLoading(false);
@@ -28,23 +24,55 @@ const Myorders = () => {
     fetchOrders();
   }, []);
 
-  if (loading) {
-    return <div className="text-center mt-20 text-lg">Loading Orders...</div>;
-  }
+  if (loading)
+    return (
+      <div className="h-screen flex items-center justify-center text-sm text-gray-400">
+        Loading Orders...
+      </div>
+    );
 
   return (
-    <div className="min-h-screen bg-white p-6">
-      <div className="max-w-6xl mx-auto">
-        <h2 className="text-3xl font-bold text-[#160059] mb-8">My Orders</h2>
+    <div className="min-h-screen bg-gray-50 text-[#3D2B3D]">
+      <Header />
 
-        <div className="space-y-6">
-          {orders?.length > 0 ? (
-            orders?.map((order) => <Card key={order._id} order={order} />)
-          ) : (
-            <div className="text-gray-500 text-center">No Orders Found</div>
-          )}
+      <main className="max-w-5xl mx-auto pt-26 pb-20 px-6">
+        
+        {/* Page Header */}
+        <div className="flex items-center justify-between mb-12">
+          <div>
+            <h1 className="text-3xl font-serif italic">My Orders</h1>
+            <p className="text-xs text-gray-400 mt-1">
+              View and track all your purchases
+            </p>
+          </div>
+
+          <span className="text-xs bg-white border px-4 py-2 rounded-full text-gray-500">
+            {orders.length} Orders
+          </span>
         </div>
-      </div>
+
+        {/* Orders List */}
+        {orders?.length > 0 ? (
+          <div className="space-y-6">
+            {orders.map((order) => (
+              <div
+                key={order._id}
+                className=" p-"
+              >
+                <Card order={order} />
+              </div>
+            ))}
+          </div>
+        ) : (
+          <div className="py-24 text-center bg-white rounded-xl border border-gray-100">
+            <p className="text-gray-400 text-sm italic">
+              You haven't placed any orders yet.
+            </p>
+          </div>
+        )}
+      </main>
+
+      <Footer />
     </div>
   );
 };

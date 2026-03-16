@@ -1,5 +1,4 @@
 import React from "react";
-import { FaTruck, FaCheckCircle } from "react-icons/fa";
 import { useNavigate } from "react-router-dom";
 
 const Card = ({ order }) => {
@@ -8,71 +7,54 @@ const Card = ({ order }) => {
   return (
     <div
       onClick={() => navigate(`/order-detail/${order._id}`)}
-      className="bg-white rounded-2xl shadow-md p-6 border border-[#160059]/20 hover:shadow-xl transition cursor-pointer"
+      className="group bg-white border border-gray-100 rounded-xl p-5 mb-4 hover:shadow-[0_10px_30px_rgba(0,0,0,0.03)] hover:border-[#3D2B3D]/10 transition-all duration-500 cursor-pointer"
     >
-      <div className="flex flex-col md:flex-row md:justify-between md:items-center gap-4 border-b pb-4">
-        <div>
-          <h3 className="text-lg font-bold text-[#160059]">
-            Order ID: {order?.orderno}
-          </h3>
+      <div className="flex items-center justify-between gap-6">
+        
+        {/* LEFT: ICON + ORDER INFO */}
+        <div className="flex items-center gap-5 flex-1 min-w-0">
+          {/* Subtle Order Icon */}
+          <div className="hidden sm:flex w-12 h-12 rounded-full bg-gray-50 items-center justify-center text-[#3D2B3D]/30 group-hover:bg-[#3D2B3D] group-hover:text-white transition-all duration-500">
+            <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.5" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z" />
+            </svg>
+          </div>
 
-          <p className="text-gray-500 text-sm">
-            Order Date: {new Date(order?.createdAt).toLocaleDateString()}
+          <div className="space-y-1 truncate">
+            <h3 className="text-[14px] font-bold text-[#3D2B3D] tracking-tight group-hover:text-[#D16B92] transition-colors">
+              Order #{order?.orderno}
+            </h3>
+            <p className="text-[11px] text-gray-400 font-serif italic">
+              {order?.items?.map((item) => item.name).join(", ")}
+            </p>
+          </div>
+        </div>
+
+        {/* CENTER: DATE & STATUS (Desktop Only) */}
+        <div className="hidden md:flex flex-col items-center gap-1 w-32">
+           <span className={`text-[8px] font-black uppercase tracking-[0.2em] px-3 py-1 rounded-full ${
+            order.status === "delivered" ? "bg-emerald-50 text-emerald-600" : "bg-gray-50 text-gray-400"
+          }`}>
+            {order?.status}
+          </span>
+          <p className="text-[10px] text-gray-300 font-medium tracking-tighter">
+            {new Date(order?.createdAt).toLocaleDateString()}
           </p>
         </div>
 
-        <div className="flex items-center gap-2">
-          {order.status === "delivered" ? (
-            <FaCheckCircle className="text-green-600" />
-          ) : (
-            <FaTruck className="text-blue-600" />
-          )}
-
-          <span className="font-semibold text-gray-700 capitalize">
-            {order?.status}
-          </span>
+        {/* RIGHT: PRICE & ARROW */}
+        <div className="flex items-center gap-6">
+          <div className="text-right">
+            <p className="text-[10px] font-black uppercase tracking-widest text-gray-300 mb-0.5">Total</p>
+            <p className="text-[15px] font-bold text-[#3D2B3D]">₹{order?.ordertotal}</p>
+          </div>
+          <div className="text-gray-200 group-hover:text-[#3D2B3D] group-hover:translate-x-1 transition-all duration-300">
+            <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 5l7 7-7 7" />
+            </svg>
+          </div>
         </div>
-      </div>
 
-      <div className="mt-4">
-        <h4 className="font-semibold text-[#160059] mb-2">Items</h4>
-
-        <ul className="space-y-1">
-          {order?.items?.map((item, index) => (
-            <li key={index} className="flex justify-between text-gray-600">
-              <span>{item?.name}</span>
-              <span>Qty: {item?.quantity}</span>
-            </li>
-          ))}
-        </ul>
-      </div>
-
-      <div className="mt-4 flex flex-col md:flex-row md:justify-between md:items-center gap-3">
-        <p className="text-gray-600">
-          <span className="font-semibold">Delivery Address:</span>{" "}
-          {order?.shippingaddress} - {order?.pincode}
-        </p>
-
-        <p className="text-lg font-bold text-[#160059]">₹{order?.ordertotal}</p>
-      </div>
-
-      <div className="mt-5 flex gap-4">
-        <button
-          onClick={(e) => {
-            e.stopPropagation();
-            navigate(`/order-detail/${order?._id}`);
-          }}
-          className="px-5 py-2 bg-[#160059] text-white rounded-lg hover:opacity-90 transition"
-        >
-          View Details
-        </button>
-
-        <button
-          onClick={(e) => e.stopPropagation()}
-          className="px-5 py-2 border border-[#160059] text-[#160059] rounded-lg hover:bg-[#160059] hover:text-white transition"
-        >
-          Track Order
-        </button>
       </div>
     </div>
   );
