@@ -9,10 +9,13 @@ import { MdOutlineAutoAwesome, MdOutlineHistory } from "react-icons/md";
 import { HiOutlineCreditCard } from "react-icons/hi";
 import logo from "../../assets/logo.png";
 import { useNavigate } from "react-router-dom";
+import { useDispatch } from "react-redux";
+import { clearAuth, clearLoginData, clearUser } from "../../redux/userSlice";
 
 const Layout = ({ children }) => {
   const location = useLocation();
   const [sidebarOpen, setSidebarOpen] = useState(false);
+  const dispatch = useDispatch();
   const navigate = useNavigate();
 
   const navigation = [
@@ -49,7 +52,16 @@ const Layout = ({ children }) => {
       ],
     },
   ];
+  const handleLogout = () => {
+    dispatch(clearUser());
+    dispatch(clearAuth());
+    dispatch(clearLoginData());
 
+    localStorage.removeItem("token");
+    localStorage.removeItem("user");
+
+    navigate("/", { replace: true });
+  };
   return (
     <div className="flex h-screen bg-gray-50 text-gray-900 font-sans overflow-hidden">
       {/* MOBILE OVERLAY */}
@@ -130,7 +142,10 @@ const Layout = ({ children }) => {
 
           {/* Sign Out */}
           <div className="border-t border-gray-100 pt-4 lg:mt-auto lg:mb-2">
-            <button className="flex w-full items-center gap-3 px-3 py-2.5 rounded-sm text-sm font-medium text-red-600 hover:bg-red-50 transition-colors">
+            <button
+              onClick={handleLogout}
+              className="flex w-full items-center gap-3 px-3 py-2.5 rounded-sm text-sm font-medium text-red-600 hover:bg-red-50 transition-colors"
+            >
               <IoLogOutOutline className="text-lg" />
               Sign Out
             </button>
@@ -141,7 +156,12 @@ const Layout = ({ children }) => {
               <p className="text-[12px] font-bold text-gray-800 mb-1">
                 Powered By
               </p>
-              <Link to={'https://www.arcoders.com'} target="_blank" rel="noopener noreferrer" className="flex flex-col">
+              <Link
+                to={"https://www.arcoders.com"}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="flex flex-col"
+              >
                 <img src={logo} alt="Logo" className="w-20 mb-2" />
               </Link>
             </div>
@@ -174,7 +194,7 @@ const Layout = ({ children }) => {
 
         {/* SCROLLABLE CONTENT */}
         <div className="flex-1 overflow-y-auto">
-            <div className="bg-white  p-6 min-h-full relative">{children}</div>
+          <div className="bg-white  p-6 min-h-full relative">{children}</div>
         </div>
       </main>
     </div>
