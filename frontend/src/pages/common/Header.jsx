@@ -130,9 +130,9 @@ const Header = () => {
               {[
                 { name: "Home", sub: "Start Fresh" },
                 { name: "Product", sub: "The Summer 26'" },
-                { name: "Story", sub: "Our Heritage" },
+                { name: "About", sub: "Our Heritage" },
                 { name: "Artisans", sub: "Meet the Makers" },
-                { name: "Contact", sub: "Get in Touch" },
+                { name: "Contact-Us", sub: "Get in Touch" },
                  { name: "Profile", sub: "view details" },
               ].map((item) => (
                 <Link
