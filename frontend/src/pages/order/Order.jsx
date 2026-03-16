@@ -6,6 +6,7 @@ import { addOrIncrementInCart, clearCart } from "../../redux/cartSlice";
 import HeaderHome from "../common/Header";
 import { orderApi } from "../../apis/order";
 import toast from "react-hot-toast";
+import { IoChevronForwardOutline } from "react-icons/io5";
 
 const Order = () => {
   const navigate = useNavigate();
@@ -93,7 +94,6 @@ const Order = () => {
       setLoading(false);
     }
   };
-  
 
   // ONLINE PAYMENT
   const createOnlineOrder = async () => {
@@ -102,9 +102,9 @@ const Order = () => {
       const { data } = await orderApi.checkOut({
         amount: total,
       });
-      console.log(data)
+      console.log(data);
       const options = {
-        key:import.meta.env.VITE_RAZORPAY_KEY,
+        key: import.meta.env.VITE_RAZORPAY_KEY,
         amount: data.amount,
         currency: "INR",
         name: "E-commerce Module",
@@ -123,9 +123,9 @@ const Order = () => {
               razorpay_payment_id: response.razorpay_payment_id,
               razorpay_signature: response.razorpay_signature,
             };
-                console.log(payload)
+            console.log(payload);
             const res = await orderApi.placeOrder(payload);
-            console.log(res)
+            console.log(res);
             toast.success(res.message || "Order successful");
             navigate("/my-order");
           } catch (error) {
@@ -178,105 +178,231 @@ const Order = () => {
   }
 
   return (
-    <div className="font-google bg-[#FFFBFB] min-h-screen">
-  <HeaderHome />
+    <div className="min-h-screen bg-[#F9F9F9] font-sans">
+      <HeaderHome />
 
-  <div className="max-w-[1440px] mx-auto px-6 lg:px-12 pt-32 pb-10">
-    {/* Page Title - Small & Elegant */}
-    <div className="mb-10 text-center lg:text-left">
-      <h1 className="text-3xl font-serif italic text-[#3D2B3D]">Secure Checkout</h1>
-      <p className="text-[10px] uppercase tracking-[0.4em] text-gray-400">Review and finalize your order</p>
-    </div>
-
-    {/* THREE COLUMN GRID - EVERYTHING VISIBLE */}
-    <div className="grid lg:grid-cols-3 gap-8 items-start">
-      
-      {/* 1. SHIPPING FORM (LEFT) */}
-      <div className="bg-white p-6 rounded-3xl border border-pink-50 shadow-sm">
-        <h2 className="text-[10px] font-black uppercase tracking-widest text-[#D16B92] mb-6 flex items-center gap-2">
-          <span className="w-5 h-5 bg-pink-50 rounded-full flex items-center justify-center">1</span>
-          Shipping
-        </h2>
-        <div className="space-y-4">
-          <input name="customername" placeholder="Full Name" onChange={handleChange} className="w-full bg-[#FAF9F6] p-3 rounded-xl text-xs outline-none border border-transparent focus:border-pink-200" />
-          <input name="phoneno" placeholder="Phone Number" onChange={handleChange} className="w-full bg-[#FAF9F6] p-3 rounded-xl text-xs outline-none border border-transparent focus:border-pink-200" />
-          <input name="emailid" placeholder="Email Address" onChange={handleChange} className="w-full bg-[#FAF9F6] p-3 rounded-xl text-xs outline-none border border-transparent focus:border-pink-200" />
-          <div className="grid grid-cols-2 gap-3">
-             <input name="pincode" placeholder="Pincode" onChange={handleChange} className="w-full bg-[#FAF9F6] p-3 rounded-xl text-xs outline-none border border-transparent focus:border-pink-200" />
-             <div className="bg-pink-50/20 rounded-xl flex items-center justify-center text-[9px] text-[#D16B92] uppercase font-bold tracking-tighter italic">Standard Delivery</div>
-          </div>
-          <textarea name="shippingaddress" placeholder="Full Address" rows="2" onChange={handleChange} className="w-full bg-[#FAF9F6] p-3 rounded-xl text-xs outline-none border border-transparent focus:border-pink-200 resize-none" />
+      <main className="max-w-6xl mx-auto px-2 lg:px-8 pt-32 pb-24">
+        {/* Page Header */}
+        <div className="mb-12">
+          <h1 className="text-3xl font-bold tracking-tight text-slate-900">
+            Checkout
+          </h1>
+          <p className="text-sm text-slate-500 mt-2">
+            Complete your details to finalize the order.
+          </p>
         </div>
-      </div>
 
-      {/* 2. ORDER CURATION (CENTER) */}
-      <div className="bg-white p-6 rounded-3xl border border-pink-50 shadow-sm flex flex-col h-full max-h-[500px]">
-        <h2 className="text-[10px] font-black uppercase tracking-widest text-[#D16B92] mb-6 flex items-center gap-2">
-          <span className="w-5 h-5 bg-pink-50 rounded-full flex items-center justify-center">2</span>
-          Curation
-        </h2>
-        <div className="space-y-4 overflow-y-auto pr-2 custom-scrollbar flex-1">
-          {items.map((item) => (
-            <div key={item.productId} className="flex gap-4 items-center border-b border-gray-50 pb-4 last:border-0">
-              <img src={item.imageUrl} className="w-10 h-14 object-cover rounded-lg shadow-sm" alt={item.name} />
-              <div className="flex-1 min-w-0">
-                <p className="text-[11px] font-serif italic text-[#3D2B3D] truncate">{item.name}</p>
-                <p className="text-[9px] text-gray-400 uppercase tracking-tighter">Qty: {item.quantity}</p>
+        <div className="grid lg:grid-cols-12 gap-12 items-start">
+          {/* LEFT COLUMN: FORMS */}
+          <div className="lg:col-span-7 space-y-8">
+            {/* 1. SHIPPING DETAILS */}
+            <section className="bg-white p-8 rounded-2xl shadow-sm border border-slate-200">
+              <div className="flex items-center gap-3 mb-8">
+                <div className="w-8 h-8 rounded-full bg-slate-900 text-white flex items-center justify-center text-sm font-bold">
+                  1
+                </div>
+                <h2 className="text-lg font-semibold text-slate-900">
+                  Shipping Information
+                </h2>
               </div>
-              <p className="text-[11px] font-bold text-[#3D2B3D]">₹{item.price}</p>
+
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+                <div className="md:col-span-2">
+                  <label className="text-[11px] font-bold uppercase tracking-wider text-slate-500 mb-2 block">
+                    Full Name
+                  </label>
+                  <input
+                    name="customername"
+                    placeholder="John Doe"
+                    onChange={handleChange}
+                    className="w-full bg-slate-50 p-3.5 rounded-lg text-sm border border-slate-200 outline-none focus:ring-2 focus:ring-slate-900/5 focus:border-slate-900 transition-all"
+                  />
+                </div>
+
+                <div>
+                  <label className="text-[11px] font-bold uppercase tracking-wider text-slate-500 mb-2 block">
+                    Email Address
+                  </label>
+                  <input
+                    name="emailid"
+                    type="email"
+                    placeholder="john@example.com"
+                    onChange={handleChange}
+                    className="w-full bg-slate-50 p-3.5 rounded-lg text-sm border border-slate-200 outline-none focus:ring-2 focus:ring-slate-900/5 focus:border-slate-900 transition-all"
+                  />
+                </div>
+
+                <div>
+                  <label className="text-[11px] font-bold uppercase tracking-wider text-slate-500 mb-2 block">
+                    Phone Number
+                  </label>
+                  <input
+                    name="phoneno"
+                    placeholder="+91 00000 00000"
+                    onChange={handleChange}
+                    className="w-full bg-slate-50 p-3.5 rounded-lg text-sm border border-slate-200 outline-none focus:ring-2 focus:ring-slate-900/5 focus:border-slate-900 transition-all"
+                  />
+                </div>
+
+                <div className="md:col-span-2">
+                  <label className="text-[11px] font-bold uppercase tracking-wider text-slate-500 mb-2 block">
+                    Shipping Address
+                  </label>
+                  <textarea
+                    name="shippingaddress"
+                    placeholder="House No, Street, Landmark..."
+                    rows="3"
+                    onChange={handleChange}
+                    className="w-full bg-slate-50 p-3.5 rounded-lg text-sm border border-slate-200 outline-none focus:ring-2 focus:ring-slate-900/5 focus:border-slate-900 transition-all resize-none"
+                  />
+                </div>
+
+                <div>
+                  <label className="text-[11px] font-bold uppercase tracking-wider text-slate-500 mb-2 block">
+                    Pincode
+                  </label>
+                  <input
+                    name="pincode"
+                    placeholder="1100XX"
+                    onChange={handleChange}
+                    className="w-full bg-slate-50 p-3.5 rounded-lg text-sm border border-slate-200 outline-none focus:ring-2 focus:ring-slate-900/5 focus:border-slate-900 transition-all"
+                  />
+                </div>
+              </div>
+            </section>
+
+            {/* 2. PAYMENT METHOD */}
+            <section className="bg-white p-8 rounded-2xl shadow-sm border border-slate-200">
+              <div className="flex items-center gap-3 mb-8">
+                <div className="w-8 h-8 rounded-full bg-slate-900 text-white flex items-center justify-center text-sm font-bold">
+                  2
+                </div>
+                <h2 className="text-lg font-semibold text-slate-900">
+                  Payment Method
+                </h2>
+              </div>
+
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <label
+                  className={`relative p-4 rounded-xl border-2 cursor-pointer transition-all flex items-center justify-between ${paymentType === "cod" ? "border-slate-900 bg-slate-50" : "border-slate-100 hover:border-slate-200"}`}
+                >
+                  <div className="flex items-center gap-3">
+                    <input
+                      type="radio"
+                      value="cod"
+                      checked={paymentType === "cod"}
+                      onChange={(e) => setPaymentType(e.target.value)}
+                      className="w-4 h-4 accent-slate-900"
+                    />
+                    <span className="text-sm font-medium text-slate-900">
+                      Cash on Delivery
+                    </span>
+                  </div>
+                </label>
+
+                <label
+                  className={`relative p-4 rounded-xl border-2 cursor-pointer transition-all flex items-center justify-between ${paymentType === "online" ? "border-slate-900 bg-slate-50" : "border-slate-100 hover:border-slate-200"}`}
+                >
+                  <div className="flex items-center gap-3">
+                    <input
+                      type="radio"
+                      value="online"
+                      checked={paymentType === "online"}
+                      onChange={(e) => setPaymentType(e.target.value)}
+                      className="w-4 h-4 accent-slate-900"
+                    />
+                    <span className="text-sm font-medium text-slate-900">
+                      Online Payment
+                    </span>
+                  </div>
+                </label>
+              </div>
+            </section>
+          </div>
+
+          {/* RIGHT COLUMN: ORDER SUMMARY (STICKY) */}
+          <div className="lg:col-span-5">
+            <div className="bg-white rounded-2xl shadow-sm border border-slate-200 sticky top-32 overflow-hidden">
+              <div className="p-8">
+                <h2 className="text-lg font-semibold text-slate-900 mb-6">
+                  Order Summary
+                </h2>
+
+                {/* Scrollable Items List */}
+                <div className="space-y-4 max-h-60 overflow-y-auto overflow-hidden mb-8 pr-2 custom-scrollbar">
+                  {items.map((item) => (
+                    <div
+                      key={item.productId}
+                      className="flex gap-4 items-center pr-10"
+                    >
+                      <div className="w-16 h-20 bg-slate-50 rounded-lg overflow-hidden flex-shrink-0">
+                        <img
+                          src={item.imageUrl}
+                          className="w-full h-full object-cover"
+                          alt={item.name}
+                        />
+                      </div>
+                      <div className="flex-1 min-w-0">
+                        <h4 className="text-sm font-medium text-slate-900 truncate">
+                          {item.name}
+                        </h4>
+                        <p className="text-xs text-slate-500 mt-1">
+                          Quantity: {item.quantity}
+                        </p>
+                      </div>
+                      <p className="text-sm font-semibold text-slate-900">
+                        ₹{item.price}
+                      </p>
+                    </div>
+                  ))}
+                </div>
+
+                {/* Calculations */}
+                <div className="space-y-3 border-t border-slate-100 pt-6">
+                  <div className="flex justify-between text-sm text-slate-500">
+                    <span>Subtotal</span>
+                    <span>₹{subtotal}</span>
+                  </div>
+                  <div className="flex justify-between text-sm text-emerald-600">
+                    <span>Discount</span>
+                    <span>-₹{discount}</span>
+                  </div>
+                  <div className="flex justify-between text-sm text-slate-500">
+                    <span>Shipping</span>
+                    <span className="font-medium text-slate-900 italic">
+                      Free
+                    </span>
+                  </div>
+
+                  <div className="flex justify-between items-baseline pt-4 mt-2 border-t border-slate-100">
+                    <span className="text-base font-bold text-slate-900">
+                      Total
+                    </span>
+                    <span className="text-3xl font-black text-slate-900 tracking-tight">
+                      ₹{total}
+                    </span>
+                  </div>
+                </div>
+
+                <button
+                  onClick={handleCheckoutOrder}
+                  className="w-full mt-8 py-5 bg-[#3D2B3D] text-white rounded-xl font-bold uppercase tracking-[0.2em] text-[11px] transition-all duration-300 hover:bg-[#D16B92] hover:shadow-lg hover:shadow-pink-100 active:scale-[0.98] flex items-center justify-center gap-3 group"
+                >
+                  <span className="tracking-[0.25em]">
+                    Complete Transaction
+                  </span>
+                  <IoChevronForwardOutline className="text-sm group-hover:translate-x-1 transition-transform duration-300" />
+                </button>
+
+                <p className="text-center text-[10px] text-slate-400 mt-6 uppercase tracking-widest">
+                  🔒 SSL Encrypted & Secure Checkout
+                </p>
+              </div>
             </div>
-          ))}
-        </div>
-      </div>
-
-      {/* 3. PAYMENT & SUMMARY (RIGHT) */}
-      <div className="space-y-6">
-        {/* PAYMENT BOX */}
-        <div className="bg-white p-6 rounded-3xl border border-pink-50 shadow-sm">
-          <h2 className="text-[10px] font-black uppercase tracking-widest text-[#D16B92] mb-6 flex items-center gap-2">
-            <span className="w-5 h-5 bg-pink-50 rounded-full flex items-center justify-center">3</span>
-            Payment
-          </h2>
-          <div className="flex flex-col gap-3">
-            <label className={`p-3 rounded-xl border cursor-pointer transition-all flex items-center gap-3 ${paymentType === 'cod' ? 'border-[#D16B92] bg-pink-50/30' : 'border-gray-50 bg-[#FAF9F6]'}`}>
-              <input type="radio" value="cod" checked={paymentType === "cod"} onChange={(e) => setPaymentType(e.target.value)} className="accent-[#D16B92]" />
-              <span className="text-[10px] font-bold uppercase tracking-widest text-[#3D2B3D]">Cash on Delivery</span>
-            </label>
-            <label className={`p-3 rounded-xl border cursor-pointer transition-all flex items-center gap-3 ${paymentType === 'online' ? 'border-[#D16B92] bg-pink-50/30' : 'border-gray-100 bg-[#FAF9F6]'}`}>
-              <input type="radio" value="online" checked={paymentType === "online"} onChange={(e) => setPaymentType(e.target.value)} className="accent-[#D16B92]" />
-              <span className="text-[10px] font-bold uppercase tracking-widest text-[#3D2B3D]">Online Payment</span>
-            </label>
           </div>
         </div>
-
-        {/* SUMMARY & ACTION */}
-        <div className="bg-[#3D2B3D] text-white p-6 rounded-3xl shadow-xl shadow-pink-100">
-           <div className="space-y-2 mb-6">
-              <div className="flex justify-between text-[10px] text-pink-100/50 uppercase tracking-widest">
-                 <span>Subtotal</span>
-                 <span>₹{subtotal}</span>
-              </div>
-              <div className="flex justify-between text-[10px] text-emerald-400 uppercase tracking-widest">
-                 <span>Discount</span>
-                 <span>-₹{discount}</span>
-              </div>
-           </div>
-           <div className="flex justify-between items-end mb-8 border-t border-white/10 pt-4">
-              <span className="text-[9px] font-black uppercase tracking-[0.3em] text-pink-200">To Pay</span>
-              <span className="text-3xl font-serif italic">₹{total}</span>
-           </div>
-           <button
-             onClick={handleCheckoutOrder}
-             className="w-full py-4 bg-[#D16B92] hover:bg-[#A34D6F] text-white rounded-2xl font-black uppercase tracking-[0.2em] text-[10px] transition-all shadow-lg active:scale-95"
-           >
-             Place Order Now
-           </button>
-        </div>
-      </div>
-
+      </main>
     </div>
-  </div>
-</div>
   );
 };
 
