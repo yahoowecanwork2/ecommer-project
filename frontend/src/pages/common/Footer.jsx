@@ -64,15 +64,23 @@ const Footer = () => {
             {/* Services */}
             <div className="space-y-6">
               <h4 className="text-[14px] font-black text-[#3D2B3D]">Services</h4>
-              <ul className="space-y-3 lg:space-y-4">
-                {['Contact us', 'Shipping policy', 'Returns', 'Privacy'].map((item) => (
-                  <li key={item}>
-                    <Link to="/" className="text-sm text-gray-500 hover:text-[#D16B92] transition-colors capitalize">
-                      {item}
-                    </Link>
-                  </li>
-                ))}
-              </ul>
+           <ul className="space-y-3 lg:space-y-4">
+  {['Contact us', 'Shipping policy', 'Return policy', 'Privacy policy'].map((item) => {
+    // Ye line "Shipping policy" ko "/shipping-policy" bana degi
+    const dynamicPath = `/${item.toLowerCase().replace(/\s+/g, '-')}`;
+
+    return (
+      <li key={item}>
+        <Link 
+          to={dynamicPath} 
+          className="text-sm text-gray-500 hover:text-[#D16B92] transition-colors capitalize"
+        >
+          {item}
+        </Link>
+      </li>
+    );
+  })}
+</ul>
             </div>
 
             {/* Contact - Spans 2 columns on small mobile if needed */}

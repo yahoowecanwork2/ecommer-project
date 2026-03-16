@@ -32,7 +32,7 @@ const Pagesroutes = () => {
         <Route path="/privacy-policy" element={<Privacy />} />
         <Route path="/shipping-policy" element={<Shipping />} />
         <Route path="/return-policy" element={<Return />} />
-        <Route path="/contact" element={<Contact />} />
+        <Route path="/contact-us" element={<Contact />} />
         {/* private pages */}
         <Route
           path="/user"

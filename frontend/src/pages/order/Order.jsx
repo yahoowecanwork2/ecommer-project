@@ -178,147 +178,116 @@ const Order = () => {
   }
 
   return (
-    <div>
-      <HeaderHome />
+    <div className="font-google bg-[#FFFBFB] min-h-screen">
+  <HeaderHome />
 
-      <div className="p-6 mt-20 max-w-6xl mx-auto">
-        <h1 className="text-2xl font-bold text-[#160059] mb-6">
-          Order Summary
-        </h1>
+  <div className="max-w-[1280px] mx-auto px-6 md:px-10 pt-32 pb-20">
+    <div className="flex flex-col lg:flex-row items-start gap-12">
+      
+      {/* --- LEFT SIDE: THE STUDIO FORM (65%) --- */}
+      <div className="lg:w-[65%] w-full space-y-10">
+        <header className="space-y-2">
+          <p className="text-[10px] font-black uppercase tracking-[0.5em] text-[#D16B92]">Checkout</p>
+          <h1 className="text-4xl md:text-5xl font-serif italic text-[#3D2B3D]">
+            Finalize your <span className="not-italic font-light text-[#D16B92]">Order.</span>
+          </h1>
+        </header>
 
-        {/* CART ITEMS */}
-        <div className="grid gap-5 md:grid-cols-2 lg:grid-cols-3">
-          {items.map((item) => (
-            <div
-              key={item.productId}
-              className="bg-white rounded-2xl shadow p-4"
-            >
-              <div className="h-40 bg-gray-100 rounded-lg overflow-hidden mb-3 flex items-center justify-center">
-                {item.imageUrl ? (
-                  <img
-                    src={item.imageUrl}
-                    alt={item.name}
-                    className="w-full h-full object-cover"
-                  />
-                ) : (
-                  <span className="text-gray-400 text-sm">No Image</span>
-                )}
+        {/* 01. SHIPPING */}
+        <div className="bg-white p-8 rounded-[32px] border border-pink-50 shadow-sm shadow-pink-50/20">
+          <div className="flex items-center gap-4 mb-8">
+            <span className="text-[10px] font-black text-[#D16B92] border border-pink-100 w-6 h-6 flex items-center justify-center rounded-full">1</span>
+            <h2 className="text-xs font-black uppercase tracking-widest text-[#3D2B3D]">Shipping Address</h2>
+          </div>
+
+          <div className="grid md:grid-cols-2 gap-5">
+            <input name="customername" placeholder="Full Name" onChange={handleChange} className="w-full bg-[#FAF9F6] p-4 rounded-2xl focus:outline-none border border-transparent focus:border-pink-200 transition-all text-sm" />
+            <input name="phoneno" placeholder="Phone Number" onChange={handleChange} className="w-full bg-[#FAF9F6] p-4 rounded-2xl focus:outline-none border border-transparent focus:border-pink-200 transition-all text-sm" />
+            <input name="emailid" placeholder="Email Address" onChange={handleChange} className="w-full bg-[#FAF9F6] p-4 rounded-2xl focus:outline-none border border-transparent focus:border-pink-200 transition-all text-sm" />
+            <input name="pincode" placeholder="Pincode" onChange={handleChange} className="w-full bg-[#FAF9F6] p-4 rounded-2xl focus:outline-none border border-transparent focus:border-pink-200 transition-all text-sm" />
+            <textarea name="shippingaddress" placeholder="Complete Address (House No, Street, Area...)" rows="2" onChange={handleChange} className="md:col-span-2 w-full bg-[#FAF9F6] p-4 rounded-2xl focus:outline-none border border-transparent focus:border-pink-200 transition-all text-sm resize-none" />
+          </div>
+        </div>
+
+        {/* 02. PAYMENT */}
+        <div className="bg-white p-8 rounded-[32px] border border-pink-50 shadow-sm shadow-pink-50/20">
+          <div className="flex items-center gap-4 mb-8">
+            <span className="text-[10px] font-black text-[#D16B92] border border-pink-100 w-6 h-6 flex items-center justify-center rounded-full">2</span>
+            <h2 className="text-xs font-black uppercase tracking-widest text-[#3D2B3D]">Payment Method</h2>
+          </div>
+
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <label className={`flex items-center justify-between p-5 rounded-2xl border cursor-pointer transition-all ${paymentType === 'cod' ? 'border-[#D16B92] bg-pink-50/30' : 'border-gray-50 bg-[#FAF9F6] hover:border-pink-100'}`}>
+              <div className="flex items-center gap-3">
+                <input type="radio" value="cod" checked={paymentType === "cod"} onChange={(e) => setPaymentType(e.target.value)} className="accent-[#D16B92]" />
+                <span className="text-[10px] font-bold uppercase tracking-widest">Cash on Delivery</span>
               </div>
+            </label>
 
-              <h3 className="font-semibold text-gray-800">{item.name}</h3>
-
-              <p className="text-sm text-gray-500 line-clamp-2">
-                {item.description}
-              </p>
-
-              <div className="flex justify-between mt-3">
-                <span className="font-bold text-[#160059]">₹{item.price}</span>
-
-                <span className="text-sm text-gray-600">
-                  Qty: {item.quantity}
-                </span>
+            <label className={`flex items-center justify-between p-5 rounded-2xl border cursor-pointer transition-all ${paymentType === 'online' ? 'border-[#D16B92] bg-pink-50/30' : 'border-gray-100 bg-[#FAF9F6] hover:border-pink-100'}`}>
+              <div className="flex items-center gap-3">
+                <input type="radio" value="online" checked={paymentType === "online"} onChange={(e) => setPaymentType(e.target.value)} className="accent-[#D16B92]" />
+                <span className="text-[10px] font-bold uppercase tracking-widest">Pay Online</span>
               </div>
+            </label>
+          </div>
+        </div>
+      </div>
+
+      {/* --- RIGHT SIDE: COMPACT SUMMARY WITH IMAGES (35%) --- */}
+      <div className="lg:w-[35%] w-full">
+        <div className="sticky top-32 bg-[#3D2B3D] text-white p-7 rounded-[40px] shadow-2xl shadow-pink-100/30 border border-white/5">
+          <h3 className="text-[10px] font-black uppercase tracking-[0.3em] text-pink-200 mb-6 pb-4 border-b border-white/10">Your Selection</h3>
+          
+          {/* Item List with Small Images */}
+          <div className="space-y-5 max-h-[280px] overflow-y-auto pr-2 custom-scrollbar mb-6">
+            {items.map((item) => (
+              <div key={item.productId} className="flex gap-4 items-center">
+                <div className="w-12 h-16 rounded-xl overflow-hidden bg-white/10 flex-shrink-0 border border-white/5">
+                  <img src={item.imageUrl} className="w-full h-full object-cover" alt={item.name} />
+                </div>
+                <div className="flex-1 min-w-0">
+                  <h4 className="text-[11px] font-serif italic text-pink-50 truncate">{item.name}</h4>
+                  <p className="text-[9px] text-pink-200/50 uppercase tracking-widest">Qty: {item.quantity}</p>
+                </div>
+                <span className="text-xs font-bold whitespace-nowrap">₹{item.price}</span>
+              </div>
+            ))}
+          </div>
+
+          {/* Pricing Details */}
+          <div className="space-y-3 pt-6 border-t border-white/10">
+            <div className="flex justify-between text-[10px] uppercase tracking-widest text-pink-50/60 font-medium">
+              <span>Subtotal</span>
+              <span>₹{subtotal}</span>
             </div>
-          ))}
-        </div>
-
-        {/* ADDRESS FORM */}
-
-        <div className="mt-8 bg-white shadow rounded-2xl p-6">
-          <h2 className="text-xl font-bold mb-4">Shipping Details</h2>
-
-          <div className="grid md:grid-cols-2 gap-4">
-            <input
-              name="customername"
-              placeholder="Full Name"
-              className="border p-3 rounded-lg"
-              onChange={handleChange}
-            />
-
-            <input
-              name="phoneno"
-              placeholder="Phone Number"
-              className="border p-3 rounded-lg"
-              onChange={handleChange}
-            />
-
-            <input
-              name="alternateno"
-              placeholder="Alternate Phone"
-              className="border p-3 rounded-lg"
-              onChange={handleChange}
-            />
-
-            <input
-              name="emailid"
-              placeholder="Email"
-              className="border p-3 rounded-lg"
-              onChange={handleChange}
-            />
-
-            <input
-              name="pincode"
-              placeholder="Pincode"
-              className="border p-3 rounded-lg"
-              onChange={handleChange}
-            />
-
-            <textarea
-              name="shippingaddress"
-              placeholder="Full Address"
-              className="border p-3 rounded-lg md:col-span-2"
-              onChange={handleChange}
-            />
-          </div>
-        </div>
-
-        {/* PAYMENT METHOD */}
-
-        <div className="mt-6 bg-white shadow rounded-2xl p-6">
-          <h2 className="text-xl font-bold mb-4">Payment Method</h2>
-
-          <div className="flex gap-6">
-            <label className="flex gap-2 items-center">
-              <input
-                type="radio"
-                value="cod"
-                checked={paymentType === "cod"}
-                onChange={(e) => setPaymentType(e.target.value)}
-              />
-              Cash on Delivery
-            </label>
-
-            <label className="flex gap-2 items-center">
-              <input
-                type="radio"
-                value="online"
-                checked={paymentType === "online"}
-                onChange={(e) => setPaymentType(e.target.value)}
-              />
-              Pay Online
-            </label>
-          </div>
-        </div>
-
-        <div className="mt-8 bg-white rounded-2xl shadow p-6 flex flex-col md:flex-row justify-between items-center gap-4">
-          <div>
-            <p className="text-gray-600">Subtotal : ₹{subtotal}</p>
-            <p className="text-gray-600">Discount : ₹{discount}</p>
-
-            <h2 className="text-xl font-bold text-gray-800">
-              Total : ₹{total}
-            </h2>
+            <div className="flex justify-between text-[10px] uppercase tracking-widest text-emerald-400 font-medium">
+              <span>Discount</span>
+              <span>- ₹{discount}</span>
+            </div>
+            <div className="flex justify-between items-end pt-4 border-t border-white/5">
+              <span className="text-[10px] font-black uppercase tracking-widest text-pink-200">Total</span>
+              <span className="text-4xl font-serif italic tracking-tighter text-white leading-none">₹{total}</span>
+            </div>
           </div>
 
+          {/* Action Button */}
           <button
             onClick={handleCheckoutOrder}
-            className="bg-[#160059] hover:bg-[#2a1380] text-white px-8 py-3 rounded-xl font-semibold transition"
+            className="w-full mt-8 py-4 bg-[#D16B92] hover:bg-[#A34D6F] text-white rounded-2xl font-black uppercase tracking-[0.2em] text-[10px] transition-all shadow-lg active:scale-95 shadow-pink-900/20"
           >
             Place Order
           </button>
+          
+          <p className="mt-6 text-[8px] uppercase tracking-[0.3em] text-center opacity-30 font-bold">
+            Secure Boutique Checkout
+          </p>
         </div>
       </div>
+
     </div>
+  </div>
+</div>
   );
 };
 

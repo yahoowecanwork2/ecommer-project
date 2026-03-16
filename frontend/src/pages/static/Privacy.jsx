@@ -4,109 +4,130 @@ import Footer from "../common/Footer";
 
 const Privacy = () => {
   return (
-    <div className="font-google">
+    <div className="font-google bg-white">
       <Header />
-      <section className="w-full bg-[#f5f1ea] py-28">
-        <div className="max-w-4xl mx-auto px-6 text-center">
-          <p className="text-xs tracking-[0.4em] uppercase text-rose-400 mb-6">
-            Legal
-          </p>
 
-          <h1 className="text-5xl font-medium text-gray-900">Privacy Policy</h1>
-
-          <p className="mt-6 text-gray-600 leading-relaxed">
-            Your privacy matters to us. This policy explains how we collect,
-            use, and protect your personal information when you use our website.
+      {/* --- HERO: MINIMALIST & BOLD --- */}
+      <section className="pt-44 pb-20 bg-[#FAF9F6]">
+        <div className="max-w-5xl mx-auto px-8 text-center space-y-4">
+          <p className="text-[10px] font-black uppercase tracking-[0.5em] text-[#D16B92]">Legal Archive</p>
+          <h1 className="text-5xl md:text-6xl font-serif italic text-[#3D2B3D]">Privacy Policy</h1>
+          <p className="text-gray-400 font-light max-w-xl mx-auto leading-relaxed italic">
+            "Your privacy matters to us. This policy explains how we collect,
+            use, and protect your personal information when you use our website."
           </p>
         </div>
       </section>
-      <section className="w-full bg-white py-20">
-        <div className="max-w-4xl mx-auto px-6 space-y-6">
-          <h2 className="text-2xl font-medium text-gray-900">
-            Information We Collect
-          </h2>
 
-          <p className="text-gray-600 leading-relaxed">
-            When you place an order or interact with our website, we may collect
-            personal information such as your name, email address, phone number,
-            shipping address, and payment details.
-          </p>
+      {/* --- CONTENT: STRUCTURED EDITORIAL LAYOUT --- */}
+      <section className="py-24">
+        <div className="max-w-3xl mx-auto px-8 space-y-20">
+          
+          {/* 01. Information We Collect */}
+          <div className="space-y-4">
+            <h2 className="text-xs font-bold uppercase tracking-widest text-[#3D2B3D] border-b border-pink-100 pb-2 inline-block">
+              01. Information We Collect
+            </h2>
+            <p className="text-lg text-gray-500 font-light leading-relaxed">
+              When you place an order or interact with our website, we may collect
+              personal information such as your name, email address, phone number,
+              shipping address, and payment details.
+            </p>
+          </div>
+
+          {/* 02. How We Use Information */}
+          <div className="space-y-6">
+            <h2 className="text-xs font-bold uppercase tracking-widest text-[#3D2B3D] border-b border-pink-100 pb-2 inline-block">
+              02. How We Use Information
+            </h2>
+            <ul className="space-y-4 text-lg text-gray-500 font-light">
+              <li className="flex gap-4">
+                <span className="text-[#D16B92] font-serif italic">—</span>
+                <span>To process and deliver your orders efficiently.</span>
+              </li>
+              <li className="flex gap-4">
+                <span className="text-[#D16B92] font-serif italic">—</span>
+                <span>To communicate order updates and essential information.</span>
+              </li>
+              <li className="flex gap-4">
+                <span className="text-[#D16B92] font-serif italic">—</span>
+                <span>To improve our products and elevate your website experience.</span>
+              </li>
+              <li className="flex gap-4">
+                <span className="text-[#D16B92] font-serif italic">—</span>
+                <span>To send promotional updates (only if you opt in).</span>
+              </li>
+            </ul>
+          </div>
+
+          {/* 03. Cookies & Tracking */}
+          <div className="space-y-4">
+            <h2 className="text-xs font-bold uppercase tracking-widest text-[#3D2B3D] border-b border-pink-100 pb-2 inline-block">
+              03. Cookies & Tracking
+            </h2>
+            <p className="text-lg text-gray-500 font-light leading-relaxed">
+              Our website uses cookies to enhance user experience, analyze site
+              traffic, and personalize content. You can choose to disable cookies
+              through your browser settings at any time.
+            </p>
+          </div>
+
+          {/* 04. Data Protection */}
+          <div className="space-y-4">
+            <h2 className="text-xs font-bold uppercase tracking-widest text-[#3D2B3D] border-b border-pink-100 pb-2 inline-block">
+              04. Data Protection
+            </h2>
+            <div className="bg-[#FAF9F6] p-8 rounded-[30px] border border-pink-50">
+              <p className="text-lg text-gray-500 font-light leading-relaxed italic">
+                We implement secure technologies and procedures to protect your
+                personal information from unauthorized access, misuse, or
+                disclosure.
+              </p>
+            </div>
+          </div>
+
+          {/* 05. Third-Party Services */}
+          <div className="space-y-4">
+            <h2 className="text-xs font-bold uppercase tracking-widest text-[#3D2B3D] border-b border-pink-100 pb-2 inline-block">
+              05. Third-Party Services
+            </h2>
+            <p className="text-lg text-gray-500 font-light leading-relaxed">
+              We may share limited information with trusted partners such as
+              payment gateways and delivery services to complete your order and
+              ensure a seamless service.
+            </p>
+          </div>
+
+          {/* 06. Your Rights */}
+          <div className="space-y-4">
+            <h2 className="text-xs font-bold uppercase tracking-widest text-[#3D2B3D] border-b border-pink-100 pb-2 inline-block">
+              06. Your Rights
+            </h2>
+            <p className="text-lg text-gray-500 font-light leading-relaxed">
+              You have the right to access, update, or request deletion of your
+              personal data. You can contact our team anytime for assistance with
+              your data.
+            </p>
+          </div>
+
+          {/* 07. Contact & Support */}
+          <div className="pt-12 border-t border-gray-100 text-center space-y-6">
+            <h2 className="text-2xl font-serif italic text-[#3D2B3D]">Contact Us</h2>
+            <p className="text-gray-500 font-light max-w-md mx-auto">
+              If you have any questions regarding this privacy policy, feel free
+              to reach out to our legal support team.
+            </p>
+            <div className="space-y-1">
+              <p className="text-[10px] font-bold uppercase tracking-widest text-gray-400">Official Correspondence</p>
+              <a href="mailto:support@naviclothing.com" className="text-xl font-serif text-[#D16B92] hover:text-[#3D2B3D] transition-colors">
+                support@naviclothing.com
+              </a>
+            </div>
+          </div>
+
         </div>
       </section>
-      <section className="w-full bg-[#faf7f2] py-20">
-        <div className="max-w-4xl mx-auto px-6 space-y-6">
-          <h2 className="text-2xl font-medium text-gray-900">
-            How We Use Your Information
-          </h2>
 
-          <ul className="text-gray-600 space-y-3 text-sm">
-            <li>• To process and deliver your orders</li>
-            <li>• To communicate order updates</li>
-            <li>• To improve our products and website experience</li>
-            <li>• To send promotional updates (only if you opt in)</li>
-          </ul>
-        </div>
-      </section>
-      <section className="w-full bg-white py-20">
-        <div className="max-w-4xl mx-auto px-6 space-y-6">
-          <h2 className="text-2xl font-medium text-gray-900">
-            Cookies & Tracking Technologies
-          </h2>
-
-          <p className="text-gray-600 leading-relaxed">
-            Our website uses cookies to enhance user experience, analyze site
-            traffic, and personalize content. You can choose to disable cookies
-            through your browser settings.
-          </p>
-        </div>
-      </section>
-      <section className="w-full bg-[#faf7f2] py-20">
-        <div className="max-w-4xl mx-auto px-6 space-y-6">
-          <h2 className="text-2xl font-medium text-gray-900">
-            Data Protection
-          </h2>
-
-          <p className="text-gray-600 leading-relaxed">
-            We implement secure technologies and procedures to protect your
-            personal information from unauthorized access, misuse, or
-            disclosure.
-          </p>
-        </div>
-      </section>
-      <section className="w-full bg-white py-20">
-        <div className="max-w-4xl mx-auto px-6 space-y-6">
-          <h2 className="text-2xl font-medium text-gray-900">
-            Third-Party Services
-          </h2>
-
-          <p className="text-gray-600 leading-relaxed">
-            We may share limited information with trusted partners such as
-            payment gateways and delivery services to complete your order.
-          </p>
-        </div>
-      </section>
-      <section className="w-full bg-[#faf7f2] py-20">
-        <div className="max-w-4xl mx-auto px-6 space-y-6">
-          <h2 className="text-2xl font-medium text-gray-900">Your Rights</h2>
-
-          <p className="text-gray-600 leading-relaxed">
-            You have the right to access, update, or request deletion of your
-            personal data. You can contact us anytime for assistance.
-          </p>
-        </div>
-      </section>
-      <section className="w-full bg-white py-20">
-        <div className="max-w-4xl mx-auto px-6 space-y-6">
-          <h2 className="text-2xl font-medium text-gray-900">Contact Us</h2>
-
-          <p className="text-gray-600 leading-relaxed">
-            If you have any questions regarding this privacy policy, feel free
-            to contact us.
-          </p>
-
-          <p className="text-sm text-gray-700">Email: support@yourbrand.com</p>
-        </div>
-      </section>
       <Footer />
     </div>
   );
