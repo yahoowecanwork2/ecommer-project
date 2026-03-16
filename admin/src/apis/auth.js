@@ -68,4 +68,8 @@ export const adminApi = {
     const res = await api.post("/admin/send-mail");
     return res.data;
   },
+  verifySubsciption: async (data) => {
+    const res = await api.get(`/admin/check/${data}`, );
+    return res.data;
+  },
 };

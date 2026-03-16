@@ -620,10 +620,8 @@ export const stats = async (req, res) => {
   } catch (error) {}
 };
 
-
 export const createSubscription = async (req, res) => {
   try {
-
     const { userId, plan, billingCycle, price } = req.body;
 
     const startDate = new Date();
@@ -643,25 +641,33 @@ export const createSubscription = async (req, res) => {
       billingCycle,
       price,
       startDate,
-      endDate
+      endDate,
     });
+
+    const admin = await Admin.findById(userId);
+
+    // add subscription to history
+    admin.previousSubscriptions.push(subscription);
+
+    // update current subscription
+    admin.currentSubscription = subscription;
+
+    await admin.save();
 
     res.status(201).json({
       success: true,
-      subscription
+      subscription,
     });
-
   } catch (error) {
     res.status(500).json({
       success: false,
-      message: error.message
+      message: error.message,
     });
   }
 };
 
 export const checkSubscription = async (req, res) => {
   try {
-
     const { userId } = req.params;
 
     const subscription = await Subscription.findOne({ userId });
@@ -669,7 +675,7 @@ export const checkSubscription = async (req, res) => {
     if (!subscription) {
       return res.json({
         active: false,
-        message: "No subscription found"
+        message: "No subscription found",
       });
     }
 
@@ -681,15 +687,14 @@ export const checkSubscription = async (req, res) => {
 
       return res.json({
         active: false,
-        message: "Subscription expired"
+        message: "Subscription expired",
       });
     }
 
     res.json({
       active: true,
-      subscription
+      subscription,
     });
-
   } catch (error) {
     res.status(500).json({ message: error.message });
   }
@@ -697,49 +702,71 @@ export const checkSubscription = async (req, res) => {
 
 export const renewSubscription = async (req, res) => {
   try {
-
     const { userId } = req.body;
 
     const subscription = await Subscription.findOne({ userId });
 
     if (!subscription) {
-      return res.status(404).json({ message: "Subscription not found" });
+      return res.status(404).json({
+        success: false,
+        message: "Subscription not found",
+      });
     }
 
-    let newEnd = new Date(subscription.endDate);
+    const admin = await Admin.findById(userId);
+
+    if (!admin) {
+      return res.status(404).json({
+        success: false,
+        message: "Admin not found",
+      });
+    }
+
+    // calculate new end date
+    let newEndDate = new Date(subscription.endDate);
 
     if (subscription.billingCycle === "monthly") {
-      newEnd.setMonth(newEnd.getMonth() + 1);
+      newEndDate.setMonth(newEndDate.getMonth() + 1);
     }
 
     if (subscription.billingCycle === "yearly") {
-      newEnd.setFullYear(newEnd.getFullYear() + 1);
+      newEndDate.setFullYear(newEndDate.getFullYear() + 1);
     }
 
-    subscription.endDate = newEnd;
+    // update subscription
+    subscription.endDate = newEndDate;
     subscription.status = "active";
 
     await subscription.save();
 
-    res.json({
-      message: "Subscription renewed",
-      subscription
-    });
+    // add this cycle to billing history
+    admin.previousSubscriptions.push(subscription);
 
+    // update current subscription
+    admin.currentSubscription = subscription;
+
+    await admin.save();
+
+    res.status(200).json({
+      success: true,
+      message: "Subscription renewed successfully",
+      subscription,
+    });
   } catch (error) {
-    res.status(500).json({ message: error.message });
+    res.status(500).json({
+      success: false,
+      message: error.message,
+    });
   }
 };
 
-
 export const createOrder = async (req, res) => {
   try {
-
     const { plan } = req.body;
 
     const plans = {
       monthly: 999,
-      yearly: 9999
+      yearly: 9999,
     };
 
     const amount = plans[plan] * 100; // paisa
@@ -747,34 +774,29 @@ export const createOrder = async (req, res) => {
     const options = {
       amount,
       currency: "INR",
-      receipt: `receipt_${Date.now()}`
+      receipt: `receipt_${Date.now()}`,
     };
 
     const order = await Razorpay.orders.create(options);
 
     res.json({
       success: true,
-      order
+      order,
     });
-
   } catch (error) {
     res.status(500).json({
-      message: error.message
+      message: error.message,
     });
   }
 };
 
-
-
-
 export const verifyPayment = async (req, res) => {
-
   const {
     razorpay_order_id,
     razorpay_payment_id,
     razorpay_signature,
     userId,
-    plan
+    plan,
   } = req.body;
 
   const body = razorpay_order_id + "|" + razorpay_payment_id;
@@ -789,7 +811,7 @@ export const verifyPayment = async (req, res) => {
   if (!isValid) {
     return res.status(400).json({
       success: false,
-      message: "Payment verification failed"
+      message: "Payment verification failed",
     });
   }
 
@@ -807,12 +829,12 @@ export const verifyPayment = async (req, res) => {
     billingCycle: plan,
     price: plan === "monthly" ? 999 : 9999,
     startDate,
-    endDate
+    endDate,
   });
 
   res.json({
     success: true,
     message: "Subscription activated",
-    subscription
+    subscription,
   });
 };
