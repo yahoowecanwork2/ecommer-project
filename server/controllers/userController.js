@@ -176,7 +176,7 @@ export const removeProfilePic = async (req, res) => {
 
 export const userUpdateProfile = async (req, res) => {
   try {
-    const { phoneno, alternateno, address } = req.body;
+    const { name, email, phoneno, alternateno, address } = req.body;
     const user = await User.findById(req.id);
     if (!user) {
       return res
@@ -186,6 +186,12 @@ export const userUpdateProfile = async (req, res) => {
     const updateData = {};
     if (phoneno) {
       updateData.phoneno = phoneno;
+    }
+    if (name) {
+      updateData.name = name;
+    }
+    if (email) {
+      updateData.email = email;
     }
     if (alternateno) {
       updateData.alternateno = alternateno;

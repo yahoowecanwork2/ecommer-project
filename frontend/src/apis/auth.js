@@ -29,8 +29,8 @@ export const authApi = {
     return res.data;
   },
 
-  updateProfile: async () => {
-    const res = await api.post("/user/profile-update");
+  updateProfile: async (data) => {
+    const res = await api.put("/user/profile-update", data);
     return res.data;
   },
 
