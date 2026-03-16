@@ -6,15 +6,15 @@ import { addOrIncrementInCart, clearCart } from "../../redux/cartSlice";
 import HeaderHome from "../common/Header";
 import { orderApi } from "../../apis/order";
 import toast from "react-hot-toast";
-import { IoChevronForwardOutline } from "react-icons/io5";
 
 const Order = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const { items, subtotal } = useSelector((state) => state.cart);
+  const { user } = useSelector((state) => state.user);
 
   const [loading, setLoading] = useState(false);
-  console.log(items);
+  const [paymentType, setPaymentType] = useState("cod");
   const [form, setForm] = useState({
     customername: "",
     phoneno: "",
@@ -24,384 +24,159 @@ const Order = () => {
     pincode: "",
   });
 
-  const [paymentType, setPaymentType] = useState("cod");
-
   const discount = 0;
   const total = subtotal - discount;
 
   useEffect(() => {
+    if (user) {
+      setForm((prev) => ({
+        ...prev,
+        customername: user.name || "",
+        phoneno: user.phoneno || "",
+        emailid: user.email || "",
+        shippingaddress: `${user.address?.locality || ""}, ${user.address?.city || ""}, ${user.address?.state || ""}`,
+        pincode: user.address?.pinCode || "",
+      }));
+    }
+  }, [user]);
+
+  useEffect(() => {
     const fetchCart = async () => {
       if (items.length > 0) return;
-
       try {
         setLoading(true);
         const res = await authApi.myCart();
-
         if (res?.cart?.length) {
-          res.cart.forEach((item) => {
-            dispatch(addOrIncrementInCart(item));
-          });
+          res.cart.forEach((item) => dispatch(addOrIncrementInCart(item)));
         }
       } catch (err) {
-        console.error("Fetch cart error:", err);
+        console.error("Cart error:", err);
       } finally {
         setLoading(false);
       }
     };
-
     fetchCart();
-  }, []);
+  }, [dispatch, items.length]);
 
   const handleChange = (e) => {
-    setForm({
-      ...form,
-      [e.target.name]: e.target.value,
-    });
+    setForm({ ...form, [e.target.name]: e.target.value });
   };
 
-  const handleClearCart = async () => {
-    try {
-      const res = await authApi.clearCart();
-      console.log(res);
-      dispatch(clearCart());
-    } catch (error) {
-      console.error("Clear cart error:", error);
-    }
-  };
-
-  // COD ORDER
   const createCodOrder = async () => {
     try {
       setLoading(true);
-      const payload = {
-        items,
-        ...form,
-        calculatedamount: subtotal,
-        discount,
-        ordertotal: total,
-        paymentType: "cod",
-      };
-      const res = await orderApi.placeOrder(payload);
+      const res = await orderApi.placeOrder({ items, ...form, calculatedamount: subtotal, discount, ordertotal: total, paymentType: "cod" });
       if (res.success) {
-        console.log(res.order);
-        toast.success(res.message || "Order placed");
-        handleClearCart();
+        toast.success("Order Placed");
+        await authApi.clearCart();
+        dispatch(clearCart());
         navigate("/my-order");
       }
     } catch (error) {
-      toast.error(error.response?.data?.message || "Order failed");
+      toast.error("Order Failed");
     } finally {
       setLoading(false);
     }
   };
 
-  // ONLINE PAYMENT
   const createOnlineOrder = async () => {
     try {
       setLoading(true);
-      const { data } = await orderApi.checkOut({
-        amount: total,
-      });
-      console.log(data);
+      const { data } = await orderApi.checkOut({ amount: total });
       const options = {
         key: import.meta.env.VITE_RAZORPAY_KEY,
         amount: data.amount,
         currency: "INR",
-        name: "E-commerce Module",
-        description: "Order Payment",
+        name: "Navi Clothing",
         order_id: data.id,
-        handler: async function (response) {
-          try {
-            const payload = {
-              items,
-              ...form,
-              calculatedamount: subtotal,
-              discount,
-              ordertotal: total,
-              paymentType: "online",
-              razorpay_order_id: response.razorpay_order_id,
-              razorpay_payment_id: response.razorpay_payment_id,
-              razorpay_signature: response.razorpay_signature,
-            };
-            console.log(payload);
-            const res = await orderApi.placeOrder(payload);
-            console.log(res);
-            toast.success(res.message || "Order successful");
-            navigate("/my-order");
-          } catch (error) {
-            toast.error("Order failed");
-          }
+        handler: async (res) => {
+          await orderApi.placeOrder({ items, ...form, calculatedamount: subtotal, discount, ordertotal: total, paymentType: "online", razorpay_order_id: res.razorpay_order_id, razorpay_payment_id: res.razorpay_payment_id, razorpay_signature: res.razorpay_signature });
+          dispatch(clearCart());
+          navigate("/my-order");
         },
-
-        theme: {
-          color: "#160059",
-        },
+        theme: { color: "#3D2B3D" },
       };
-
-      const rzp = new window.Razorpay(options);
-      rzp.open();
+      new window.Razorpay(options).open();
     } catch (error) {
-      toast.error("Payment failed", error);
+      toast.error("Payment Failed");
     } finally {
       setLoading(false);
     }
   };
 
   const handleCheckoutOrder = () => {
-    if (!form.customername || !form.phoneno || !form.shippingaddress) {
-      toast.error("Please fill address details");
-      return;
-    }
-
-    if (paymentType === "cod") {
-      createCodOrder();
-    } else {
-      createOnlineOrder();
-    }
+    if (!form.customername || !form.phoneno || !form.shippingaddress) return toast.error("Please fill details");
+    paymentType === "cod" ? createCodOrder() : createOnlineOrder();
   };
 
-  if (!loading && items.length === 0) {
-    return (
-      <div className="flex flex-col items-center justify-center py-20">
-        <h2 className="text-xl font-semibold text-gray-700">
-          Your cart is empty
-        </h2>
-
-        <button
-          onClick={() => navigate("/")}
-          className="mt-4 bg-[#160059] text-white px-6 py-2 rounded-lg"
-        >
-          Continue Shopping
-        </button>
-      </div>
-    );
-  }
+  if (!loading && items.length === 0) return <div className="h-screen flex items-center justify-center font-serif italic text-2xl">Bag is empty.</div>;
 
   return (
-    <div className="min-h-screen bg-[#F9F9F9] font-sans">
+    <div className="bg-white min-h-screen text-[#3D2B3D] font-sans">
       <HeaderHome />
+      
+      <div className="max-w-6xl mx-auto px-6 pt-32 pb-20">
+        <h1 className="text-3xl font-serif italic mb-20">Checkout</h1>
 
-      <main className="max-w-6xl mx-auto px-2 lg:px-8 pt-32 pb-24">
-        {/* Page Header */}
-        <div className="mb-12">
-          <h1 className="text-3xl font-bold tracking-tight text-slate-900">
-            Checkout
-          </h1>
-          <p className="text-sm text-slate-500 mt-2">
-            Complete your details to finalize the order.
-          </p>
-        </div>
-
-        <div className="grid lg:grid-cols-12 gap-12 items-start">
-          {/* LEFT COLUMN: FORMS */}
-          <div className="lg:col-span-7 space-y-8">
-            {/* 1. SHIPPING DETAILS */}
-            <section className="bg-white p-8 rounded-2xl shadow-sm border border-slate-200">
-              <div className="flex items-center gap-3 mb-8">
-                <div className="w-8 h-8 rounded-full bg-slate-900 text-white flex items-center justify-center text-sm font-bold">
-                  1
+        <div className="grid lg:grid-cols-2 gap-24">
+          
+          {/* LEFT: MINIMAL FORM */}
+          <div className="space-y-16">
+            <section>
+              <h2 className="text-[10px] font-bold uppercase tracking-[0.4em] text-gray-400 mb-10">01. Delivery</h2>
+              <div className="space-y-8">
+                <input name="customername" value={form.customername} placeholder="Recipient Name" onChange={handleChange} className="w-full border-b border-gray-100 py-3 outline-none focus:border-[#3D2B3D] transition-all text-sm placeholder:text-gray-300" />
+                <div className="grid grid-cols-2 gap-8">
+                  <input name="phoneno" value={form.phoneno} placeholder="Phone" onChange={handleChange} className="w-full border-b border-gray-100 py-3 outline-none focus:border-[#3D2B3D] transition-all text-sm placeholder:text-gray-300" />
+                  <input name="emailid" value={form.emailid} placeholder="Email" onChange={handleChange} className="w-full border-b border-gray-100 py-3 outline-none focus:border-[#3D2B3D] transition-all text-sm placeholder:text-gray-300" />
                 </div>
-                <h2 className="text-lg font-semibold text-slate-900">
-                  Shipping Information
-                </h2>
-              </div>
-
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
-                <div className="md:col-span-2">
-                  <label className="text-[11px] font-bold uppercase tracking-wider text-slate-500 mb-2 block">
-                    Full Name
-                  </label>
-                  <input
-                    name="customername"
-                    placeholder="John Doe"
-                    onChange={handleChange}
-                    className="w-full bg-slate-50 p-3.5 rounded-lg text-sm border border-slate-200 outline-none focus:ring-2 focus:ring-slate-900/5 focus:border-slate-900 transition-all"
-                  />
-                </div>
-
-                <div>
-                  <label className="text-[11px] font-bold uppercase tracking-wider text-slate-500 mb-2 block">
-                    Email Address
-                  </label>
-                  <input
-                    name="emailid"
-                    type="email"
-                    placeholder="john@example.com"
-                    onChange={handleChange}
-                    className="w-full bg-slate-50 p-3.5 rounded-lg text-sm border border-slate-200 outline-none focus:ring-2 focus:ring-slate-900/5 focus:border-slate-900 transition-all"
-                  />
-                </div>
-
-                <div>
-                  <label className="text-[11px] font-bold uppercase tracking-wider text-slate-500 mb-2 block">
-                    Phone Number
-                  </label>
-                  <input
-                    name="phoneno"
-                    placeholder="+91 00000 00000"
-                    onChange={handleChange}
-                    className="w-full bg-slate-50 p-3.5 rounded-lg text-sm border border-slate-200 outline-none focus:ring-2 focus:ring-slate-900/5 focus:border-slate-900 transition-all"
-                  />
-                </div>
-
-                <div className="md:col-span-2">
-                  <label className="text-[11px] font-bold uppercase tracking-wider text-slate-500 mb-2 block">
-                    Shipping Address
-                  </label>
-                  <textarea
-                    name="shippingaddress"
-                    placeholder="House No, Street, Landmark..."
-                    rows="3"
-                    onChange={handleChange}
-                    className="w-full bg-slate-50 p-3.5 rounded-lg text-sm border border-slate-200 outline-none focus:ring-2 focus:ring-slate-900/5 focus:border-slate-900 transition-all resize-none"
-                  />
-                </div>
-
-                <div>
-                  <label className="text-[11px] font-bold uppercase tracking-wider text-slate-500 mb-2 block">
-                    Pincode
-                  </label>
-                  <input
-                    name="pincode"
-                    placeholder="1100XX"
-                    onChange={handleChange}
-                    className="w-full bg-slate-50 p-3.5 rounded-lg text-sm border border-slate-200 outline-none focus:ring-2 focus:ring-slate-900/5 focus:border-slate-900 transition-all"
-                  />
-                </div>
+                <input name="shippingaddress" value={form.shippingaddress} placeholder="Shipping Address" onChange={handleChange} className="w-full border-b border-gray-100 py-3 outline-none focus:border-[#3D2B3D] transition-all text-sm placeholder:text-gray-300" />
+                <input name="pincode" value={form.pincode} placeholder="Pincode" onChange={handleChange} className="w-full border-b border-gray-100 py-3 outline-none focus:border-[#3D2B3D] transition-all text-sm placeholder:text-gray-300" />
               </div>
             </section>
 
-            {/* 2. PAYMENT METHOD */}
-            <section className="bg-white p-8 rounded-2xl shadow-sm border border-slate-200">
-              <div className="flex items-center gap-3 mb-8">
-                <div className="w-8 h-8 rounded-full bg-slate-900 text-white flex items-center justify-center text-sm font-bold">
-                  2
-                </div>
-                <h2 className="text-lg font-semibold text-slate-900">
-                  Payment Method
-                </h2>
-              </div>
-
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <label
-                  className={`relative p-4 rounded-xl border-2 cursor-pointer transition-all flex items-center justify-between ${paymentType === "cod" ? "border-slate-900 bg-slate-50" : "border-slate-100 hover:border-slate-200"}`}
-                >
-                  <div className="flex items-center gap-3">
-                    <input
-                      type="radio"
-                      value="cod"
-                      checked={paymentType === "cod"}
-                      onChange={(e) => setPaymentType(e.target.value)}
-                      className="w-4 h-4 accent-slate-900"
-                    />
-                    <span className="text-sm font-medium text-slate-900">
-                      Cash on Delivery
-                    </span>
-                  </div>
-                </label>
-
-                <label
-                  className={`relative p-4 rounded-xl border-2 cursor-pointer transition-all flex items-center justify-between ${paymentType === "online" ? "border-slate-900 bg-slate-50" : "border-slate-100 hover:border-slate-200"}`}
-                >
-                  <div className="flex items-center gap-3">
-                    <input
-                      type="radio"
-                      value="online"
-                      checked={paymentType === "online"}
-                      onChange={(e) => setPaymentType(e.target.value)}
-                      className="w-4 h-4 accent-slate-900"
-                    />
-                    <span className="text-sm font-medium text-slate-900">
-                      Online Payment
-                    </span>
-                  </div>
-                </label>
+            <section>
+              <h2 className="text-[10px] font-bold uppercase tracking-[0.4em] text-gray-400 mb-8">02. Method</h2>
+              <div className="flex gap-12">
+                {["cod", "online"].map((type) => (
+                  <label key={type} className="flex items-center gap-3 cursor-pointer">
+                    <input type="radio" value={type} checked={paymentType === type} onChange={(e) => setPaymentType(e.target.value)} className="accent-[#3D2B3D] w-4 h-4" />
+                    <span className="text-[11px] font-bold uppercase tracking-widest">{type === "cod" ? "Cash" : "Online"}</span>
+                  </label>
+                ))}
               </div>
             </section>
           </div>
 
-          {/* RIGHT COLUMN: ORDER SUMMARY (STICKY) */}
-          <div className="lg:col-span-5">
-            <div className="bg-white rounded-2xl shadow-sm border border-slate-200 sticky top-32 overflow-hidden">
-              <div className="p-8">
-                <h2 className="text-lg font-semibold text-slate-900 mb-6">
-                  Order Summary
-                </h2>
-
-                {/* Scrollable Items List */}
-                <div className="space-y-4 max-h-60 overflow-y-auto overflow-hidden mb-8 pr-2 custom-scrollbar">
-                  {items.map((item) => (
-                    <div
-                      key={item.productId}
-                      className="flex gap-4 items-center pr-10"
-                    >
-                      <div className="w-16 h-20 bg-slate-50 rounded-lg overflow-hidden flex-shrink-0">
-                        <img
-                          src={item.imageUrl}
-                          className="w-full h-full object-cover"
-                          alt={item.name}
-                        />
-                      </div>
-                      <div className="flex-1 min-w-0">
-                        <h4 className="text-sm font-medium text-slate-900 truncate">
-                          {item.name}
-                        </h4>
-                        <p className="text-xs text-slate-500 mt-1">
-                          Quantity: {item.quantity}
-                        </p>
-                      </div>
-                      <p className="text-sm font-semibold text-slate-900">
-                        ₹{item.price}
-                      </p>
-                    </div>
-                  ))}
+          {/* RIGHT: SUMMARY */}
+          <div className="lg:pl-12">
+            <h2 className="text-[10px] font-bold uppercase tracking-[0.4em] text-gray-400 mb-10">03. Review</h2>
+            <div className="space-y-6 mb-12">
+              {items.map((item) => (
+                <div key={item.productId} className="flex justify-between items-center text-sm border-b border-gray-50 pb-4">
+                  <span className="font-serif italic text-gray-600">{item.name} <span className="text-[10px] font-sans not-italic text-gray-300 ml-2">x{item.quantity}</span></span>
+                  <span className="font-medium">₹{item.price * item.quantity}</span>
                 </div>
+              ))}
+            </div>
 
-                {/* Calculations */}
-                <div className="space-y-3 border-t border-slate-100 pt-6">
-                  <div className="flex justify-between text-sm text-slate-500">
-                    <span>Subtotal</span>
-                    <span>₹{subtotal}</span>
-                  </div>
-                  <div className="flex justify-between text-sm text-emerald-600">
-                    <span>Discount</span>
-                    <span>-₹{discount}</span>
-                  </div>
-                  <div className="flex justify-between text-sm text-slate-500">
-                    <span>Shipping</span>
-                    <span className="font-medium text-slate-900 italic">
-                      Free
-                    </span>
-                  </div>
-
-                  <div className="flex justify-between items-baseline pt-4 mt-2 border-t border-slate-100">
-                    <span className="text-base font-bold text-slate-900">
-                      Total
-                    </span>
-                    <span className="text-3xl font-black text-slate-900 tracking-tight">
-                      ₹{total}
-                    </span>
-                  </div>
-                </div>
-
-                <button
-                  onClick={handleCheckoutOrder}
-                  className="w-full mt-8 py-5 bg-[#3D2B3D] text-white rounded-xl font-bold uppercase tracking-[0.2em] text-[11px] transition-all duration-300 hover:bg-[#D16B92] hover:shadow-lg hover:shadow-pink-100 active:scale-[0.98] flex items-center justify-center gap-3 group"
-                >
-                  <span className="tracking-[0.25em]">
-                    Complete Transaction
-                  </span>
-                  <IoChevronForwardOutline className="text-sm group-hover:translate-x-1 transition-transform duration-300" />
-                </button>
-
-                <p className="text-center text-[10px] text-slate-400 mt-6 uppercase tracking-widest">
-                  🔒 SSL Encrypted & Secure Checkout
-                </p>
+            <div className="space-y-4 pt-4">
+              <div className="flex justify-between items-baseline">
+                <span className="text-[10px] font-black uppercase tracking-widest">Total Payable</span>
+                <span className="text-4xl font-serif italic">₹{total}</span>
               </div>
+              <button 
+                onClick={handleCheckoutOrder} 
+                disabled={loading}
+                className="w-full mt-10 py-5 bg-[#3D2B3D] text-white rounded-full text-[10px] font-black uppercase tracking-[0.3em] transition-all hover:bg-black active:scale-[0.98]"
+              >
+                {loading ? "Processing..." : "Complete Transaction"}
+              </button>
             </div>
           </div>
+
         </div>
-      </main>
+      </div>
     </div>
   );
 };
