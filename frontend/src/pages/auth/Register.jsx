@@ -16,7 +16,7 @@ const Register = () => {
   const [confirmationResult, setConfirmationResult] = useState(null);
   const [agreeTerms, setAgreeTerms] = useState(false);
 
-  // ---------------- Recaptcha Setup -------------------------------
+  // ---------------- Recaptcha Setup ----------------------
   useEffect(() => {
     // window.location.reload();
     if (!auth) return;

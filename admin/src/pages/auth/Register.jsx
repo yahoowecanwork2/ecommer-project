@@ -7,7 +7,7 @@ import toast from "react-hot-toast";
 import { MdOutlineMail, MdOutlineLock, MdOutlinePerson, MdPhone } from "react-icons/md";
 import { IoEyeOutline, IoEyeOffOutline } from "react-icons/io5";
 
-// Logic & Components ----------
+// Logic & Components -----------------------
 import { adminApi } from "../../apis/auth";
 import { clearToken, setToken } from "../../apis/storage";
 import { clearRegisterData, setAuth, setRegisterData } from "../../redux/userSlice";
