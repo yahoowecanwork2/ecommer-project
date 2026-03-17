@@ -28,22 +28,20 @@ jobs:
             cd /home/deployer/apps/ecommerce-module
 
             echo "📥 Pulling latest code"
-            git reset --hard
             git pull origin main
 
-            echo "🧹 Cleaning old Docker cache (important for Vite env)"
-            docker builder prune -f
+            echo "Down docker image"
+            docker compose down frontend
 
-            echo "🐳 Rebuilding frontend image (NO CACHE)"
-            docker compose build frontend --no-cache
+            echo "🐳 Rebuilding frontend image"
+            docker compose build frontend
 
             echo "🔄 Restarting frontend container"
             docker compose up -d frontend
 
-            echo "🧪 Verifying environment inside container"
-            docker compose exec frontend printenv | grep VITE || echo "⚠️ ENV not found"
+            echo "✅ Frontend deployment completed"
 
-            echo "🔄 Reloading Nginx"
+            echo "🔄 Nginx reload started"
             docker restart nginx-proxy
 
-            echo "✅ Deployment completed successfully"
+            echo "✅ Nginx reloaded successfully"
