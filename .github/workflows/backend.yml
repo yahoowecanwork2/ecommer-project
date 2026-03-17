@@ -27,21 +27,30 @@ jobs:
 
             cd /home/deployer/apps/ecommerce-module
 
-            echo "📥 Pulling latest code"
-            git pull origin main
+            echo "🧹 Fixing possible git corruption"
+            git fetch origin
 
-            echo "Down docker image"
+            # Force reset to remote (clean + reliable)
+            git reset --hard origin/main
+
+            echo "📥 Latest code synced"
+
+            echo "🧹 Cleaning Docker cache"
+            docker builder prune -f
+
+            echo "🛑 Stopping backend container"
             docker compose down backend
 
-            echo "🐳 Rebuilding backend image"
-            docker compose build backend
+            echo "🐳 Rebuilding backend image (NO CACHE)"
+            docker compose build backend --no-cache
 
             echo "🔄 Restarting backend container"
             docker compose up -d backend
 
-            echo "✅ Backend deployment completed"
+            echo "🧪 Verifying backend is running"
+            docker ps | grep ecommerce-backend || echo "⚠️ Backend not running"
 
-            echo "🔄 Nginx reload started"
+            echo "🔄 Reloading Nginx"
             docker restart nginx-proxy
 
-            echo "✅ Nginx reloaded successfully"
+            echo "✅ Backend deployment completed successfully"
