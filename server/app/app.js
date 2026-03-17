@@ -20,7 +20,7 @@ export const instance = new Razorpay({
   key_secret: process.env.RAZORPAY_SECRET,
 });
 
-const allowedOrigins = ["http://localhost:5173", "http://localhost:5174","https://ecomuserpanel.arcoders.com/"];
+const allowedOrigins = ["http://localhost:5173", "http://localhost:5174","https://ecomuserpanel.arcoders.com"];
 
 app.use(
   cors({
