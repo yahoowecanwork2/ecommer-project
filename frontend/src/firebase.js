@@ -13,8 +13,8 @@ const firebaseConfig = {
   projectId: "ecommerce-59905",
   storageBucket: "ecommerce-59905.firebasestorage.app",
   messagingSenderId: "753504773892",
-  appId: "1:753504773892:web:b627edd1a757ef3da7d251",
-  measurementId: "G-QZB7759FN3"
+  appId: "1:753504773892:web:98096577a3855f3ea7d251",
+  measurementId: "G-XJ2DKE46NF"
 };
 
 // Initialize Firebase
