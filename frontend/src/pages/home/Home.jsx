@@ -2,474 +2,348 @@ import React from "react";
 import { Link } from "react-router-dom";
 import Footer from "../common/Footer";
 import Header from "../common/Header";
-import { Truck, Gem, Leaf, Sparkles } from "lucide-react";
+import {
+  IoStar,
+  IoPlayCircleOutline,
+  IoRocketOutline,
+  IoHeartOutline,
+  IoTimeOutline,
+  IoShieldCheckmarkOutline,
+  IoArrowForwardOutline,
+  IoLogoInstagram,
+} from "react-icons/io5";
 
 const Home = () => {
+  const categories = [
+    {
+      name: "Anarkali",
+      img: "https://images.unsplash.com/photo-1610030469915-9a08eb7250a2?q=80&w=300",
+    },
+    {
+      name: "Straight Cut",
+      img: "https://images.unsplash.com/photo-1583391733956-3750e0ff4e8b?q=80&w=300",
+    },
+    {
+      name: "ChikanKari",
+      img: "https://images.unsplash.com/photo-1609357605129-26f69add5d6e?q=80&w=300",
+    },
+    {
+      name: "Short Kurti",
+      img: "https://images.unsplash.com/photo-1574169208507-84376144848b?q=80&w=300",
+    },
+  ];
+
+  const products = [
+    {
+      name: "Summer Pastel Floral Kurti",
+      price: "1,899",
+      img: "https://images.unsplash.com/photo-1609357605129-26f69add5d6e?q=80&w=600",
+    },
+    {
+      name: "Midnight Blue Silk Anarkali",
+      price: "4,500",
+      img: "https://images.unsplash.com/photo-1610030469915-9a08eb7250a2?q=80&w=600",
+    },
+    {
+      name: "Ivory Cotton Chikankari",
+      price: "2,200",
+      img: "https://images.unsplash.com/photo-1583391733956-3750e0ff4e8b?q=80&w=600",
+    },
+    {
+      name: "Earthy Maroon Straight Fit",
+      price: "1,499",
+      img: "https://images.unsplash.com/photo-1574169208507-84376144848b?q=80&w=600",
+    },
+  ];
+
+  const reviews = [
+    {
+      name: "Ananya Sharma",
+      text: "The fabric is so breathable and the fit is just perfect. Truly handcrafted elegance!",
+      initial: "A",
+    },
+    {
+      name: "Priya Singh",
+      text: "I wore the Chikankari kurti for a family function and got so many compliments. Love Kuddi!",
+      initial: "P",
+    },
+    {
+      name: "Megha Rao",
+      text: "Fast delivery and premium packaging. The quality exceeded my expectations.",
+      initial: "M",
+    },
+  ];
+
+  const videoReviews = [
+    {
+      id: 1,
+      url: "https://cdn.pixabay.com/video/2021/04/12/70796-536098055_tiny.mp4",
+      user: "@style_by_me",
+    },
+    {
+      id: 2,
+      url: "https://cdn.pixabay.com/video/2023/10/20/185834-876615801_tiny.mp4",
+      user: "@ethnic_vibe",
+    },
+    {
+      id: 3,
+      url: "https://cdn.pixabay.com/video/2020/09/03/48981-456637119_tiny.mp4",
+      user: "@desi_lookbook",
+    },
+    {
+      id: 4,
+      url: "https://cdn.pixabay.com/video/2022/01/18/104526-666323674_tiny.mp4",
+      user: "@kuddi_diaries",
+    },
+  ];
+
   return (
-    <>
-      <div className="font-google bg-white text-[#2D1B2D] selection:bg-[#F3E5F5] selection:text-[#D16B92]">
-        <Header />
+    <div className="bg-white text-[#1a1a1a] font-sans selection:bg-[#c9a07a] selection:text-white">
+      <Header />
 
-        {/* --- SECTION 1: HERO (Luxurious Editorial Look) --- */}
-        <section className="relative min-h-[85vh] lg:min-h-[95vh] flex items-center pt-24 lg:pt-20 pb-12 overflow-hidden bg-[#FCFBF7]">
-          <div className="absolute inset-0 opacity-[0.03] pointer-events-none">
-            <img
-              src="https://www.transparenttextures.com/patterns/handmade-paper.png"
-              className="w-full h-full object-repeat"
-              alt="Texture"
-            />
-          </div>
-          <div className="max-w-7xl mx-auto px-6 lg:px-8 grid lg:grid-cols-2 items-center gap-12 lg:gap-16 relative z-10 w-full">
-            <div className="space-y-6 lg:space-y-10 text-center lg:text-left order-2 lg:order-1">
-              <div className="flex items-center justify-center lg:justify-start gap-4">
-                <span className="w-10 lg:w-12 h-[1px] bg-[#D16B92]"></span>
-                <p className="text-[10px] lg:text-[11px] tracking-[0.4em] lg:tracking-[0.5em] uppercase font-bold text-[#D16B92]">
-                  The 2026 Muse Collection
-                </p>
-              </div>
-              <h1 className="text-[12vw] lg:text-[110px] font-serif italic leading-[0.85] lg:leading-[0.8] tracking-tighter text-[#2D1B2D]">
-                Poetic <br />
-                <span className="not-italic font-extralight text-[#D16B92]">
-                  Lines.
-                </span>
-              </h1>
-              <p className="text-base lg:text-xl text-gray-400 max-w-md mx-auto lg:mx-0 font-light leading-relaxed italic">
-                “Where heritage hand-embroidery meets the effortless spirit of
-                the modern woman.”
-              </p>
-              <div className="flex flex-col sm:flex-row items-center justify-center lg:justify-start gap-6 lg:gap-8 pt-4">
-                <Link
-                  to="/product"
-                  className="w-full sm:w-auto group relative px-10 lg:px-14 py-4 lg:py-5 bg-[#2D1B2D] text-white text-[11px] lg:text-[12px] font-bold uppercase tracking-[0.3em] overflow-hidden rounded-full shadow-2xl transition-all hover:shadow-[#D16B92]/20"
-                >
-                  <span className="relative z-10">Explore Edit</span>
-                  <div className="absolute inset-0 bg-[#D16B92] translate-y-full group-hover:translate-y-0 transition-transform duration-700 ease-in-out"></div>
-                </Link>
-                <Link
-                  to="/about"
-                  className="group text-[11px] lg:text-[12px] font-bold uppercase tracking-[0.3em] text-[#2D1B2D] relative"
-                >
-                  Our Philosophy
-                  <span className="absolute bottom-[-4px] left-0 w-full h-[1px] bg-[#D16B92] origin-right scale-x-0 group-hover:scale-x-100 group-hover:origin-left transition-transform duration-500"></span>
-                </Link>
-              </div>
-            </div>
-
-            <div className="relative flex justify-center items-center order-1 lg:order-2">
-              <div className="relative w-full max-w-[320px] lg:max-w-lg aspect-[4/5] rounded-t-full rounded-b-[80px] lg:rounded-b-[100px] overflow-hidden shadow-2xl border-[10px] lg:border-[15px] border-white z-10 transform hover:scale-[1.02] transition-transform duration-700">
-                <img
-                  src="https://images.unsplash.com/photo-1617627143750-d86bc21e42bb?q=80&w=1974"
-                  className="w-full h-full object-cover"
-                  alt="Premium Fashion"
-                />
-              </div>
-              <div className="absolute -bottom-6 -right-6 lg:-bottom-10 lg:-right-10 w-32 h-32 lg:w-40 lg:h-40 border-[1px] border-[#D16B92]/30 rounded-full animate-pulse"></div>
-            </div>
-          </div>
-        </section>
-
-        {/* --- SECTION 2: THE SIGNATURE EDIT --- */}
-        <section className="py-20 lg:py-32 bg-white">
-          <div className="max-w-7xl mx-auto px-6 lg:px-8">
-            <div className="grid lg:grid-cols-12 gap-12 lg:gap-16 items-center">
-              <div className="lg:col-span-5 space-y-6 lg:space-y-8 text-center lg:text-left">
-                <p className="text-[10px] font-bold uppercase tracking-[0.5em] text-[#D16B92]">
-                  Luxury Essentials
-                </p>
-                <h2 className="text-4xl lg:text-6xl font-serif italic leading-tight text-[#2D1B2D]">
-                  The Signature <br className="hidden lg:block" /> Silhouette
-                  Edit
-                </h2>
-                <p className="text-gray-400 font-light text-sm lg:text-lg leading-relaxed italic">
-                  Experience the fusion of artisanal tradition and avant-garde
-                  design. Each piece is a masterpiece of slow fashion.
-                </p>
-                <div className="pt-4 lg:pt-6">
-                  <Link
-                    to="/product"
-                    className="inline-block px-8 lg:px-10 py-3 lg:py-4 border border-[#D16B92] text-[#D16B92] text-[10px] font-bold uppercase tracking-widest rounded-full hover:bg-[#D16B92] hover:text-white transition-all"
-                  >
-                    View All Masterpieces
-                  </Link>
-                </div>
-              </div>
-              <div className="lg:col-span-7 grid grid-cols-1 sm:grid-cols-2 gap-8 lg:gap-8">
-                <div className="space-y-6 lg:space-y-8 lg:mt-12">
-                  <div className="group relative overflow-hidden rounded-[2rem] aspect-[3/4.5] shadow-xl hover:shadow-[#D16B92]/20 transition-all duration-700">
-                    <img
-                      src="https://images.unsplash.com/photo-1617627143750-d86bc21e42bb?q=80&w=1974"
-                      className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-1000"
-                      alt="fashion"
-                    />
-
-                    <div className="absolute inset-0 bg-[#2D1B2D]/20 opacity-0 group-hover:opacity-100 transition-opacity"></div>
-
-                    <div className="absolute bottom-6 left-6 text-white opacity-0 lg:group-hover:opacity-100 translate-y-4 lg:group-hover:translate-y-0 transition-all">
-                      <p className="font-serif italic text-xl">Indigo Bloom</p>
-                      <p className="text-[10px] uppercase tracking-widest">
-                        Shop Now →
-                      </p>
-                    </div>
-                  </div>
-
-                  <p className="hidden lg:block text-center font-serif italic text-gray-400">
-                    “Elegance is the only beauty that never fades.”
-                  </p>
-                </div>
-
-                <div className="group relative overflow-hidden rounded-[2rem] aspect-[3/4.5] shadow-xl hover:shadow-[#D16B92]/20 transition-all duration-700">
-                  <img
-                    src="https://images.unsplash.com/photo-1503342217505-b0a15ec3261c"
-                    className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-1000"
-                    alt="fashion"
-                  />
-
-                  <div className="absolute inset-0 bg-[#2D1B2D]/20 opacity-0 group-hover:opacity-100 transition-opacity"></div>
-
-                  <div className="absolute bottom-6 left-6 text-white opacity-0 lg:group-hover:opacity-100 translate-y-4 lg:group-hover:translate-y-0 transition-all">
-                    <p className="font-serif italic text-xl">Crimson Grace</p>
-                    <p className="text-[10px] uppercase tracking-widest">
-                      Shop Now →
-                    </p>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </section>
-
-        {/* --- SECTION 3: THE MUSE GALLERY (Responsive Staggered Grid) --- */}
-<section className="py-20 lg:py-32 bg-[#FAF9F6] font-google pb-24">
-  <div className="max-w-7xl mx-auto px-6 lg:px-8">
-    <div className="flex flex-col items-center mb-16 lg:mb-28 space-y-4 text-center">
-      <span className="px-6 py-2 border border-[#D16B92]/30 rounded-full text-[9px] lg:text-[10px] font-bold uppercase tracking-[0.5em] text-[#D16B92]">
-        Ready to Wear
-      </span>
-      <h2 className="text-4xl lg:text-7xl font-serif italic text-[#2D1B2D] text-center">
-        Featured Collections
-      </h2>
-    </div>
-
-    <div className="grid grid-cols-2 lg:grid-cols-4 gap-x-4 lg:gap-x-10 gap-y-12 lg:gap-y-32">
-      {[
-        {
-          name: "Royal Indigo Bandhani",
-          price: "₹4,999",
-          img: "/images/indigo-suit.jpg", // local path
-        },
-        {
-          name: "Crimson Square Luxe",
-          price: "₹3,499",
-          img: "/images/crimson-grace.jpg", // local path
-        },
-        {
-          name: "Blossom Peplum Edit",
-          price: "₹5,200",
-          img: "/images/peplum-blossom.jpg", // local path
-        },
-        {
-          name: "Ivory Shimmer Silk",
-          price: "₹4,299",
-          img: "/images/ivory-silk.jpg", // local path
-        },
-        {
-          name: "Midnight Rose Silk",
-          price: "₹6,400",
-          img: "/images/midnight-rose.jpg", // local path
-        },
-        {
-          name: "Heritage Navy Shrug",
-          price: "₹2,999",
-          img: "/images/navy-shrug.jpg", // local path
-        },
-        {
-          name: "Sage Garden Kurti",
-          price: "₹3,800",
-          img: "/images/sage-kurti.jpg", // local path
-        },
-        {
-          name: "Pastel Grace Wrap",
-          price: "₹4,100",
-          img: "/images/pastel-grace.jpg", // local path
-        },
-      ].map((item, i) => (
-        <div
-          key={i}
-          className={`group cursor-pointer ${i % 2 !== 0 ? "lg:translate-y-20" : ""}`}
-        >
-          <div className="relative aspect-[3/4.5] overflow-hidden rounded-2xl lg:rounded-[3rem] bg-gray-100 mb-4 lg:mb-8 transition-all duration-1000 group-hover:shadow-2xl shadow-pink-100/30">
-            <img
-              src={item.img}
-              className="w-full h-full object-cover transition-transform duration-[1.5s] group-hover:scale-110"
-              alt={item.name}
-              loading="lazy"
-            />
-            <div className="absolute top-3 right-3 lg:top-6 lg:right-6 w-8 h-8 lg:w-10 lg:h-10 bg-white/80 backdrop-blur-md rounded-full flex items-center justify-center opacity-0 lg:group-hover:opacity-100 transition-opacity">
-              <span className="text-[#D16B92] font-bold text-sm lg:text-base">♡</span>
-            </div>
-            <div className="absolute inset-x-4 lg:inset-x-8 bottom-4 lg:bottom-8 translate-y-full opacity-0 lg:group-hover:translate-y-0 lg:group-hover:opacity-100 transition-all duration-500">
-              <button className="w-full py-3 lg:py-4 bg-[#2D1B2D] text-white text-[9px] lg:text-[10px] font-black uppercase tracking-[0.2em] rounded-xl lg:rounded-2xl shadow-xl hover:bg-[#D16B92] transition-colors active:scale-95 shadow-pink-900/10">
-                Quick Add +
-              </button>
-            </div>
-          </div>
-          <div className="text-center space-y-1 lg:space-y-2 px-2">
-            <h4 className="text-sm lg:text-[15px] font-serif italic text-[#2D1B2D] tracking-wide lg:group-hover:text-[#D16B92] transition-colors leading-snug">
-              {item.name}
-            </h4>
-            <p className="text-[12px] lg:text-[13px] text-[#D16B92] font-medium tracking-[0.1em]">
-              {item.price}
+      {/* 1. HERO SECTION */}
+      <section className="relative h-[90vh] flex items-center overflow-hidden bg-[#fdfaf7]">
+        <div className="max-w-7xl mx-auto px-6 w-full grid lg:grid-cols-2 items-center gap-12">
+          <div className="z-10 order-2 lg:order-1">
+            <span className="text-[12px] tracking-[0.4em] uppercase font-semibold text-[#c9a07a] mb-4 block">
+              New Arrival 2026
+            </span>
+            <h1 className="text-5xl lg:text-[80px] font-serif leading-[1.1] mb-8">
+              Timeless <br />{" "}
+              <span className="italic font-light text-gray-400">Elegance.</span>
+            </h1>
+            <p className="text-gray-500 max-w-md mb-10 leading-relaxed text-lg">
+              Handcrafted kurtis designed for the modern woman who cherishes her
+              roots.
             </p>
+            <Link
+              to="/product"
+              className="inline-flex items-center gap-3 bg-[#1a1a1a] text-white px-10 py-5 text-[11px] font-bold uppercase tracking-widest hover:bg-[#c9a07a] transition-all group"
+            >
+              Shop Collection{" "}
+              <IoArrowForwardOutline className="text-lg group-hover:translate-x-2 transition-transform" />
+            </Link>
+          </div>
+          <div className="relative h-[60vh] lg:h-[80vh] order-1 lg:order-2">
+            <img
+              src="https://images.unsplash.com/photo-1612336307429-8a898d10e223?q=80&w=2070"
+              className="w-full h-full object-cover rounded-t-[200px] shadow-2xl animate-slow-zoom"
+              alt="Fashion Hero"
+            />
           </div>
         </div>
-      ))}
-    </div>
-  </div>
-</section>
+      </section>
 
-        {/* --- SECTION 4: SUMMER SOIRÉE --- */}
-        <section className="py-20 lg:py-32 bg-white overflow-hidden">
-          <div className="max-w-7xl mx-auto px-6 lg:px-8 mb-12 lg:mb-16">
-            <div className="flex justify-between items-center">
-              <h2 className="text-3xl lg:text-5xl font-serif italic text-[#2D1B2D]">
-                Summer Soirée
-              </h2>
-              <p className="text-[#D16B92] text-[10px] lg:text-[11px] font-bold uppercase tracking-[0.4em] hidden sm:block italic">
-                Slide to Explore →
+      {/* 2. BRAND STORY SECTION (NEW) */}
+      <section className="py-24 bg-white">
+        <div className="max-w-4xl mx-auto px-6 text-center">
+          <h2 className="text-[#c9a07a] text-[12px] font-bold uppercase tracking-[0.5em] mb-8">
+            #StyleThatSpeaksYou
+          </h2>
+          <p className="text-2xl md:text-3xl font-serif italic leading-relaxed text-gray-800">
+            "Founded with a passion for redefining everyday fashion,{" "}
+            <span className="text-[#c9a07a]">Kuddi</span> is your go-to
+            destination for short kurtis that make a bold, confident statement.
+            We believe that fashion should not only look good but should be
+            affordable too."
+          </p>
+          <div className="mt-8 h-1 w-12 bg-gray-200 mx-auto"></div>
+        </div>
+      </section>
+
+      {/* 3. CATEGORIES */}
+      <section className="pb-24 max-w-7xl mx-auto px-6">
+        <h2 className="text-3xl font-serif italic mb-10 text-center">
+          Shop by Style
+        </h2>
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-8">
+          {categories.map((cat, idx) => (
+            <Link key={idx} to="/shop" className="group text-center">
+              <div className="aspect-[4/5] overflow-hidden mb-6 bg-gray-100 rounded-sm group-hover:shadow-xl transition-all duration-700">
+                <img
+                  src={cat.img}
+                  alt={cat.name}
+                  className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-1000"
+                />
+              </div>
+              <p className="text-[13px] font-semibold tracking-wider uppercase group-hover:text-[#c9a07a] transition-colors">
+                {cat.name}
               </p>
-            </div>
+            </Link>
+          ))}
+        </div>
+      </section>
+
+      {/* 4. PRODUCT GRID */}
+      <section className="py-24 bg-[#fafafa]">
+        <div className="max-w-7xl mx-auto px-6">
+          <div className="text-center mb-16">
+            <h2 className="text-4xl font-serif mb-4">The Kurti Edit</h2>
+            <div className="h-0.5 w-16 bg-[#c9a07a] mx-auto mb-4"></div>
+            <p className="text-gray-400 text-[10px] tracking-[0.3em] uppercase">
+              Handpicked for your daily grace
+            </p>
           </div>
-          <div className="flex gap-6 lg:gap-10 overflow-x-auto px-6 lg:px-8 pb-12 lg:pb-20 no-scrollbar snap-x">
-            {[
-              {
-                title: "The Linen Edit",
-                price: "₹3,999",
-                img: "https://images.unsplash.com/photo-1589156229687-496a31ad1d1f?q=80&w=1972",
-              },
-              {
-                title: "Pastel Dreams",
-                price: "₹4,200",
-                img: "https://images.unsplash.com/photo-1560060141-7b9018741bed?q=80&w=1964",
-              },
-              {
-                title: "Floral Whisper",
-                price: "₹3,499",
-                img: "https://images.unsplash.com/photo-1595967734996-c1265319e825?q=80&w=1964",
-              },
-              {
-                title: "Golden Hour",
-                price: "₹5,100",
-                img: "https://images.unsplash.com/photo-1612459284970-e8f027596582?q=80&w=1964",
-              },
-              {
-                title: "Breezy Boho",
-                price: "₹2,999",
-                img: "https://images.unsplash.com/photo-1609505848912-b7c3b8b4beda?q=80&w=1965",
-              },
-            ].map((item, i) => (
-              <div
-                key={i}
-                className="flex-shrink-0 w-72 lg:w-80 snap-center group"
-              >
-                <div className="relative aspect-[4/5] rounded-[2rem] lg:rounded-[3rem] overflow-hidden shadow-lg mb-6 lg:group-hover:shadow-[#D16B92]/20 transition-all duration-700">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-10">
+            {products.map((item, i) => (
+              <div key={i} className="group flex flex-col">
+                <div className="relative aspect-[3/4] overflow-hidden bg-white mb-5 shadow-sm">
                   <img
                     src={item.img}
                     className="w-full h-full object-cover transition-transform duration-1000 group-hover:scale-110"
-                    alt="soiree"
+                    alt={item.name}
                   />
-                  <div className="absolute inset-0 bg-gradient-to-t from-[#2D1B2D]/40 to-transparent"></div>
-                  <div className="absolute bottom-6 left-6 lg:bottom-8 lg:left-8 text-white">
-                    <p className="text-[9px] uppercase tracking-widest mb-1 opacity-80">
-                      Collection 26'
-                    </p>
-                    <p className="text-xl lg:text-2xl font-serif italic">
-                      {item.title}
-                    </p>
+                  <div className="absolute inset-0 bg-black/5 opacity-0 group-hover:opacity-100 transition-all flex items-end p-4">
+                    <button className="w-full bg-white text-black py-3 text-[10px] font-bold uppercase tracking-widest hover:bg-[#c9a07a] hover:text-white transition-all transform translate-y-4 group-hover:translate-y-0">
+                      Add to Bag
+                    </button>
                   </div>
                 </div>
-                <div className="flex justify-between items-center px-4">
-                  <p className="text-[#2D1B2D] text-[12px] lg:text-[13px] font-medium tracking-widest">
-                    {item.price}
+                <h3 className="text-[14px] text-gray-800 font-medium">
+                  {item.name}
+                </h3>
+                <p className="text-[15px] font-bold text-[#c9a07a]">
+                  ₹{item.price}
+                </p>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* 5. VIDEO REVIEWS */}
+      <section className="py-24 bg-white overflow-hidden">
+        <div className="max-w-7xl mx-auto px-6">
+          <div className="flex justify-between items-center mb-12">
+            <div>
+              <h2 className="text-3xl font-serif">#KuddiStories</h2>
+              <p className="text-gray-400 text-xs mt-2 uppercase tracking-widest font-semibold">
+                See how our community styles it
+              </p>
+            </div>
+            <IoLogoInstagram className="text-3xl text-[#c9a07a]" />
+          </div>
+          <div className="flex gap-6 overflow-x-auto no-scrollbar pb-8">
+            {videoReviews.map((video) => (
+              <div
+                key={video.id}
+                className="relative flex-shrink-0 w-[240px] aspect-[9/16] rounded-2xl overflow-hidden group shadow-lg"
+              >
+                <video
+                  className="w-full h-full object-cover"
+                  muted
+                  loop
+                  playsInline
+                  onMouseOver={(e) => e.target.play()}
+                  onMouseOut={(e) => {
+                    e.target.pause();
+                    e.target.currentTime = 0;
+                  }}
+                >
+                  <source src={video.url} type="video/mp4" />
+                </video>
+                <div className="absolute bottom-4 left-4 text-white z-10">
+                  <p className="text-[10px] font-bold tracking-widest">
+                    {video.user}
                   </p>
-                  <button className="text-[9px] lg:text-[10px] font-black uppercase tracking-tighter border-b border-[#D16B92] text-[#D16B92]">
-                    Add to Bag
-                  </button>
+                </div>
+                <div className="absolute inset-0 bg-black/20 group-hover:bg-transparent transition-all flex items-center justify-center">
+                  <IoPlayCircleOutline className="text-white/70 text-4xl group-hover:hidden" />
                 </div>
               </div>
             ))}
           </div>
-        </section>
+        </div>
+      </section>
 
-        {/* --- SECTION 5: THE ATELIERS (Video Section) --- */}
-        <section className="relative h-[70vh] lg:h-screen w-full overflow-hidden bg-[#1A111A]">
-          <div className="absolute inset-0 z-0">
-            <video
-              autoPlay
-              loop
-              muted
-              playsInline
-              className="w-full h-full object-cover opacity-20 mix-blend-luminosity scale-110"
-            >
-              <source
-                src="https://kuddi.net/cdn/shop/videos/c/vp/0c88554249a54728b1230e7681c25f46/0c88554249a54728b1230e7681c25f46.HD-1080p-7.2Mbps-21528629.mp4?v=0"
-                type="video/mp4"
-              />
-            </video>
-            <div className="absolute inset-0 bg-gradient-to-b from-[#1A111A] via-transparent to-[#1A111A]"></div>
-          </div>
-          <div className="relative z-10 h-full max-w-[1440px] mx-auto px-6 lg:px-20 flex flex-col justify-center">
-            <div className="grid lg:grid-cols-12 gap-8 items-center text-center lg:text-left">
-              <div className="lg:col-span-7 space-y-4 lg:space-y-6">
-                <div className="flex items-center justify-center lg:justify-start gap-4 animate-pulse">
-                  <div className="w-10 h-[1px] bg-[#D4AF37]"></div>
-                  <p className="text-[9px] lg:text-[10px] tracking-[0.5em] lg:tracking-[0.8em] uppercase text-[#D4AF37] font-bold">
-                    The Sanctum of Craft
-                  </p>
-                </div>
-                <h2 className="text-5xl lg:text-[160px] font-serif italic text-[#F9F5F0] leading-[0.8] tracking-tighter">
-                  sculpted <br /> Silence.
-                </h2>
-              </div>
-              <div className="lg:col-span-5 lg:mt-32 space-y-8">
-                <p className="text-[#F9F5F0] text-lg lg:text-3xl font-light leading-snug italic max-w-md mx-auto lg:mx-0">
-                  “In our ateliers, we measure time in the rhythm of a
-                  heartbeat.”
-                </p>
-                <div className="flex items-center justify-center lg:justify-start gap-6 lg:gap-8">
-                  <button className="w-16 h-16 lg:w-20 lg:h-20 rounded-full border border-[#D4AF37]/30 flex items-center justify-center text-[#D4AF37] hover:bg-[#D4AF37] hover:text-[#1A111A] transition-all duration-700">
-                    ▶
-                  </button>
-                  <p className="text-[10px] font-black uppercase tracking-[0.4em] lg:tracking-[0.5em] text-[#D4AF37]">
-                    Observe the craft
-                  </p>
-                </div>
-              </div>
-            </div>
-          </div>
-        </section>
-
-        {/* --- SECTION 6: MUSES VOICES --- */}
-        <section className="py-20 lg:py-40 bg-white">
-          <div className="max-w-7xl mx-auto px-6 lg:px-8">
-            <div className="grid lg:grid-cols-2 gap-16 lg:gap-24 items-center">
-              <div className="relative group px-4 lg:px-0">
-                <img
-                  src="https://images.unsplash.com/photo-1483985988355-763728e1935b?q=80&w=2070"
-                  className="w-full h-[450px] lg:h-[700px] object-cover rounded-[60px] lg:rounded-[120px] shadow-2xl"
-                  alt="Model"
-                />
-                <div className="absolute -bottom-6 -right-2 lg:-bottom-10 lg:-right-10 bg-[#D16B92] text-white p-8 lg:p-14 rounded-[30px] lg:rounded-[60px] shadow-2xl">
-                  <p className="text-3xl lg:text-6xl font-serif italic tracking-tighter">
-                    "Exceptional"
-                  </p>
-                </div>
-              </div>
-              <div className="space-y-12 lg:space-y-16">
-                <div className="space-y-4 text-center lg:text-left">
-                  <p className="text-[10px] font-bold uppercase tracking-[0.5em] text-[#D16B92]">
-                    Voices of Grace
-                  </p>
-                  <h2 className="text-4xl lg:text-6xl font-serif italic text-[#2D1B2D]">
-                    What Our Muses Say
-                  </h2>
-                </div>
-                <div className="space-y-12">
-                  {[
-                    {
-                      title: "Pure Luxury",
-                      text: "The drape of this kurti is like poetry. I've never felt so comfortable yet so regal.",
-                      author: "Mira Rajput",
-                    },
-                    {
-                      title: "Unmatched Craft",
-                      text: "The hand-embroidery is intricate and the finish is boutique-grade. Truly unique.",
-                      author: "Sia Kapoor",
-                    },
-                  ].map((rev, i) => (
-                    <div
-                      key={i}
-                      className="group space-y-4 text-center lg:text-left"
-                    >
-                      <div className="flex justify-center lg:justify-start gap-1 text-[#D16B92]">
-                        ★★★★★
-                      </div>
-                      <p className="text-lg lg:text-2xl text-gray-400 font-light italic leading-relaxed lg:group-hover:text-[#2D1B2D] transition-colors duration-500">
-                        "{rev.text}"
-                      </p>
-                      <p className="text-[10px] lg:text-[11px] font-black uppercase text-gray-400 tracking-widest">
-                        — {rev.author}
-                      </p>
-                    </div>
-                  ))}
-                </div>
-              </div>
-            </div>
-          </div>
-        </section>
-
-        {/* --- SECTION 7: THE LUXE PERKS --- */}
-        <section className="py-20 lg:py-28 bg-[#FCFBF7] border-y border-gray-100">
-          <div className="max-w-7xl mx-auto px-6 lg:px-8 grid grid-cols-2 md:grid-cols-4 gap-12 lg:gap-16 text-center">
-            {[
-              {
-                label: "Bespoke Delivery",
-                sub: "Global White-Glove Shipping",
-                icon: <Truck strokeWidth={1} size={28} />,
-              },
-              {
-                label: "Purest Silks",
-                sub: "Hand-Sourced Heritage Fabrics",
-                icon: <Gem strokeWidth={1} size={28} />,
-              },
-              {
-                label: "Ethical Craft",
-                sub: "Directly Supporting Artisans",
-                icon: <Leaf strokeWidth={1} size={28} />,
-              },
-              {
-                label: "Graceful Fit",
-                sub: "Tailored For Modern Comfort",
-                icon: <Sparkles strokeWidth={1} size={28} />,
-              },
-            ].map((item, i) => (
+      {/* 6. CUSTOMER REVIEWS */}
+      <section className="py-24 bg-[#fdfaf7]">
+        <div className="max-w-7xl mx-auto px-6">
+          <h2 className="text-center text-3xl font-serif italic mb-16">
+            Trusted by Thousands
+          </h2>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+            {reviews.map((rev, i) => (
               <div
                 key={i}
-                className="group flex flex-col items-center space-y-6"
+                className="bg-white p-10 rounded-sm border border-gray-100 shadow-sm hover:shadow-md transition-shadow relative"
               >
-                <div className="relative">
-                  <div className="text-[#2D1B2D] group-hover:text-[#D16B92] group-hover:-translate-y-2 transition-all duration-700">
-                    {item.icon}
-                  </div>
-                  <div className="absolute -bottom-2 left-1/2 -translate-x-1/2 w-1 h-1 bg-[#D16B92] rounded-full opacity-0 group-hover:opacity-100 transition-all duration-500"></div>
+                <div className="flex text-[#c9a07a] mb-6 gap-1">
+                  {[...Array(5)].map((_, i) => (
+                    <IoStar key={i} />
+                  ))}
                 </div>
-                <div className="space-y-2">
-                  <div className="text-[9px] lg:text-[11px] font-black uppercase tracking-[0.4em] lg:tracking-[0.6em] text-[#2D1B2D] group-hover:text-[#D16B92] transition-all">
-                    {item.label}
+                <p className="text-gray-600 italic leading-relaxed mb-8 text-[15px]">
+                  "{rev.text}"
+                </p>
+                <div className="flex items-center gap-4">
+                  <div className="w-10 h-10 rounded-full bg-[#fdfaf7] flex items-center justify-center text-[#c9a07a] font-bold text-sm border border-[#c9a07a]/20">
+                    {rev.initial}
                   </div>
-                  <div className="w-6 lg:w-8 h-[1px] bg-gray-200 mx-auto group-hover:w-12 lg:group-hover:w-16 transition-all duration-700"></div>
-                  <p className="text-[8px] lg:text-[9px] text-gray-400 uppercase tracking-[0.2em] font-medium">
-                    {item.sub}
-                  </p>
+                  <span className="text-[11px] font-bold uppercase tracking-widest">
+                    {rev.name}
+                  </span>
                 </div>
               </div>
             ))}
           </div>
-        </section>
+        </div>
+      </section>
 
-        <Footer />
-      </div>
+      {/* 7. USP SECTION */}
+      <section className="py-20 bg-white border-t border-gray-100">
+        <div className="max-w-7xl mx-auto px-6 grid grid-cols-2 lg:grid-cols-4 gap-12">
+          <USPItem
+            icon={<IoRocketOutline />}
+            title="Free Shipping"
+            desc="On orders above ₹2999"
+          />
+          <USPItem
+            icon={<IoHeartOutline />}
+            title="Made in India"
+            desc="Handcrafted with love"
+          />
+          <USPItem
+            icon={<IoTimeOutline />}
+            title="Express Delivery"
+            desc="Ships within 24 hours"
+          />
+          <USPItem
+            icon={<IoShieldCheckmarkOutline />}
+            title="Pure Fabrics"
+            desc="100% Breathable Cotton"
+          />
+        </div>
+      </section>
+
+      <Footer />
 
       <style
         dangerouslySetInnerHTML={{
           __html: `
+        @keyframes slow-zoom { 0% { transform: scale(1); } 100% { transform: scale(1.05); } }
+        .animate-slow-zoom { animation: slow-zoom 15s ease-in-out infinite alternate; }
         .no-scrollbar::-webkit-scrollbar { display: none; }
         .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
-        html { scroll-behavior: smooth; }
       `,
         }}
       />
-    </>
+    </div>
   );
 };
+
+const USPItem = ({ icon, title, desc }) => (
+  <div className="flex flex-col items-center text-center group">
+    <div className="text-2xl text-[#c9a07a] mb-4 group-hover:scale-110 transition-transform">
+      {icon}
+    </div>
+    <h4 className="text-[11px] font-bold uppercase tracking-tighter mb-1">
+      {title}
+    </h4>
+    <p className="text-[10px] text-gray-400 font-medium uppercase tracking-widest">
+      {desc}
+    </p>
+  </div>
+);
 
 export default Home;
