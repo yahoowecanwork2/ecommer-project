@@ -129,7 +129,7 @@ const Header = () => {
             <nav className="flex flex-col space-y-8">
               {[
                 { name: "Home", sub: "Back to start", path: "/" },
-                { name: "Shop", sub: "Explore Collections", path: "/shop" },
+                { name: "Shop", sub: "Explore Collections", path: "/product" },
                 {
                   name: "Size Guide",
                   sub: "Find your fit",
