@@ -30,6 +30,9 @@ jobs:
             echo "📥 Pulling latest code"
             git pull origin main
 
+            echo "Down docker image"
+            docker compose down admin
+
             echo "🐳 Rebuilding admin image"
             docker compose build admin
 

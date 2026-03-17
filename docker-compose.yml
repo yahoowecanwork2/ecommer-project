@@ -15,7 +15,7 @@ services:
     build:
       context: ./frontend
       args:
-        VITE_BACKEND_URL: https://ecomserver.arcoders.com/api/v1
+        VITE_BACKEND_URL: ${VITE_BACKEND_URL}
     image: ecommerce-frontend
     restart: always
     expose:
@@ -29,7 +29,7 @@ services:
     build:
       context: ./admin
       args:
-        VITE_BACKEND_URL: https://ecomserver.arcoders.com/api/v1
+        VITE_BACKEND_URL: ${VITE_BACKEND_URL}
     image: ecommerce-admin
     restart: always
     expose:
