@@ -16,31 +16,32 @@ const Register = () => {
   const [confirmationResult, setConfirmationResult] = useState(null);
   const [agreeTerms, setAgreeTerms] = useState(false);
 
-  // ---------------- Recaptcha Setup --------------------
+  // ---------------- Recaptcha Setup ----------------
   useEffect(() => {
+    // window.location.reload();
     if (!auth) return;
 
-    if (!window.recaptchaVerifier) {
-      try {
-        window.recaptchaVerifier = new RecaptchaVerifier(
-          "recaptcha-container", // ✅ container first
-          {
-            size: "invisible",
-            callback: () => {
-              console.log("Recaptcha solved");
-            },
+    // if (!window.recaptchaVerifier) {
+    try {
+      window.recaptchaVerifier = new RecaptchaVerifier(
+        auth,
+        "recaptcha-container",
+        {
+          size: "invisible",
+          callback: () => {
+            console.log("Recaptcha solved");
           },
-          auth, // ✅ auth last
-        );
+        },
+      );
 
-        window.recaptchaVerifier.render();
-      } catch (error) {
-        console.log("Recaptcha Init Error:", error);
-      }
+      window.recaptchaVerifier.render();
+    } catch (error) {
+      console.log("Recaptcha Init Error:", error);
     }
+    // }
   }, []);
 
-  // ---------------- Send OTP ------------------------
+  // ---------------- Send OTP ----------------
   const sendOtp = async (type) => {
     try {
       if (!window.recaptchaVerifier) {
@@ -48,18 +49,11 @@ const Register = () => {
         return;
       }
 
-      if (!phone || phone.length < 10) {
-        toast.error("Enter valid phone number");
-        return;
-      }
-
       setRegistrationLoading(true);
-
-      const formattedPhone = `+91${phone.replace(/\D/g, "")}`;
 
       const result = await signInWithPhoneNumber(
         auth,
-        formattedPhone,
+        `+91${phone}`,
         window.recaptchaVerifier,
       );
 
@@ -76,14 +70,8 @@ const Register = () => {
       }
     } catch (error) {
       console.error("OTP Error:", error);
-
-      // 🔥 IMPORTANT: reset recaptcha on failure
-      if (window.recaptchaVerifier) {
-        window.recaptchaVerifier.clear();
-        window.recaptchaVerifier = null;
-      }
-
-      toast.error(error.message || "Failed to send OTP");
+      toast.error(error.message);
+      // window.location.reload();
     } finally {
       setRegistrationLoading(false);
     }
@@ -91,21 +79,27 @@ const Register = () => {
 
   // ---------------- Check user exist ----------------
   const checkUserExist = async () => {
+    console.log("This is working fine");
+
     try {
+      console.log("This is try");
       if (!phone) {
         toast.error("Enter phone number");
         return;
       }
+      console.log("This is enter phone");
 
       setUserExistLoading(true);
 
       const res = await authApi.checkUserExist(phone);
 
       if (res?.success) {
+        // toast.success(res?.message);
         sendOtp("register");
       }
     } catch (error) {
       if (error?.response?.status === 400) {
+        // toast.success(error?.response?.data?.message);
         sendOtp("login");
       } else {
         toast.error("Server Error");
