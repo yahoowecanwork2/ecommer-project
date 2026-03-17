@@ -28,17 +28,22 @@ jobs:
             cd /home/deployer/apps/ecommerce-module
 
             echo "📥 Pulling latest code"
+            git reset --hard
             git pull origin main
 
-            echo "🐳 Rebuilding admin image"
-            docker compose build admin
+            echo "🧹 Cleaning old Docker cache (prevents stale Vite build)"
+            docker builder prune -f
+
+            echo "🐳 Rebuilding admin image (NO CACHE)"
+            docker compose build adminpanel --no-cache
 
             echo "🔄 Restarting admin container"
-            docker compose up -d admin
+            docker compose up -d adminpanel
 
-            echo "✅ Admin panel deployment completed"
+            echo "🧪 Verifying environment inside container"
+            docker compose exec adminpanel printenv | grep VITE || echo "⚠️ ENV not found"
 
-            echo "🔄 Nginx reload started"
+            echo "🔄 Reloading Nginx"
             docker restart nginx-proxy
 
-            echo "✅ Nginx reloaded successfully"
+            echo "✅ Admin panel deployment completed successfully"
