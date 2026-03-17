@@ -53,17 +53,17 @@ const Pagesroutes = () => {
         <Route
           path="/product"
           element={
-            <Protectedroutes>
-              <Product />
-            </Protectedroutes>
+            // <Protectedroutes>
+            <Product />
+            // </Protectedroutes>
           }
         />
         <Route
           path="/product-detail/:slug"
           element={
-            <Protectedroutes>
-              <Productdetail />
-            </Protectedroutes>
+            // <Protectedroutes>
+            <Productdetail />
+            // </Protectedroutes>
           }
         />
         <Route
