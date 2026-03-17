@@ -7,7 +7,7 @@ const checkAdmin = async (req, res, next) => {
     try{
             // console.log(req.cookies)
             // console.log(req.cookies.token)
-            // console.log(req.cookies.role)
+            // console.log(req.cookies.role) 
                  let token = req.cookies?.token;
     if (!token && req.headers.authorization?.startsWith("Bearer ")) {
       token = req.headers.authorization.split(" ")[1];
