@@ -40,7 +40,7 @@ const Register = () => {
     }
   }, []);
 
-  // ---------------- Send OTP ----------------
+  // ---------------- Send OTP ------------------------
   const sendOtp = async (type) => {
     try {
       if (!window.recaptchaVerifier) {
