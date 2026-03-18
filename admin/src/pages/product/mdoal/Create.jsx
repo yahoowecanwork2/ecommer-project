@@ -12,7 +12,6 @@ const Create = ({ setShowModal }) => {
     stock: "",
     category: "",
     description: "",
-    keywords: "",
     discount: "",
     available: "yes",
     insale: "no",
@@ -22,7 +21,24 @@ const Create = ({ setShowModal }) => {
   const [images, setImages] = useState([]);
   const [loading, setLoading] = useState(false);
   const [preview, setPreview] = useState([]);
+  const [keywords, setKeywords] = useState([]);
+  const [keywordInput, setKeywordInput] = useState("");
+  const handleAddKeyword = (e) => {
+    if (e.key === "Enter" || e.key === ",") {
+      e.preventDefault();
 
+      const value = keywordInput.trim().toLowerCase();
+      if (value && !keywords.includes(value)) {
+        setKeywords([...keywords, value]);
+      }
+
+      setKeywordInput("");
+    }
+  };
+
+  const removeKeyword = (index) => {
+    setKeywords(keywords.filter((_, i) => i !== index));
+  };
   // get categories
   const getCategories = async () => {
     try {
@@ -79,7 +95,7 @@ const Create = ({ setShowModal }) => {
     Object.keys(formData).forEach((key) => {
       data.append(key, formData[key]);
     });
-
+    data.append("keywords", keywords.join(","));
     images.forEach((img) => {
       data.append("images", img);
     });
@@ -172,7 +188,35 @@ const Create = ({ setShowModal }) => {
               required
             />
           </div>
+          {/* Keywords */}
+          <div className="space-y-2">
+            <label className="text-[10px] font-black text-gray-400 uppercase tracking-widest">
+              Keywords (SEO Tags)
+            </label>
 
+            <div className="border border-gray-200 rounded-sm p-2 flex flex-wrap gap-2 bg-gray-50/30 focus-within:border-gray-900">
+              {keywords.map((key, index) => (
+                <span
+                  key={index}
+                  className="flex items-center gap-1 bg-gray-900 text-white text-[10px] px-2 py-1 rounded"
+                >
+                  {key}
+                  <button type="button" onClick={() => removeKeyword(index)}>
+                    <FaTimes size={10} />
+                  </button>
+                </span>
+              ))}
+
+              <input
+                type="text"
+                value={keywordInput}
+                onChange={(e) => setKeywordInput(e.target.value)}
+                onKeyDown={handleAddKeyword}
+                placeholder="Type and press Enter..."
+                className="flex-1 bg-transparent outline-none text-xs"
+              />
+            </div>
+          </div>
           {/* Financials & Inventory */}
           <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
             <div className="space-y-1">

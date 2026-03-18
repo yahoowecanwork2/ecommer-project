@@ -2,6 +2,12 @@ import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import Footer from "../common/Footer";
 import Header from "../common/Header";
+import video1 from "/src/assets/videos/video1.mp4";
+import video2 from "/src/assets/videos/video2.mp4";
+import image1 from "/src/assets/images/heroimage.jpeg";
+import video3 from "/src/assets/videos/video3.mp4";
+import video4 from "/src/assets/videos/video4.mp4";
+import video5 from "/src/assets/videos/video5.mp4";
 import {
   IoStar,
   IoPlayCircleOutline,
@@ -135,22 +141,27 @@ const Home = () => {
   const videoReviews = [
     {
       id: 1,
-      url: "https://cdn.pixabay.com/video/2021/04/12/70796-536098055_tiny.mp4",
+      url: video1,
       user: "@style_by_me",
     },
     {
       id: 2,
-      url: "https://cdn.pixabay.com/video/2023/10/20/185834-876615801_tiny.mp4",
+      url: video2,
       user: "@ethnic_vibe",
     },
     {
       id: 3,
-      url: "https://cdn.pixabay.com/video/2020/09/03/48981-456637119_tiny.mp4",
+      url: video4,
       user: "@desi_lookbook",
     },
     {
       id: 4,
-      url: "https://cdn.pixabay.com/video/2022/01/18/104526-666323674_tiny.mp4",
+      url: video5,
+      user: "@kuddi_diaries",
+    },
+     {
+      id: 5,
+      url: video3,
       user: "@kuddi_diaries",
     },
   ];
@@ -160,7 +171,7 @@ const Home = () => {
       <Header />
 
       {/* 1. HERO SECTION */}
-      <section className="relative h-[90vh] flex items-center overflow-hidden bg-[#fdfaf7]">
+      <section className="relative h-[150vh] md:h-[110vh] lg:h-[120vh] flex items-center overflow-hidden bg-[#fdfaf7]">
         <div className="max-w-7xl mx-auto px-6 w-full grid lg:grid-cols-2 items-center gap-12">
           <div className="z-10 order-2 lg:order-1">
             <span className="text-[12px] tracking-[0.4em] uppercase font-semibold text-[#c9a07a] mb-4 block">
@@ -182,12 +193,18 @@ const Home = () => {
               <IoArrowForwardOutline className="text-lg group-hover:translate-x-2 transition-transform" />
             </Link>
           </div>
-          <div className="relative h-[60vh] lg:h-[80vh] order-1 lg:order-2">
-            <img
-              src="https://images.unsplash.com/photo-1612336307429-8a898d10e223?q=80&w=2070"
-              className="w-full h-full object-cover rounded-t-[200px] shadow-2xl animate-slow-zoom"
-              alt="Fashion Hero"
-            />
+          {/* Image Container */}
+          <div className="relative h-[65vh] lg:h-[85vh] w-full max-w-[500px] ml-auto order-1 lg:order-2">
+            <div className="w-full h-full rounded-t-[250px] overflow-hidden shadow-2xl">
+              <img
+                src={image1}
+                className="w-full h-full object-cover object-top animate-slow-zoom"
+                alt="Fashion Hero"
+              />
+            </div>
+
+            {/* Optional: Ek decorative border ya element jo design ko 'fix' dikhaye */}
+            <div className="absolute -inset-4 border border-[#c9a07a]/20 rounded-t-[270px] -z-10 hidden lg:block" />
           </div>
         </div>
       </section>
@@ -214,7 +231,7 @@ const Home = () => {
 
       {/* 3. CATEGORIES */}
       <section className="py-12 max-w-7xl mx-auto px-6">
-        {/* Header: Chhota aur clean */}
+        {/* Header */}
         <div className="flex justify-between items-end mb-6">
           <h2 className="text-2xl font-serif italic text-gray-900">
             Shop by Style
@@ -229,15 +246,19 @@ const Home = () => {
 
         {/* Horizontal Scroll Container */}
         <div className="flex gap-4 overflow-x-auto no-scrollbar pb-4 snap-x snap-mandatory">
-          {categories.map((cat, idx) => (
+          {categories?.map((cat, idx) => (
             <Link
               key={idx}
-              to="/product"
+              to={`/product?category=${cat.slug}`} // Category ke hisaab se filter karne ke liye
               className="relative flex-shrink-0 w-[200px] md:w-[260px] aspect-[3/4] overflow-hidden rounded-xl bg-gray-100 snap-start group"
             >
-              {/* Image: Dono keys check kar raha hoon (img ya image) */}
+              {/* IMAGE LOGIC FIX: Accessing the first item of the array */}
               <img
-                src={cat.img || cat.image}
+                src={
+                  cat.image && cat.image[0]?.url
+                    ? cat.image[0].url
+                    : "https://via.placeholder.com/300x400"
+                }
                 alt={cat.name}
                 className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
               />
@@ -245,9 +266,9 @@ const Home = () => {
               {/* Minimal Overlay */}
               <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-transparent to-transparent" />
 
-              {/* Content: Bottom left mein fix */}
+              {/* Content */}
               <div className="absolute bottom-4 left-4">
-                <h3 className="text-white text-lg font-serif italic">
+                <h3 className="text-white text-lg font-serif italic leading-tight">
                   {cat.name}
                 </h3>
                 <div className="w-6 h-[1px] bg-[#c9a07a] mt-1 group-hover:w-12 transition-all duration-500" />
@@ -256,7 +277,7 @@ const Home = () => {
           ))}
         </div>
 
-        {/* Scrollbar Chhupane ke liye CSS */}
+        {/* Scrollbar CSS */}
         <style
           dangerouslySetInnerHTML={{
             __html: `
@@ -356,24 +377,26 @@ const Home = () => {
                 className="relative flex-shrink-0 w-[240px] aspect-[9/16] rounded-2xl overflow-hidden group shadow-lg"
               >
                 <video
+                  src={video.url} // <--- Important Change
                   className="w-full h-full object-cover"
                   muted
                   loop
                   playsInline
-                  onMouseOver={(e) => e.target.play()}
+                  onMouseOver={(e) => e.currentTarget.play()}
                   onMouseOut={(e) => {
-                    e.target.pause();
-                    e.target.currentTime = 0;
+                    e.currentTarget.pause();
+                    e.currentTarget.currentTime = 0;
                   }}
-                >
-                  <source src={video.url} type="video/mp4" />
-                </video>
-                <div className="absolute bottom-4 left-4 text-white z-10">
+                />
+
+                <div className="absolute bottom-4 left-4 text-white z-10 pointer-events-none">
                   <p className="text-[10px] font-bold tracking-widest">
                     {video.user}
                   </p>
                 </div>
-                <div className="absolute inset-0 bg-black/20 group-hover:bg-transparent transition-all flex items-center justify-center">
+
+                {/* Overlay - added pointer-events-none takki mouse hover video tak pahonch sake */}
+                <div className="absolute inset-0 bg-black/20 group-hover:bg-transparent transition-all flex items-center justify-center pointer-events-none">
                   <IoPlayCircleOutline className="text-white/70 text-4xl group-hover:hidden" />
                 </div>
               </div>
