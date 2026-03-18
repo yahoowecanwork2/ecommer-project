@@ -26,6 +26,7 @@ const Plans = () => {
   const navigate = useNavigate();
   const [showPayments, setShowPayments] = useState(false);
   const [subscription, setSubscription] = useState({});
+  const [plan, setPlan] = useState({});
 
   const { user } = useSelector((state) => state.user);
   console.log(user);
@@ -37,6 +38,88 @@ const Plans = () => {
       setSubscription(res?.subscription);
     } catch (error) {
     } finally {
+    }
+  };
+
+  const handleSubscribe = (data) => {
+    console.log(data);
+    setPlan(data);
+    setShowPayments(true);
+  };
+  console.log(user?.currentSubscription);
+
+  const selectedPlan = {
+    name: user?.currentSubscription?.plan,
+    displayName: user?.currentSubscription?.plan,
+    price: user?.currentSubscription?.price,
+    cycle: user?.currentSubscription?.billingCycle,
+  };
+  const handlePayment = async () => {
+    try {
+      // 1️⃣ Create order with FULL metadata
+      const order = await adminApi.createOrder({
+        amount: selectedPlan.price,
+        plan: selectedPlan.name,
+        billingCycle: selectedPlan.cycle,
+        price: selectedPlan.price,
+        userId: user._id,
+        type: "renew", // or "renew"
+      });
+
+      if (!order.success) {
+        alert("Failed to create payment order");
+        return;
+      }
+
+      // 2️⃣ Razorpay Checkout
+      const options = {
+        key: import.meta.env.VITE_RAZORPAY_KEY,
+        amount: order.order.amount,
+        currency: "INR",
+        order_id: order.order.id,
+
+        name: "Your Store Platform",
+        description: `${selectedPlan.displayName} Plan Subscription`,
+
+        handler: async function (response) {
+          try {
+            console.log("Payment response:", response);
+
+            // 3️⃣ Verify payment (NO extra data needed)
+            const verifyData = await adminApi.verifyPayment({
+              razorpay_order_id: response.razorpay_order_id,
+              razorpay_payment_id: response.razorpay_payment_id,
+              razorpay_signature: response.razorpay_signature,
+            });
+            console.log(verifyData);
+            
+
+            if (verifyData.success) {
+              alert("✅ Payment successful! Subscription activated.");
+            } else {
+              alert("❌ Payment verification failed");
+            }
+          } catch (err) {
+            console.error("VERIFY ERROR 👉", err);
+            alert("Verification failed");
+          }
+        },
+
+        prefill: {
+          name: user?.name || "",
+          email: user?.email || "",
+        },
+
+        theme: {
+          color: "#111827",
+        },
+      };
+
+      const rzp = new window.Razorpay(options);
+      rzp.open();
+    } catch (error) {
+      console.error("PAYMENT ERROR 👉", error);
+      alert("Payment failed. Please try again.");
     }
   };
 
@@ -130,48 +213,56 @@ const Plans = () => {
     <Layout>
       <div className="space-y-8">
         {/* SUBSCRIPTION BANNER */}
-        <div className="relative overflow-hidden bg-gray-900 rounded-sm p-4 text-white border border-gray-800 font-google">
-          <div className="absolute top-0 right-0 p-8 opacity-10">
-            <MdHistory size={120} />
-          </div>
-
-          <div className="relative flex flex-col md:flex-row items-center justify-between gap-6">
-            <div className="flex items-center gap-5">
-              <div className="bg-white/10 p-3 rounded-sm border border-white/20 animate-pulse">
-                <FaClock className="text-2xl text-yellow-400" />
+        {user?.currentSubscription?.endDate &&
+          new Date(user.currentSubscription.endDate) > new Date() && (
+            <div className="relative overflow-hidden bg-gray-900 rounded-sm p-4 text-white border border-gray-800 font-google">
+              <div className="absolute top-0 right-0 p-8 opacity-10">
+                <MdHistory size={120} />
               </div>
 
-              <div>
-                <h2 className="text-base font-normal">Subscription Expiring</h2>
+              <div className="relative flex flex-col md:flex-row items-center justify-between gap-6">
+                <div className="flex items-center gap-5">
+                  <div className="bg-white/10 p-3 rounded-sm border border-white/20 animate-pulse">
+                    <FaClock className="text-2xl text-yellow-400" />
+                  </div>
 
-                <p className="text-[11px] text-gray-400 font-medium uppercase mt-1">
-                  Your{" "}
-                  <span className="text-white font-bold">
-                    {user?.currentSubscription?.plan}
-                  </span>{" "}
-                  plan ends in{" "}
-                  <span className="text-yellow-400 font-bold mx-1">
-                    {getDaysLeft(user?.currentSubscription?.endDate)} Days
-                  </span>
-                  ({formatDate(user?.currentSubscription?.endDate)})
-                </p>
+                  <div>
+                    <h2 className="text-base font-normal">
+                      Subscription Expiring
+                    </h2>
+
+                    <p className="text-[11px] text-gray-400 font-medium uppercase mt-1">
+                      Your{" "}
+                      <span className="text-white font-bold">
+                        {user?.currentSubscription?.plan}
+                      </span>{" "}
+                      plan ends in{" "}
+                      <span className="text-yellow-400 font-bold mx-1">
+                        {getDaysLeft(user?.currentSubscription?.endDate)} Days
+                      </span>
+                      ({formatDate(user?.currentSubscription?.endDate)})
+                    </p>
+                  </div>
+                </div>
+
+                <div className="flex gap-3">
+                  <button
+                    onClick={handlePayment}
+                    className="px-6 py-2 bg-yellow-400 text-gray-900 text-[12px] font-semibold rounded-xs hover:bg-yellow-300"
+                  >
+                    Renew Now
+                  </button>
+
+                  <button
+                    onClick={() => navigate("/history")}
+                    className="px-6 py-2 bg-white/5 border border-white/10 text-white text-[12px] font-medium rounded-xs hover:bg-white/10"
+                  >
+                    View Billing History
+                  </button>
+                </div>
               </div>
             </div>
-
-            <div className="flex gap-3">
-              <button className="px-6 py-2 bg-yellow-400 text-gray-900 text-[12px] font-semibold rounded-xs hover:bg-yellow-300 transition-all shadow-sm">
-                Renew Now
-              </button>
-
-              <button
-                onClick={() => navigate("/history")}
-                className="px-6 py-2 bg-white/5 border border-white/10 text-white text-[12px] font-medium rounded-xs hover:bg-white/10 transition-all"
-              >
-                View Billing History
-              </button>
-            </div>
-          </div>
-        </div>
+          )}
 
         {/* HEADER */}
         <div className="text-center space-y-8 pt-6">
@@ -282,10 +373,7 @@ const Plans = () => {
 
               {/* Action: High Contrast */}
               <button
-                onClick={() =>
-                  // handleSubscribe({ plan: plan.plan, billingCycle })
-                  setShowPayments(true)
-                }
+                onClick={() => handleSubscribe(plan)}
                 className={`w-full py-3.5 text-xs font-bold uppercase tracking-widest transition-colors ${
                   plan.recommended
                     ? "bg-gray-900 text-white hover:bg-black"
@@ -310,7 +398,12 @@ const Plans = () => {
       </div>
       {showPayments ? (
         <div className="fixed inset-0 w-full h-full bg-white z-50 overflow-y-auto">
-          <PaymentPage user={user} setShowPayment={setShowPayments} />
+          <PaymentPage
+            user={user}
+            plan={plan}
+            billingCycle={billingCycle}
+            setShowPayment={setShowPayments}
+          />
         </div>
       ) : null}
     </Layout>
