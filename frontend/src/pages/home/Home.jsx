@@ -225,7 +225,7 @@ const Home = () => {
 
       {/* 3. CATEGORIES */}
       <section className="py-12 max-w-7xl mx-auto px-6">
-        {/* Header: Chhota aur clean */}
+        {/* Header */}
         <div className="flex justify-between items-end mb-6">
           <h2 className="text-2xl font-serif italic text-gray-900">
             Shop by Style
@@ -240,15 +240,19 @@ const Home = () => {
 
         {/* Horizontal Scroll Container */}
         <div className="flex gap-4 overflow-x-auto no-scrollbar pb-4 snap-x snap-mandatory">
-          {categories.map((cat, idx) => (
+          {categories?.map((cat, idx) => (
             <Link
               key={idx}
-              to="/product"
+              to={`/product?category=${cat.slug}`} // Category ke hisaab se filter karne ke liye
               className="relative flex-shrink-0 w-[200px] md:w-[260px] aspect-[3/4] overflow-hidden rounded-xl bg-gray-100 snap-start group"
             >
-              {/* Image: Dono keys check kar raha hoon (img ya image) */}
+              {/* IMAGE LOGIC FIX: Accessing the first item of the array */}
               <img
-                src={cat.img || cat.image}
+                src={
+                  cat.image && cat.image[0]?.url
+                    ? cat.image[0].url
+                    : "https://via.placeholder.com/300x400"
+                }
                 alt={cat.name}
                 className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
               />
@@ -256,9 +260,9 @@ const Home = () => {
               {/* Minimal Overlay */}
               <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-transparent to-transparent" />
 
-              {/* Content: Bottom left mein fix */}
+              {/* Content */}
               <div className="absolute bottom-4 left-4">
-                <h3 className="text-white text-lg font-serif italic">
+                <h3 className="text-white text-lg font-serif italic leading-tight">
                   {cat.name}
                 </h3>
                 <div className="w-6 h-[1px] bg-[#c9a07a] mt-1 group-hover:w-12 transition-all duration-500" />
@@ -267,7 +271,7 @@ const Home = () => {
           ))}
         </div>
 
-        {/* Scrollbar Chhupane ke liye CSS */}
+        {/* Scrollbar CSS */}
         <style
           dangerouslySetInnerHTML={{
             __html: `
