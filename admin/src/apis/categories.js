@@ -2,7 +2,11 @@ import { api } from ".";
 
 export const categoriesApi = {
   create: async (data) => {
-    const res = await api.post("/category/create", data);
+    const res = await api.post("/category/create", data, {
+      headers: {
+        "Content-Type": "multipart/form-data",
+      },
+    });
     return res.data;
   },
   get: async () => {
