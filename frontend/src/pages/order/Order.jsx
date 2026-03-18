@@ -168,7 +168,7 @@ const Order = () => {
               <button 
                 onClick={handleCheckoutOrder} 
                 disabled={loading}
-                className="w-full mt-10 py-5 bg-[#3D2B3D] text-white rounded-full text-[10px] font-black uppercase tracking-[0.3em] transition-all hover:bg-black active:scale-[0.98]"
+                className="w-full mt-10 py-5 bg-[#3D2B3D] text-white text-[10px] font-black uppercase tracking-[0.3em] transition-all hover:bg-black active:scale-[0.98]"
               >
                 {loading ? "Processing..." : "Complete Transaction"}
               </button>

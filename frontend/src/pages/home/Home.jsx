@@ -2,11 +2,11 @@ import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import Footer from "../common/Footer";
 import Header from "../common/Header";
-import video1 from "/src/assets/videos/video1.mp4"
-import video2 from "/src/assets/videos/video2.mp4"
-import video3 from "/src/assets/videos/video3.mp4"
-import video4 from "/src/assets/videos/video4.mp4"
-import video5 from "/src/assets/videos/video5.mp4"
+import video1 from "/src/assets/videos/video1.mp4";
+import video2 from "/src/assets/videos/video2.mp4";
+import image1 from "/src/assets/images/heroimage.jpeg";
+import video4 from "/src/assets/videos/video4.mp4";
+import video5 from "/src/assets/videos/video5.mp4";
 import {
   IoStar,
   IoPlayCircleOutline,
@@ -165,7 +165,7 @@ const Home = () => {
       <Header />
 
       {/* 1. HERO SECTION */}
-      <section className="relative h-[140vh] md:h-[120vh] flex items-center overflow-hidden bg-[#fdfaf7]">
+      <section className="relative h-[100vh] md:h-[120vh] flex items-center overflow-hidden bg-[#fdfaf7]">
         <div className="max-w-7xl mx-auto px-6 w-full grid lg:grid-cols-2 items-center gap-12">
           <div className="z-10 order-2 lg:order-1">
             <span className="text-[12px] tracking-[0.4em] uppercase font-semibold text-[#c9a07a] mb-4 block">
@@ -187,12 +187,18 @@ const Home = () => {
               <IoArrowForwardOutline className="text-lg group-hover:translate-x-2 transition-transform" />
             </Link>
           </div>
-          <div className="relative h-[60vh] lg:h-[80vh] order-1 lg:order-2">
-            <img
-              src="https://images.unsplash.com/photo-1612336307429-8a898d10e223?q=80&w=2070"
-              className="w-full h-full object-cover rounded-t-[200px] shadow-2xl animate-slow-zoom"
-              alt="Fashion Hero"
-            />
+          {/* Image Container */}
+          <div className="relative h-[65vh] lg:h-[85vh] w-full max-w-[500px] ml-auto order-1 lg:order-2">
+            <div className="w-full h-full rounded-t-[250px] overflow-hidden shadow-2xl">
+              <img
+                src={image1}
+                className="w-full h-full object-cover object-top animate-slow-zoom"
+                alt="Fashion Hero"
+              />
+            </div>
+
+            {/* Optional: Ek decorative border ya element jo design ko 'fix' dikhaye */}
+            <div className="absolute -inset-4 border border-[#c9a07a]/20 rounded-t-[270px] -z-10 hidden lg:block" />
           </div>
         </div>
       </section>
@@ -355,36 +361,36 @@ const Home = () => {
             <IoLogoInstagram className="text-3xl text-[#c9a07a]" />
           </div>
           <div className="flex gap-6 overflow-x-auto no-scrollbar pb-8">
-    {videoReviews.map((video) => (
-  <div
-    key={video.id}
-    className="relative flex-shrink-0 w-[240px] aspect-[9/16] rounded-2xl overflow-hidden group shadow-lg"
-  >
-    <video
-      src={video.url} // <--- Important Change
-      className="w-full h-full object-cover"
-      muted
-      loop
-      playsInline
-      onMouseOver={(e) => e.currentTarget.play()}
-      onMouseOut={(e) => {
-        e.currentTarget.pause();
-        e.currentTarget.currentTime = 0;
-      }}
-    />
-    
-    <div className="absolute bottom-4 left-4 text-white z-10 pointer-events-none">
-      <p className="text-[10px] font-bold tracking-widest">
-        {video.user}
-      </p>
-    </div>
+            {videoReviews.map((video) => (
+              <div
+                key={video.id}
+                className="relative flex-shrink-0 w-[240px] aspect-[9/16] rounded-2xl overflow-hidden group shadow-lg"
+              >
+                <video
+                  src={video.url} // <--- Important Change
+                  className="w-full h-full object-cover"
+                  muted
+                  loop
+                  playsInline
+                  onMouseOver={(e) => e.currentTarget.play()}
+                  onMouseOut={(e) => {
+                    e.currentTarget.pause();
+                    e.currentTarget.currentTime = 0;
+                  }}
+                />
 
-    {/* Overlay - added pointer-events-none takki mouse hover video tak pahonch sake */}
-    <div className="absolute inset-0 bg-black/20 group-hover:bg-transparent transition-all flex items-center justify-center pointer-events-none">
-      <IoPlayCircleOutline className="text-white/70 text-4xl group-hover:hidden" />
-    </div>
-  </div>
-))}
+                <div className="absolute bottom-4 left-4 text-white z-10 pointer-events-none">
+                  <p className="text-[10px] font-bold tracking-widest">
+                    {video.user}
+                  </p>
+                </div>
+
+                {/* Overlay - added pointer-events-none takki mouse hover video tak pahonch sake */}
+                <div className="absolute inset-0 bg-black/20 group-hover:bg-transparent transition-all flex items-center justify-center pointer-events-none">
+                  <IoPlayCircleOutline className="text-white/70 text-4xl group-hover:hidden" />
+                </div>
+              </div>
+            ))}
           </div>
         </div>
       </section>

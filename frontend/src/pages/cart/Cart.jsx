@@ -206,7 +206,7 @@ const Cart = () => {
 
               <button
                 onClick={() => navigate(`/order`)}
-                className="w-full bg-[#3D2B3D] text-white py-4 rounded-full text-[11px] font-black uppercase tracking-[0.3em] flex items-center justify-center gap-3 hover:bg-[#D16B92] transition-all duration-500 shadow-xl shadow-pink-50/50 group active:scale-95 mb-6"
+                className="w-full bg-[#3D2B3D] text-white py-4 text-[11px] font-black flex items-center justify-center gap-3 hover:bg-[#D16B92] transition-all duration-500 shadow-xl shadow-pink-50/50 group active:scale-95 mb-6"
               >
                 Checkout Now
                 <IoArrowForward className="text-sm group-hover:translate-x-2 transition-transform duration-500" />
