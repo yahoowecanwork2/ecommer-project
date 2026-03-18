@@ -5,6 +5,7 @@ import Header from "../common/Header";
 import video1 from "/src/assets/videos/video1.mp4";
 import video2 from "/src/assets/videos/video2.mp4";
 import image1 from "/src/assets/images/heroimage.jpeg";
+import video3 from "/src/assets/videos/video3.mp4";
 import video4 from "/src/assets/videos/video4.mp4";
 import video5 from "/src/assets/videos/video5.mp4";
 import {
@@ -158,6 +159,11 @@ const Home = () => {
       url: video5,
       user: "@kuddi_diaries",
     },
+     {
+      id: 5,
+      url: video3,
+      user: "@kuddi_diaries",
+    },
   ];
 
   return (
@@ -165,7 +171,7 @@ const Home = () => {
       <Header />
 
       {/* 1. HERO SECTION */}
-      <section className="relative h-[100vh] md:h-[120vh] flex items-center overflow-hidden bg-[#fdfaf7]">
+      <section className="relative h-[150vh] md:h-[110vh] lg:h-[120vh] flex items-center overflow-hidden bg-[#fdfaf7]">
         <div className="max-w-7xl mx-auto px-6 w-full grid lg:grid-cols-2 items-center gap-12">
           <div className="z-10 order-2 lg:order-1">
             <span className="text-[12px] tracking-[0.4em] uppercase font-semibold text-[#c9a07a] mb-4 block">

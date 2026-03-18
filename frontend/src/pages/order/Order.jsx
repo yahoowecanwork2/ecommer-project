@@ -165,13 +165,13 @@ const Order = () => {
                 <span className="text-[10px] font-black uppercase tracking-widest">Total Payable</span>
                 <span className="text-xl italic">₹{total}</span>
               </div>
-              <button 
-                onClick={handleCheckoutOrder} 
-                disabled={loading}
-                className="w-full mt-10 py-5 bg-[#3D2B3D] text-white text-[10px] font-black uppercase tracking-[0.3em] transition-all hover:bg-black active:scale-[0.98]"
-              >
-                {loading ? "Processing..." : "Complete Transaction"}
-              </button>
+             <button 
+  onClick={handleCheckoutOrder} 
+  disabled={loading}
+  className="w-full mt-10 py-5 bg-[#1a1a1a] text-white text-[11px] font-bold uppercase tracking-[0.3em] transition-all hover:bg-[#c9a07a] active:scale-[0.98] disabled:opacity-50 disabled:cursor-not-allowed shadow-lg shadow-gray-200/50"
+>
+  {loading ? "Processing..." : "Complete Transaction"}
+</button>
             </div>
           </div>
 
