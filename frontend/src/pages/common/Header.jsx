@@ -133,7 +133,7 @@ const Header = () => {
                 {
                   name: "Size Guide",
                   sub: "Find your fit",
-                  path: "/size-guide",
+                  path: "/Size",
                 },
                 {
                   name: "Customer Care",
