@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import Footer from "../common/Footer";
 import Header from "../common/Header";
@@ -12,49 +12,107 @@ import {
   IoArrowForwardOutline,
   IoLogoInstagram,
 } from "react-icons/io5";
+import { productApi } from "../../apis/product";
 
 const Home = () => {
-  const categories = [
-    {
-      name: "Anarkali",
-      img: "https://images.unsplash.com/photo-1610030469915-9a08eb7250a2?q=80&w=300",
-    },
-    {
-      name: "Straight Cut",
-      img: "https://images.unsplash.com/photo-1583391733956-3750e0ff4e8b?q=80&w=300",
-    },
-    {
-      name: "ChikanKari",
-      img: "https://images.unsplash.com/photo-1609357605129-26f69add5d6e?q=80&w=300",
-    },
-    {
-      name: "Short Kurti",
-      img: "https://images.unsplash.com/photo-1574169208507-84376144848b?q=80&w=300",
-    },
-  ];
+  const [categories, setCategories] = useState([]);
+  const [products, setProducts] = useState([]);
+  const [startIndex, setStartIndex] = useState(0);
+  const [loading, setLoading] = useState(false);
+  const [activeCategory, setActiveCategory] = useState(null);
+  const [filterByCat, setFilterByCat] = useState([]);
+  const limit = 12;
 
-  const products = [
-    {
-      name: "Summer Pastel Floral Kurti",
-      price: "1,899",
-      img: "https://images.unsplash.com/photo-1609357605129-26f69add5d6e?q=80&w=600",
-    },
-    {
-      name: "Midnight Blue Silk Anarkali",
-      price: "4,500",
-      img: "https://images.unsplash.com/photo-1610030469915-9a08eb7250a2?q=80&w=600",
-    },
-    {
-      name: "Ivory Cotton Chikankari",
-      price: "2,200",
-      img: "https://images.unsplash.com/photo-1583391733956-3750e0ff4e8b?q=80&w=600",
-    },
-    {
-      name: "Earthy Maroon Straight Fit",
-      price: "1,499",
-      img: "https://images.unsplash.com/photo-1574169208507-84376144848b?q=80&w=600",
-    },
-  ];
+  const getProducts = async () => {
+    try {
+      setLoading(true);
+      setActiveCategory(null);
+      setFilterByCat([]);
+      const res = await productApi.get(startIndex, limit);
+      console.log("products", res);
+
+      setProducts(res.products);
+      setLoading(false);
+    } catch (error) {
+      setLoading(false);
+      console.log("Error fetching products", error);
+    }
+  };
+
+  const fetchCategories = async () => {
+    try {
+      const res = await productApi.getCategories();
+      console.log("categories", res);
+
+      setCategories(res.categories);
+    } catch (error) {
+      console.log("Category fetch error", error);
+    }
+  };
+  const handleCategoryFilter = async (categoryId) => {
+    try {
+      setLoading(true);
+      setProducts([]);
+      setActiveCategory(categoryId);
+      const res = await productApi.filterByCategories(categoryId, 0, limit);
+      console.log("filter by categories", res);
+
+      if (res.success) {
+        setFilterByCat(res.products);
+      }
+      setLoading(false);
+      // setIsFilterOpen(false);
+    } catch (error) {
+      console.log(error);
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    getProducts();
+    fetchCategories();
+  }, [startIndex]);
+  // const categories = [
+  //   {
+  //     name: "Anarkali",
+  //     img: "https://images.unsplash.com/photo-1610030469915-9a08eb7250a2?q=80&w=300",
+  //   },
+  //   {
+  //     name: "Straight Cut",
+  //     img: "https://images.unsplash.com/photo-1583391733956-3750e0ff4e8b?q=80&w=300",
+  //   },
+  //   {
+  //     name: "ChikanKari",
+  //     img: "https://images.unsplash.com/photo-1609357605129-26f69add5d6e?q=80&w=300",
+  //   },
+  //   {
+  //     name: "Short Kurti",
+  //     img: "https://images.unsplash.com/photo-1574169208507-84376144848b?q=80&w=300",
+  //   },
+  // ];
+
+  // const products = [
+  //   {
+  //     name: "Summer Pastel Floral Kurti",
+  //     price: "1,899",
+  //     img: "https://images.unsplash.com/photo-1609357605129-26f69add5d6e?q=80&w=600",
+  //   },
+  //   {
+  //     name: "Midnight Blue Silk Anarkali",
+  //     price: "4,500",
+  //     img: "https://images.unsplash.com/photo-1610030469915-9a08eb7250a2?q=80&w=600",
+  //   },
+  //   {
+  //     name: "Ivory Cotton Chikankari",
+  //     price: "2,200",
+  //     img: "https://images.unsplash.com/photo-1583391733956-3750e0ff4e8b?q=80&w=600",
+  //   },
+  //   {
+  //     name: "Earthy Maroon Straight Fit",
+  //     price: "1,499",
+  //     img: "https://images.unsplash.com/photo-1574169208507-84376144848b?q=80&w=600",
+  //   },
+  // ];
 
   const reviews = [
     {
@@ -155,61 +213,126 @@ const Home = () => {
       </section>
 
       {/* 3. CATEGORIES */}
-      <section className="pb-24 max-w-7xl mx-auto px-6">
-        <h2 className="text-3xl font-serif italic mb-10 text-center">
-          Shop by Style
-        </h2>
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-8">
+      <section className="py-12 max-w-7xl mx-auto px-6">
+        {/* Header: Chhota aur clean */}
+        <div className="flex justify-between items-end mb-6">
+          <h2 className="text-2xl font-serif italic text-gray-900">
+            Shop by Style
+          </h2>
+          <Link
+            to="/product"
+            className="text-[10px] font-bold uppercase tracking-widest text-[#c9a07a] border-b border-[#c9a07a]/30 pb-1"
+          >
+            View All
+          </Link>
+        </div>
+
+        {/* Horizontal Scroll Container */}
+        <div className="flex gap-4 overflow-x-auto no-scrollbar pb-4 snap-x snap-mandatory">
           {categories.map((cat, idx) => (
-            <Link key={idx} to="/shop" className="group text-center">
-              <div className="aspect-[4/5] overflow-hidden mb-6 bg-gray-100 rounded-sm group-hover:shadow-xl transition-all duration-700">
-                <img
-                  src={cat.img}
-                  alt={cat.name}
-                  className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-1000"
-                />
+            <Link
+              key={idx}
+              to="/product"
+              className="relative flex-shrink-0 w-[200px] md:w-[260px] aspect-[3/4] overflow-hidden rounded-xl bg-gray-100 snap-start group"
+            >
+              {/* Image: Dono keys check kar raha hoon (img ya image) */}
+              <img
+                src={cat.img || cat.image}
+                alt={cat.name}
+                className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
+              />
+
+              {/* Minimal Overlay */}
+              <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-transparent to-transparent" />
+
+              {/* Content: Bottom left mein fix */}
+              <div className="absolute bottom-4 left-4">
+                <h3 className="text-white text-lg font-serif italic">
+                  {cat.name}
+                </h3>
+                <div className="w-6 h-[1px] bg-[#c9a07a] mt-1 group-hover:w-12 transition-all duration-500" />
               </div>
-              <p className="text-[13px] font-semibold tracking-wider uppercase group-hover:text-[#c9a07a] transition-colors">
-                {cat.name}
-              </p>
             </Link>
           ))}
         </div>
+
+        {/* Scrollbar Chhupane ke liye CSS */}
+        <style
+          dangerouslySetInnerHTML={{
+            __html: `
+    .no-scrollbar::-webkit-scrollbar { display: none; }
+    .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+  `,
+          }}
+        />
       </section>
 
       {/* 4. PRODUCT GRID */}
-      <section className="py-24 bg-[#fafafa]">
+      <section className="py-20 bg-[#fcfcfc]">
         <div className="max-w-7xl mx-auto px-6">
-          <div className="text-center mb-16">
-            <h2 className="text-4xl font-serif mb-4">The Kurti Edit</h2>
-            <div className="h-0.5 w-16 bg-[#c9a07a] mx-auto mb-4"></div>
-            <p className="text-gray-400 text-[10px] tracking-[0.3em] uppercase">
-              Handpicked for your daily grace
-            </p>
+          {/* --- Header --- */}
+          <div className="text-center mb-12">
+            <span className="text-[#c9a07a] text-[10px] font-bold uppercase tracking-[0.4em] mb-3 block">
+              New In Store
+            </span>
+            <h2 className="text-3xl md:text-4xl font-serif italic text-gray-900">
+              The Kurti Edit
+            </h2>
           </div>
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-10">
-            {products.map((item, i) => (
-              <div key={i} className="group flex flex-col">
-                <div className="relative aspect-[3/4] overflow-hidden bg-white mb-5 shadow-sm">
+
+          {/* --- Product Grid --- */}
+          <div className="grid grid-cols-2 lg:grid-cols-4 gap-x-4 gap-y-10 md:gap-x-8 md:gap-y-12">
+            {products?.slice(0, 8).map((item, i) => (
+              /* Dynamic Link using slug */
+              <Link
+                key={i}
+                to={`/product-detail/${item.slug}`}
+                className="group flex flex-col"
+              >
+                {/* Card Image Container */}
+                <div className="relative aspect-[3/4] overflow-hidden rounded-[24px] bg-[#f3f3f3] mb-4 transition-all duration-500">
                   <img
-                    src={item.img}
-                    className="w-full h-full object-cover transition-transform duration-1000 group-hover:scale-110"
+                    src={item?.image?.url || item?.img}
+                    className="w-full h-full object-cover transition-transform duration-[1.2s] group-hover:scale-110"
                     alt={item.name}
                   />
-                  <div className="absolute inset-0 bg-black/5 opacity-0 group-hover:opacity-100 transition-all flex items-end p-4">
-                    <button className="w-full bg-white text-black py-3 text-[10px] font-bold uppercase tracking-widest hover:bg-[#c9a07a] hover:text-white transition-all transform translate-y-4 group-hover:translate-y-0">
-                      Add to Bag
-                    </button>
+
+                  {/* View Overlay */}
+                  <div className="absolute inset-0 bg-[#c9a07a]/10 opacity-0 group-hover:opacity-100 transition-all duration-500 flex items-center justify-center">
+                    <div className="bg-white text-[#c9a07a] px-6 py-3 rounded-full text-[10px] font-bold uppercase tracking-widest shadow-xl transform translate-y-4 group-hover:translate-y-0 transition-all duration-500 flex items-center gap-2">
+                      View Details
+                      <IoArrowForwardOutline />
+                    </div>
                   </div>
                 </div>
-                <h3 className="text-[14px] text-gray-800 font-medium">
-                  {item.name}
-                </h3>
-                <p className="text-[15px] font-bold text-[#c9a07a]">
-                  ₹{item.price}
-                </p>
-              </div>
+
+                {/* Product Info */}
+                <div className="text-center px-1">
+                  <h3 className="text-[13px] md:text-[14px] text-gray-800 font-medium truncate mb-1">
+                    {item.name}
+                  </h3>
+                  <div className="flex items-center justify-center gap-2">
+                    <p className="text-[15px] font-bold text-[#c9a07a]">
+                      ₹{item.price}
+                    </p>
+                    <span className="text-[10px] text-gray-400 line-through">
+                      ₹{Math.round(item.price * 1.3)}
+                    </span>
+                  </div>
+                </div>
+              </Link>
             ))}
+          </div>
+
+          {/* --- View More Button (Single & Themed) --- */}
+          <div className="mt-16 text-center">
+            <Link
+              to="/product"
+              className="inline-flex items-center gap-3 px-10 py-4 bg-[#c9a07a] text-white text-[11px] font-bold uppercase tracking-[0.2em] rounded-full hover:bg-[#b88f6a] shadow-lg shadow-[#c9a07a]/20 transition-all duration-500 group"
+            >
+              View All Collections
+              <IoArrowForwardOutline className="group-hover:translate-x-1 transition-transform" />
+            </Link>
           </div>
         </div>
       </section>
