@@ -19,7 +19,7 @@ export const getCategoryNames = async (req, res) => {
 
 export const createCategory = async (req, res) => {
   try {
-    const { name, image } = req.body;
+    const { name } = req.body;
     const slug = generateSlug(name);
     const existingCategory = await Category.findOne({ slug });
     if (existingCategory) {
@@ -28,9 +28,21 @@ export const createCategory = async (req, res) => {
         message: "Category already exists",
       });
     }
+    // check required images
+    if (!req.files || req.files.length < 1) {
+      return res.status(400).json({
+        success: false,
+        message: "Minimum 41 images required",
+      });
+    }
+    // map uploaded images
+    const imageData = req.files.map((file, index) => ({
+      url: `${req.protocol}://${req.get("host")}/uploads/${file.filename}`,
+      index: index,
+    }));
     const category = await Category.create({
       name,
-      image,
+      image: imageData,
       slug,
     });
     return res.status(201).json({
@@ -39,6 +51,12 @@ export const createCategory = async (req, res) => {
       category,
     });
   } catch (error) {
+    // if error remove uploaded files
+    if (req.files) {
+      req.files.forEach((file) => {
+        removeFiles(`uploads/${file.filename}`);
+      });
+    }
     console.error(error);
     return res.status(500).json({
       success: false,

@@ -31,13 +31,13 @@ jobs:
             git pull origin main
 
             echo "Down docker image"
-            docker compose down admin
+            docker compose down adminpanel
 
             echo "🐳 Rebuilding admin image"
-            docker compose build admin
+            docker compose build adminpanel
 
             echo "🔄 Restarting admin container"
-            docker compose up -d admin
+            docker compose up -d adminpanel
 
             echo "✅ Admin panel deployment completed"
 

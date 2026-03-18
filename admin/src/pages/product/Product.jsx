@@ -108,75 +108,7 @@ const Product = () => {
   return (
     <Layout>
       <div className="space-y-6">
-        <motion.div className="absolute inset-0 bg-slate-950/20 backdrop-blur-xs z-30 flex items-center justify-center font-google">
-          <motion.div
-            initial={{ opacity: 0, y: 14 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.4 }}
-            className="bg-white border border-slate-200 max-w-sm w-full rounded-sm shadow-2xl relative overflow-hidden"
-          >
-            {/* CONTENT */}
-            <div className="p-10 text-center relative">
-              {/* Precision Loading Bar */}
-              <div className="absolute bottom-0 left-0 w-full h-[2px] bg-slate-50 overflow-hidden">
-                <motion.div
-                  animate={{ x: ["-100%", "200%"] }}
-                  transition={{
-                    duration: 2.2,
-                    repeat: Infinity,
-                    ease: "easeInOut",
-                  }}
-                  className="w-1/2 h-full bg-slate-900"
-                />
-              </div>
 
-              {/* Subscription Status with Icon */}
-              <div className="flex items-center justify-center gap-2 mb-3">
-                <AlertCircle className="w-3.5 h-3.5 text-red-500" />
-                <p className="text-[11px] uppercase font-bold text-red-500 tracking-widest">
-                  SUBSCRIPTION ENDED
-                </p>
-              </div>
-
-              <h1 className="text-2xl font-light text-slate-900 mb-3 tracking-tight">
-                Access <span className="font-semibold text-black">Paused</span>
-              </h1>
-
-              <p className="text-xs text-slate-500 mb-8 leading-relaxed px-2">
-                Your subscription has ended, Renew now to keep accessing your
-                dashboard and features.
-              </p>
-
-              {/* Button with Arrow Icon */}
-              <motion.button
-                onClick={() => navigate("/plans")}
-                whileHover="hover"
-                whileTap={{ scale: 0.98 }}
-                className="group w-full bg-slate-900 text-white rounded-sm text-xs uppercase tracking-widest font-bold py-5 flex items-center justify-center gap-2 transition-colors hover:bg-black"
-              >
-                <span>Renew Subscription</span>
-                <motion.div
-                  variants={{
-                    hover: { x: 5 },
-                  }}
-                  transition={{ type: "spring", stiffness: 400, damping: 10 }}
-                >
-                  <ArrowRight className="w-4 h-4" />
-                </motion.div>
-              </motion.button>
-
-              {/* Subtle Activity Indicator */}
-              <div className="flex justify-center items-center mt-8 gap-3">
-                <div className="flex items-center gap-1.5 opacity-40">
-                  <ShieldCheck className="w-3 h-3 text-slate-900" />
-                  <p className="text-[9px] uppercase tracking-widest font-bold text-slate-600">
-                    Secure Checkout
-                  </p>
-                </div>
-              </div>
-            </div>
-          </motion.div>
-        </motion.div>
         {/* HEADER SECTION */}
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-gray-100 pb-4">
           <div>
