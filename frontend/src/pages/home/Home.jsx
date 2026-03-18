@@ -135,19 +135,22 @@ const Home = () => {
       </section>
 
       {/* 2. BRAND STORY SECTION (NEW) */}
-      <section className="py-24 bg-white">
-        <div className="max-w-4xl mx-auto px-6 text-center">
-          <h2 className="text-[#c9a07a] text-[12px] font-bold uppercase tracking-[0.5em] mb-8">
+      {/* 2. BRAND STORY SECTION (CONCISE VERSION) */}
+      <section className="py-16 bg-white border-b border-gray-50">
+        <div className="max-w-3xl mx-auto px-6 text-center">
+          <h2 className="text-[#c9a07a] text-[10px] font-bold uppercase tracking-[0.4em] mb-6">
             #StyleThatSpeaksYou
           </h2>
-          <p className="text-2xl md:text-3xl font-serif italic leading-relaxed text-gray-800">
-            "Founded with a passion for redefining everyday fashion,{" "}
-            <span className="text-[#c9a07a]">Kuddi</span> is your go-to
-            destination for short kurtis that make a bold, confident statement.
-            We believe that fashion should not only look good but should be
-            affordable too."
+          <p className="text-xl md:text-2xl font-serif italic leading-relaxed text-gray-800">
+            "Redefining everyday fashion with short kurtis that inspire
+            confidence. At{" "}
+            <span className="text-[#c9a07a] not-italic font-semibold">
+              Navi Clothing
+            </span>
+            , we believe premium style should be bold, expressive, and always
+            affordable."
           </p>
-          <div className="mt-8 h-1 w-12 bg-gray-200 mx-auto"></div>
+          <div className="mt-6 h-px w-10 bg-[#c9a07a]/30 mx-auto"></div>
         </div>
       </section>
 
