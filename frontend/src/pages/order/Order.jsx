@@ -163,7 +163,7 @@ const Order = () => {
             <div className="space-y-4 pt-4">
               <div className="flex justify-between items-baseline">
                 <span className="text-[10px] font-black uppercase tracking-widest">Total Payable</span>
-                <span className="text-4xl font-serif italic">₹{total}</span>
+                <span className="text-xl italic">₹{total}</span>
               </div>
               <button 
                 onClick={handleCheckoutOrder} 

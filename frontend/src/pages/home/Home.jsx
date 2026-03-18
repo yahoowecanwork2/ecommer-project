@@ -2,6 +2,11 @@ import React from "react";
 import { Link } from "react-router-dom";
 import Footer from "../common/Footer";
 import Header from "../common/Header";
+import video1 from "/src/assets/videos/video1.mp4"
+import video2 from "/src/assets/videos/video2.mp4"
+import video3 from "/src/assets/videos/video3.mp4"
+import video4 from "/src/assets/videos/video4.mp4"
+import video5 from "/src/assets/videos/video5.mp4"
 import {
   IoStar,
   IoPlayCircleOutline,
@@ -77,22 +82,22 @@ const Home = () => {
   const videoReviews = [
     {
       id: 1,
-      url: "https://cdn.pixabay.com/video/2021/04/12/70796-536098055_tiny.mp4",
+      url: video1,
       user: "@style_by_me",
     },
     {
       id: 2,
-      url: "https://cdn.pixabay.com/video/2023/10/20/185834-876615801_tiny.mp4",
+      url: video2,
       user: "@ethnic_vibe",
     },
     {
       id: 3,
-      url: "https://cdn.pixabay.com/video/2020/09/03/48981-456637119_tiny.mp4",
+      url: video4,
       user: "@desi_lookbook",
     },
     {
       id: 4,
-      url: "https://cdn.pixabay.com/video/2022/01/18/104526-666323674_tiny.mp4",
+      url: video5,
       user: "@kuddi_diaries",
     },
   ];
@@ -102,7 +107,7 @@ const Home = () => {
       <Header />
 
       {/* 1. HERO SECTION */}
-      <section className="relative h-[90vh] flex items-center overflow-hidden bg-[#fdfaf7]">
+      <section className="relative h-[140vh] md:h-[120vh] flex items-center overflow-hidden bg-[#fdfaf7]">
         <div className="max-w-7xl mx-auto px-6 w-full grid lg:grid-cols-2 items-center gap-12">
           <div className="z-10 order-2 lg:order-1">
             <span className="text-[12px] tracking-[0.4em] uppercase font-semibold text-[#c9a07a] mb-4 block">
@@ -224,34 +229,36 @@ const Home = () => {
             <IoLogoInstagram className="text-3xl text-[#c9a07a]" />
           </div>
           <div className="flex gap-6 overflow-x-auto no-scrollbar pb-8">
-            {videoReviews.map((video) => (
-              <div
-                key={video.id}
-                className="relative flex-shrink-0 w-[240px] aspect-[9/16] rounded-2xl overflow-hidden group shadow-lg"
-              >
-                <video
-                  className="w-full h-full object-cover"
-                  muted
-                  loop
-                  playsInline
-                  onMouseOver={(e) => e.target.play()}
-                  onMouseOut={(e) => {
-                    e.target.pause();
-                    e.target.currentTime = 0;
-                  }}
-                >
-                  <source src={video.url} type="video/mp4" />
-                </video>
-                <div className="absolute bottom-4 left-4 text-white z-10">
-                  <p className="text-[10px] font-bold tracking-widest">
-                    {video.user}
-                  </p>
-                </div>
-                <div className="absolute inset-0 bg-black/20 group-hover:bg-transparent transition-all flex items-center justify-center">
-                  <IoPlayCircleOutline className="text-white/70 text-4xl group-hover:hidden" />
-                </div>
-              </div>
-            ))}
+    {videoReviews.map((video) => (
+  <div
+    key={video.id}
+    className="relative flex-shrink-0 w-[240px] aspect-[9/16] rounded-2xl overflow-hidden group shadow-lg"
+  >
+    <video
+      src={video.url} // <--- Important Change
+      className="w-full h-full object-cover"
+      muted
+      loop
+      playsInline
+      onMouseOver={(e) => e.currentTarget.play()}
+      onMouseOut={(e) => {
+        e.currentTarget.pause();
+        e.currentTarget.currentTime = 0;
+      }}
+    />
+    
+    <div className="absolute bottom-4 left-4 text-white z-10 pointer-events-none">
+      <p className="text-[10px] font-bold tracking-widest">
+        {video.user}
+      </p>
+    </div>
+
+    {/* Overlay - added pointer-events-none takki mouse hover video tak pahonch sake */}
+    <div className="absolute inset-0 bg-black/20 group-hover:bg-transparent transition-all flex items-center justify-center pointer-events-none">
+      <IoPlayCircleOutline className="text-white/70 text-4xl group-hover:hidden" />
+    </div>
+  </div>
+))}
           </div>
         </div>
       </section>
