@@ -26,7 +26,7 @@ const productSchema = new mongoose.Schema({
      // during searching used this keyword filed we add all keywords in scentence related to that projecct 
     keywords:{
        type:String,
-       required:true
+    //    required:true
     },
     stock:{
        type:Number,
