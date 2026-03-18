@@ -14,8 +14,11 @@ const Header = () => {
 
   // Redux state for cart
   const { items } = useSelector((state) => state.cart);
+  const { items: wishlistItems } = useSelector((state) => state.wishlist);
+  const { user, auth } = useSelector((state) => state.user);
   const cartCount = items?.reduce((acc, item) => acc + item.quantity, 0) || 0;
-
+  const wishlistCount =
+    wishlistItems?.reduce((acc, item) => acc + item.quantity, 0) || 0;
   // Scroll effect to change background
   useEffect(() => {
     const handleScroll = () => {
@@ -68,15 +71,26 @@ const Header = () => {
           </div>
 
           {/* RIGHT: User Actions */}
-          <div className="flex items-center justify-end gap-5 md:gap-8 flex-1">
-            {/* Wishlist */}
-            <Link to="/wishlist" className="relative group hidden sm:block">
-              <IoHeartOutline className="text-[22px] text-[#1a1a1a] group-hover:text-[#c9a07a] transition-colors" />
+          <div className="flex items-center justify-end gap-4 md:gap-8 flex-1">
+            <Link to="/wishlist" className="relative group flex items-center">
+              <IoHeartOutline
+                className={`text-[22px] md:text-[24px] transition-colors ${
+                  wishlistCount > 0
+                    ? "text-[#c9a07a]" // active color
+                    : "text-[#1a1a1a]"
+                } group-hover:text-[#c9a07a]`}
+              />
+
+              {/* Badge */}
+              {wishlistCount > 0 && (
+                <span className="absolute -top-1 -right-1.5 bg-[#c9a07a] text-white text-[8px] font-bold w-4 h-4 flex items-center justify-center rounded-full">
+                  {wishlistCount}
+                </span>
+              )}
             </Link>
 
-            {/* Cart */}
-            <Link to="/cart" className="relative group">
-              <IoBagOutline className="text-[22px] text-[#1a1a1a] group-hover:text-[#c9a07a] transition-colors" />
+            <Link to="/cart" className="relative group flex items-center">
+              <IoBagOutline className="text-[22px] md:text-[24px] text-[#1a1a1a] group-hover:text-[#c9a07a] transition-colors" />
               {cartCount > 0 && (
                 <span className="absolute -top-1 -right-1.5 bg-[#c9a07a] text-white text-[8px] font-bold w-4 h-4 flex items-center justify-center rounded-full">
                   {cartCount}
@@ -84,11 +98,10 @@ const Header = () => {
               )}
             </Link>
 
-            {/* Profile */}
             <Link to="/profile" className="flex items-center gap-2 group">
-              <IoPersonOutline className="text-[20px] text-[#1a1a1a] group-hover:text-[#c9a07a]" />
+              <IoPersonOutline className="text-[20px] md:text-[22px] text-[#1a1a1a] group-hover:text-[#c9a07a]" />
               <span className="text-[10px] font-bold uppercase tracking-[0.2em] text-[#1a1a1a] group-hover:text-[#c9a07a] hidden md:block">
-                Account
+                {auth && user?.name ? user.name : "Account"}
               </span>
             </Link>
           </div>
@@ -133,7 +146,7 @@ const Header = () => {
                 {
                   name: "Size Guide",
                   sub: "Find your fit",
-                  path: "/size-guide",
+                  path: "/Size",
                 },
                 {
                   name: "Customer Care",
