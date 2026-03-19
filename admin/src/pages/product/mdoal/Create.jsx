@@ -269,7 +269,7 @@ const Create = ({ setShowModal }) => {
                 type="file"
                 id="product-images"
                 multiple
-                accept="image/*"
+                accept=".jpeg,.png"
                 onChange={handleImageChange}
                 className="hidden"
               />
@@ -279,7 +279,7 @@ const Create = ({ setShowModal }) => {
               >
                 <MdCloudUpload className="text-2xl text-gray-400 mb-1" />
                 <span className="text-[10px] font-bold text-gray-500 uppercase tracking-tighter">
-                  Click to upload assets
+                  Upload (.jpeg, .png only)
                 </span>
               </label>
             </div>
@@ -287,22 +287,27 @@ const Create = ({ setShowModal }) => {
             {/* Image Previews */}
             <div className="grid grid-cols-4 sm:grid-cols-6 gap-3 mt-4">
               {preview?.map((img, index) => (
-                <div
-                  key={index}
-                  className="relative group aspect-square border border-gray-100 rounded-sm overflow-hidden"
-                >
-                  <img
-                    src={img}
-                    alt=""
-                    className="h-full w-full object-cover transition-transform group-hover:scale-110"
-                  />
-                  <button
-                    type="button"
-                    onClick={() => removeImage(index)}
-                    className="absolute inset-0 bg-red-600/80 text-white flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity"
-                  >
-                    <FaTrash size={12} />
-                  </button>
+                <div key={index} className="flex flex-col gap-1 group">
+                  <div className="relative aspect-square border border-gray-100 rounded-sm overflow-hidden">
+                    <img
+                      src={img}
+                      alt=""
+                      className="h-full w-full object-cover transition-transform group-hover:scale-110"
+                    />
+
+                    <button
+                      type="button"
+                      onClick={() => removeImage(index)}
+                      className="absolute inset-0 bg-red-600/80 text-white flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity"
+                    >
+                      <FaTrash size={12} />
+                    </button>
+                  </div>
+
+                  {/* 🏷️ File name */}
+                  <p className="text-[10px] text-gray-500 text-center">
+                    {images[index]?.name}
+                  </p>
                 </div>
               ))}
             </div>
