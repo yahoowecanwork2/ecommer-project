@@ -11,6 +11,7 @@ import Order from "../models/Order.js";
 import crypto from "crypto";
 import Subscription from "../models/Subscription.js";
 import { razorpay } from "../config/razorpay.js";
+import { renewSubscriptionService } from "../service/subscriptionService.js";
 
 //-------------------------------------- owner apis ----------------------------------
 
@@ -760,15 +761,31 @@ export const renewSubscription = async (req, res) => {
   }
 };
 
-
 export const createOrder = async (req, res) => {
   try {
-    const { amount } = req.body;
+    const { amount, userId, plan, billingCycle, price, type } = req.body;
+
+    // ✅ Validate input
+    if (!amount || !userId || !plan || !billingCycle || !price || !type) {
+      return res.status(400).json({
+        success: false,
+        message: "Missing required fields",
+      });
+    }
 
     const options = {
-      amount: amount * 100, // convert to paise
+      amount: amount * 100, // ₹ → paise
       currency: "INR",
       receipt: `receipt_${Date.now()}`,
+
+      // 🔥 THIS IS THE HEART OF YOUR FLOW
+      notes: {
+        userId,
+        plan,
+        billingCycle,
+        price,
+        type, // "create" | "renew"
+      },
     };
 
     const order = await razorpay.orders.create(options);
@@ -777,8 +794,9 @@ export const createOrder = async (req, res) => {
       success: true,
       order,
     });
-
   } catch (error) {
+    console.error("CREATE ORDER ERROR 👉", error);
+
     res.status(500).json({
       success: false,
       message: error.message,
@@ -788,19 +806,17 @@ export const createOrder = async (req, res) => {
 
 export const verifyPayment = async (req, res) => {
   try {
-    const {
-      razorpay_order_id,
-      razorpay_payment_id,
-      razorpay_signature,
-      userId,
-      plan,
-      billingCycle
-    } = req.body;
+    const { razorpay_order_id, razorpay_payment_id, razorpay_signature } =
+      req.body;
+    console.log("Line 793 working");
 
+    // ✅ 1. Verify signature
     const generatedSignature = crypto
       .createHmac("sha256", process.env.RAZORPAY_SECRET)
       .update(razorpay_order_id + "|" + razorpay_payment_id)
       .digest("hex");
+
+    console.log("Line 801 working");
 
     if (generatedSignature !== razorpay_signature) {
       return res.status(400).json({
@@ -809,41 +825,76 @@ export const verifyPayment = async (req, res) => {
       });
     }
 
-    // Calculate subscription dates
-    const startDate = new Date();
-    const endDate = new Date();
+    console.log("Line 809 working");
 
-    if (billingCycle === "monthly") {
-      endDate.setMonth(endDate.getMonth() + 1);
-    } else {
-      endDate.setFullYear(endDate.getFullYear() + 1);
+    // ✅ 2. Fetch order (SOURCE OF TRUTH)
+    const order = await razorpay.orders.fetch(razorpay_order_id);
+
+    const { userId, plan, billingCycle, price, type } = order.notes;
+    
+    if (!userId || !plan || !billingCycle || !price) {
+      return res.status(400).json({
+        success: false,
+        message: "Invalid order metadata",
+      });
     }
+    console.log("Line 822 working");
 
-    const subscription = await Subscription.findOneAndUpdate(
-      { userId },
-      {
+    const normalizedBillingCycle = billingCycle.toLowerCase();
+
+    let subscription;
+
+    console.log("Line 828 working");
+
+    // 🔁 3. RENEW FLOW (using service)
+    if (type === "renew") {
+      subscription = await renewSubscriptionService(
         userId,
-        plan,
-        billingCycle,
-        paymentId: razorpay_payment_id,
-        startDate,
-        endDate,
-        status: "active",
-      },
-      { upsert: true, new: true }
-    );
+        razorpay_payment_id,
+      );
+      console.log("Line 838 working");
+    }
+    // 🆕 4. CREATE FLOW
+    else {
+      const startDate = new Date();
+      const endDate = new Date(startDate);
+
+      if (normalizedBillingCycle === "monthly") {
+        endDate.setMonth(endDate.getMonth() + 1);
+      } else {
+        endDate.setFullYear(endDate.getFullYear() + 1);
+      }
+
+      subscription = await Subscription.findOneAndUpdate(
+        { userId },
+        {
+          userId,
+          plan,
+          billingCycle: normalizedBillingCycle,
+          price,
+          paymentId: razorpay_payment_id,
+          startDate,
+          endDate,
+          status: "active",
+        },
+        { upsert: true, new: true },
+      );
+    }
 
     res.json({
       success: true,
-      message: "Payment verified and subscription activated",
+      message:
+        type === "renew"
+          ? "Subscription renewed successfully"
+          : "Subscription created successfully",
       subscription,
     });
-
   } catch (error) {
+    console.error("VERIFY PAYMENT ERROR 👉", error);
+
     res.status(500).json({
       success: false,
       message: error.message,
     });
   }
 };
-
