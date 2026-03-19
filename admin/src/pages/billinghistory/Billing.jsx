@@ -62,7 +62,7 @@ const Billing = () => {
                 Billing History
               </p>
 
-              {payments?.length > 0 && (
+              {user?.previousSubscrip.length > 0 && (
                 <input
                   type="text"
                   placeholder="Search Invoice..."

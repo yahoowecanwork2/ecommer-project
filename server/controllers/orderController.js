@@ -2,6 +2,7 @@ import { instance } from "../app/app.js";
 import Order from "../models/Order.js";
 import { Payment } from "../models/Payment.js";
 import { generateOrderId } from "../utils/idGenerate.js";
+import crypto from "crypto";
 
 //------------------------------ user controller ---------------------------
 // use rozer pay payment method check out payment
@@ -38,7 +39,7 @@ export const checkoutPayment = async (req, res) => {
   }
 };
 
-// firstly make payment verify then place save order in our data base
+
 export const createOrder = async (req, res) => {
   try {
     const {
@@ -57,12 +58,55 @@ export const createOrder = async (req, res) => {
       razorpay_payment_id,
       razorpay_signature,
     } = req.body;
+
+    // 🛑 Validate items
     if (!items || items.length === 0) {
       return res.status(400).json({
         success: false,
         message: "Order items required",
       });
     }
+
+    let paymentDoc = null;
+
+    console.log(razorpay_order_id,razorpay_payment_id,razorpay_signature);
+    
+
+    // 💳 Handle online payment
+    if (paymentType === "online") {
+      if (!razorpay_order_id || !razorpay_payment_id || !razorpay_signature) {
+        return res.status(400).json({
+          success: false,
+          message: "Razorpay payment details required",
+        });
+      }
+
+      // 🔐 Verify Razorpay signature
+      const body = razorpay_order_id + "|" + razorpay_payment_id;
+
+      const expectedSignature = crypto
+        .createHmac("sha256", process.env.RAZORPAY_SECRET)
+        .update(body.toString())
+        .digest("hex");
+
+      if (expectedSignature !== razorpay_signature) {
+        return res.status(400).json({
+          success: false,
+          message: "Invalid payment signature",
+        });
+      }
+
+      // ✅ Create payment first
+      paymentDoc = await Payment.create({
+        razorpay_order_id,
+        razorpay_payment_id,
+        razorpay_signature,
+        customerId: req.id,
+        amount: ordertotal,
+      });
+    }
+
+    // 📦 Create order (now safe ✅)
     const order = await Order.create({
       items,
       customerId: req.id,
@@ -77,25 +121,10 @@ export const createOrder = async (req, res) => {
       discount,
       ordertotal,
       paymentType,
+      payment: paymentDoc?._id, // ✅ important fix
       paymentstatus: paymentType === "online" ? "complete" : "pending",
     });
-    if (paymentType === "online") {
-      if (!razorpay_order_id || !razorpay_payment_id || !razorpay_signature) {
-        return res.status(400).json({
-          success: false,
-          message: "Razorpay payment details required",
-        });
-      }
-      const payment = await Payment.create({
-        razorpay_order_id,
-        razorpay_payment_id,
-        razorpay_signature,
-        orderId: order._id,
-        customerId: order.customerId,
-      });
-      order.payment = payment._id;
-      await order.save();
-    }
+
     return res.status(201).json({
       success: true,
       message: "Order created successfully",
@@ -536,27 +565,26 @@ export const updateOrderStatus = async (req, res) => {
     if (!status) {
       return res.status(400).json({
         success: false,
-        message: "Status is required"
+        message: "Status is required",
       });
     }
 
     const order = await Order.findByIdAndUpdate(
       orderId,
       { status },
-      { new: true }
+      { new: true },
     );
 
     res.status(200).json({
       success: true,
       message: "Order status updated successfully",
-      order
+      order,
     });
-
   } catch (error) {
     console.error(error);
     res.status(500).json({
       success: false,
-      message: "Failed to update order"
+      message: "Failed to update order",
     });
   }
 };

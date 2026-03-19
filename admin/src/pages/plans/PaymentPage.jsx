@@ -197,10 +197,12 @@ const PaymentPage = ({ user, plan, billingCycle, setShowPayment }) => {
           {/* 🔥 BUTTON */}
           <button
             onClick={
-              isCurrentPlan === "renew"
+              isCurrentPlan
                 ? () => handleRenewPayment()
-                : () =>{ console.log(isCurrentPlan);
-                 handleCreatePayment()}
+                : () => {
+                    console.log(isCurrentPlan);
+                    handleCreatePayment();
+                  }
             }
             className={`w-full py-4 text-[11px] font-bold uppercase tracking-[0.2em] ${
               isCurrentPlan
