@@ -18,11 +18,10 @@ const Register = () => {
 
   // ---------------- Recaptcha Setup ----------------
   useEffect(() => {
-    // window.location.reload();
     if (!auth) return;
 
-    // if (!window.recaptchaVerifier) {
-      try {
+    try {
+      if (!window.recaptchaVerifier) {
         window.recaptchaVerifier = new RecaptchaVerifier(
           auth,
           "recaptcha-container",
@@ -31,14 +30,13 @@ const Register = () => {
             callback: () => {
               console.log("Recaptcha solved");
             },
-          },
+          }
         );
-
         window.recaptchaVerifier.render();
-      } catch (error) {
-        console.log("Recaptcha Init Error:", error);
       }
-    // }
+    } catch (error) {
+      console.log("Recaptcha Init Error:", error);
+    }
   }, []);
 
   // ---------------- Send OTP ----------------
@@ -54,24 +52,21 @@ const Register = () => {
       const result = await signInWithPhoneNumber(
         auth,
         `+91${phone}`,
-        window.recaptchaVerifier,
+        window.recaptchaVerifier
       );
 
       if (result) {
         setConfirmationResult(result);
-
         if (type === "register") {
           setShowmodal(true);
         } else {
           setShowLoginmodal(true);
         }
-
         toast.success("OTP sent successfully!");
       }
     } catch (error) {
       console.error("OTP Error:", error);
       toast.error(error.message);
-      // window.location.reload();
     } finally {
       setRegistrationLoading(false);
     }
@@ -80,22 +75,19 @@ const Register = () => {
   // ---------------- Check user exist ----------------
   const checkUserExist = async () => {
     try {
-      if (!phone) {
-        toast.error("Enter phone number");
+      if (!phone || phone.length < 10) {
+        toast.error("Enter a valid 10-digit phone number");
         return;
       }
 
       setUserExistLoading(true);
-
       const res = await authApi.checkUserExist(phone);
 
       if (res?.success) {
-        // toast.success(res?.message);
         sendOtp("register");
       }
     } catch (error) {
       if (error?.response?.status === 400) {
-        // toast.success(error?.response?.data?.message);
         sendOtp("login");
       } else {
         toast.error("Server Error");
@@ -106,137 +98,114 @@ const Register = () => {
   };
 
   return (
-    <div className="font-google bg-[#FCFBF9] min-h-screen selection:bg-[#D16B92] selection:text-white overflow-hidden">
-  <Header />
+    <div className="font-sans bg-white min-h-screen selection:bg-[#c9a07a] selection:text-white flex items-center justify-center relative overflow-hidden">
+      <Header />
 
-  <div className="flex min-h-screen pt-20">
-    
-    {/* --- LEFT SIDE: THE ARTISTIC CANVAS (Deep Plum Theme) --- */}
-    <div className="hidden lg:flex lg:w-1/2 bg-[#2D1B2D] relative items-center justify-center overflow-hidden">
-      {/* Aesthetic Background Detail */}
-      <div className="absolute inset-0 opacity-40">
-        <div className="absolute top-[-10%] left-[-10%] w-[600px] h-[600px] bg-[#D16B92] rounded-full blur-[120px]"></div>
-        <div className="absolute bottom-[-10%] right-[-10%] w-[500px] h-[500px] bg-[#E8A5C0] rounded-full blur-[100px] opacity-30"></div>
+      {/* --- BACKGROUND ACCENTS --- */}
+      <div className="absolute inset-0 pointer-events-none overflow-hidden">
+        <div className="absolute top-[-10%] right-[-5%] w-[500px] h-[500px] bg-[#fdfaf7] rounded-full blur-[120px]"></div>
+        <div className="absolute bottom-[-10%] left-[-5%] w-[400px] h-[400px] bg-[#fdfaf7] rounded-full blur-[100px]"></div>
       </div>
-      
-      <div className="relative z-10 text-center space-y-6 px-20">
-        <h2 className="text-6xl xl:text-8xl font-serif italic text-white tracking-tighter leading-[0.8]">
-          The Muse <br /> <span className="text-[#D16B92]">Archive.</span>
-        </h2>
-        <p className="text-[10px] font-black uppercase tracking-[0.6em] text-[#D16B92]/80">Navi Clothing Heritage</p>
-      </div>
-    </div>
 
-    {/* --- RIGHT SIDE: PURE SIMPLE LOGIN FORM --- */}
-    <div className="w-full lg:w-1/2 flex items-center justify-center bg-white px-8 md:px-24 py-12">
-      <div className="w-full max-w-[400px]">
-        
-        {/* Minimalist Heading */}
-        <div className="mb-16 text-center lg:text-left">
-          <h2 className="text-4xl md:text-5xl font-serif italic text-[#2D1B2D] mb-3 leading-tight tracking-tighter">
-            Welcome to Navi
-          </h2>
-          <div className="flex items-center justify-center lg:justify-start gap-3">
-             <span className="h-[1px] w-5 bg-gray-100"></span>
-             <p className="text-[10px] font-black uppercase tracking-[0.3em] text-gray-300">Login or Signup</p>
-          </div>
-        </div>
-
-        <div className="space-y-10">
-          {/* Phone Input: Sharp & Underline Style */}
-          <div className="space-y-2 group">
-            <label className="text-[9px] font-black uppercase tracking-widest text-gray-400 ml-1 group-focus-within:text-[#D16B92] transition-colors">
-              Registry Terminal
-            </label>
-            <div className="flex items-center border-b-2 border-gray-100 py-3.5 group-focus-within:border-[#D16B92] transition-all duration-500">
-              <span className="text-sm font-bold text-[#D16B92] mr-4">+91</span>
-              <input
-                type="tel"
-                placeholder="Mobile Number"
-                value={phone}
-                onChange={(e) => setPhone(e.target.value)}
-                className="flex-1 bg-transparent outline-none text-base tracking-[0.2em] font-medium placeholder:text-gray-200"
-              />
+      <main className="w-full max-w-[440px] px-6 py-20 relative z-10">
+        <div className="space-y-16">
+          
+          {/* --- BRAND HEADER --- */}
+          <div className="text-center space-y-4">
+            <h1 className="text-5xl md:text-6xl font-serif tracking-tighter text-[#1a1a1a]">
+              Navi <span className="italic font-light text-gray-400">Clothing</span>
+            </h1>
+            <div className="flex items-center justify-center gap-4">
+              <span className="h-[1px] w-8 bg-gray-100"></span>
+              <p className="text-[10px] font-bold uppercase tracking-[0.4em] text-[#c9a07a]">
+                Member Access
+              </p>
+              <span className="h-[1px] w-8 bg-gray-100"></span>
             </div>
           </div>
 
-          {/* Terms Checkbox */}
-          <div className="flex items-start gap-3 px-1">
-            <input
-              type="checkbox"
-              checked={agreeTerms}
-              onChange={(e) => setAgreeTerms(e.target.checked)}
-              className="mt-1 w-4 h-4 accent-[#D16B92] cursor-pointer"
-            />
-            <p className="text-[10px] leading-relaxed text-gray-400 font-medium">
-              By continuing, I confirm that I agree to the{" "}
-              <span className="text-[#D16B92] cursor-pointer hover:underline font-bold">Terms</span> &{" "}
-              <span className="text-[#D16B92] cursor-pointer hover:underline font-bold">Privacy Policy</span>.
-            </p>
-          </div>
+          {/* --- FORM SECTION --- */}
+          <div className="space-y-12">
+            
+            {/* Phone Input */}
+            <div className="space-y-3 group">
+              <label className="text-[10px] font-bold uppercase tracking-[0.2em] text-gray-400 group-focus-within:text-[#c9a07a] transition-colors">
+                Mobile Number
+              </label>
+              <div className="relative flex items-center border-b border-gray-100 py-4 focus-within:border-[#1a1a1a] transition-all duration-500">
+                <span className="text-sm font-bold text-[#c9a07a] pr-4 border-r border-gray-100 mr-5">
+                  +91
+                </span>
+                <input
+                  type="tel"
+                  placeholder="00000 00000"
+                  maxLength={10}
+                  value={phone}
+                  onChange={(e) => setPhone(e.target.value)}
+                  className="flex-1 bg-transparent outline-none text-base tracking-[0.1em] font-light placeholder:text-gray-200 text-[#1a1a1a]"
+                />
+              </div>
+            </div>
 
-          {/* Action Button */}
-        <div className="pt-4">
-  <button
-    onClick={checkUserExist}
-    disabled={!agreeTerms || userExistLoading || registrationLoading}
-    className={`w-full py-5 rounded-full font-black text-[11px] uppercase tracking-[0.4em] transition-all duration-700 shadow-xl overflow-hidden relative group ${
-      agreeTerms
-        ? "bg-[#D16B92] text-white shadow-[#D16B92]/20 active:scale-95"
-        : "bg-gray-100 text-gray-300 cursor-not-allowed shadow-none"
-    }`}
-  >
-    <span className="relative z-10">
-      {registrationLoading
-        ? "Submitting..."
-        : userExistLoading
-        ? "Searching Records..."
-        : "Continue To Collection"}
-    </span>
+            {/* Terms Agreement */}
+            <div className="flex items-start gap-4">
+              <input
+                type="checkbox"
+                checked={agreeTerms}
+                onChange={(e) => setAgreeTerms(e.target.checked)}
+                className="mt-1 w-4 h-4 rounded-none border-gray-300 accent-[#1a1a1a] cursor-pointer"
+              />
+              <p className="text-[11px] leading-relaxed text-gray-400 font-normal">
+                I agree to the <span className="text-[#1a1a1a] underline underline-offset-4 cursor-pointer hover:text-[#c9a07a] transition-colors">Terms of Service</span> and <span className="text-[#1a1a1a] underline underline-offset-4 cursor-pointer hover:text-[#c9a07a] transition-colors">Privacy Policy</span>.
+              </p>
+            </div>
 
-    {/* Animated Shine Effect on Hover (Sirf tab dikhega jab agreeTerms true ho) */}
-    {agreeTerms && !registrationLoading && !userExistLoading && (
-      <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent -translate-x-full group-hover:animate-[shimmer_1.5s_infinite]"></div>
-    )}
-  </button>
-  
-  {/* CSS for Shimmer - Agar pehle se add nahi kiya hai */}
-  <style dangerouslySetInnerHTML={{ __html: `
-    @keyframes shimmer {
-      100% { transform: translateX(100%); }
-    }
-  `}} />
-</div>
+            {/* CTA Button */}
+            <div className="pt-4">
+              <button
+                onClick={checkUserExist}
+                disabled={!agreeTerms || userExistLoading || registrationLoading}
+                className={`w-full py-5 text-[11px] font-bold uppercase tracking-[0.3em] transition-all duration-500 rounded-sm shadow-sm ${
+                  agreeTerms
+                    ? "bg-[#1a1a1a] text-white hover:bg-[#c9a07a] active:scale-[0.98]"
+                    : "bg-gray-50 text-gray-300 cursor-not-allowed border border-gray-100"
+                }`}
+              >
+                {registrationLoading || userExistLoading
+                  ? "Verifying Identity..."
+                  : "Continue Access"}
+              </button>
+            </div>
 
-          {/* Help / Support Link */}
-          <div className="mt-12 text-center">
-             <p className="text-[10px] font-bold text-gray-300 uppercase tracking-widest leading-loose">
-               Have trouble logging in? <br />
-               <span className="text-[#D16B92] cursor-pointer hover:scale-105 transition-transform italic ml-1 font-black">Get help</span>
-             </p>
+            {/* Assistance Section */}
+            <div className="pt-8 text-center border-t border-gray-50">
+              <p className="text-[10px] font-medium text-gray-300 uppercase tracking-widest">
+                Need concierge help? <a href="mailto:support@naviclothing.com" className="text-[#c9a07a] italic hover:underline">Get Support</a>
+              </p>
+            </div>
           </div>
         </div>
-      </div>
-    </div>
-  </div>
+      </main>
 
-  {/* Hidden Tool Containers */}
-  <div id="recaptcha-container"></div>
-  {showmodal && confirmationResult && (
-    <Registerotpverify
-      confirmationResult={confirmationResult}
-      phone={phone}
-      setShowmodal={setShowmodal}
-    />
-  )}
-  {showLoginmodal && confirmationResult && (
-    <Loginotpverifymodal
-      confirmationResult={confirmationResult}
-      phone={phone}
-      setShowLoginmodal={setShowLoginmodal}
-    />
-  )}
-</div>
+      {/* --- FIREBASE & MODAL LOGIC --- */}
+      <div id="recaptcha-container"></div>
+
+      {showmodal && confirmationResult && (
+        <Registerotpverify
+          confirmationResult={confirmationResult}
+          phone={phone}
+          setShowmodal={setShowmodal}
+        />
+      )}
+
+      {showLoginmodal && confirmationResult && (
+        <Loginotpverifymodal
+          confirmationResult={confirmationResult}
+          phone={phone}
+          setShowLoginmodal={setShowLoginmodal}
+        />
+      )}
+    </div>
   );
 };
 
