@@ -10,6 +10,9 @@ import {
   FaArrowLeft,
   FaRegCalendarAlt,
   FaHashtag,
+  FaCheckCircle,
+  FaTag,
+  FaReceipt,
 } from "react-icons/fa";
 import { orderApis } from "../../apis/order";
 
@@ -23,10 +26,7 @@ const Orderdetails = () => {
     try {
       setLoading(true);
       const res = await orderApis.getSingle(id);
-
-      if (res.order) {
-        setOrder(res.order);
-      }
+      if (res.order) setOrder(res.order);
       setLoading(false);
     } catch (error) {
       setLoading(false);
@@ -38,8 +38,7 @@ const Orderdetails = () => {
     try {
       setLoading(true);
       await orderApis.updateStatus(id, { status: "delivered" });
-      getSingleOrder(); // refresh
-      setLoading(false);
+      getSingleOrder();
     } catch (error) {
       setLoading(false);
       console.log(error);
@@ -52,193 +51,230 @@ const Orderdetails = () => {
 
   const getStatusStyle = (status) => {
     const base =
-      "px-2 py-0.5 rounded-sm border text-[10px] font-bold uppercase tracking-tight ";
+      "px-3 py-1 rounded-sm text-[10px] font-black uppercase tracking-tighter border ";
     switch (status?.toLowerCase()) {
       case "pending":
-        return base + "bg-orange-50 text-orange-700 border-orange-200";
+        return base + "bg-white text-zinc-800 border-zinc-800";
       case "delivered":
-        return base + "bg-green-50 text-green-700 border-green-200";
+        return base + "bg-zinc-900 text-white border-zinc-900";
       case "cancelled":
-        return base + "bg-red-50 text-red-700 border-red-200";
+        return base + "bg-zinc-100 text-zinc-400 border-zinc-200 line-through";
       default:
-        return base + "bg-gray-50 text-gray-700 border-gray-200";
+        return base + "bg-white text-zinc-500 border-zinc-200";
     }
   };
 
   if (loading)
     return (
       <Layout>
-        <div className="p-8 text-[11px] font-bold uppercase tracking-widest text-gray-400 animate-pulse">
-          Loading Order Data...
+        <div className="flex h-64 items-center justify-center text-[11px] font-bold uppercase tracking-[0.3em] text-zinc-400 animate-pulse">
+          LOADING_ORDER_DATA...
         </div>
       </Layout>
     );
 
+  // Totals Calculation
+  const subtotal =
+    order?.items?.reduce(
+      (acc, item) => acc + item.productId?.price * item.quantity,
+      0,
+    ) || 0;
+  const discountAmount = order?.discount || 0;
+
   return (
     <Layout>
-      <div className="space-y-6">
-        {/* TOP NAV */}
-        <div className="flex items-center justify-between border-b border-gray-100 pb-4">
+      <div className="max-w-6xl mx-auto pb-20 font-sans text-zinc-900">
+        <div className="flex items-center justify-between mb-8 border-b border-zinc-100 pb-5">
           <button
             onClick={() => navigate("/order")}
-            className="flex items-center gap-2 text-[11px] font-bold uppercase tracking-widest text-gray-400 hover:text-gray-900"
+            className="flex items-center gap-2 text-[10px] font-black uppercase tracking-widest text-zinc-400 hover:text-black transition-colors"
           >
-            <FaArrowLeft size={10} /> Back to Orders
+            <FaArrowLeft size={10} /> Back to Archive
           </button>
 
-          <button
-            onClick={markAsDelivered}
-            className="px-4 py-2 text-[11px] font-bold uppercase tracking-widest bg-green-600 text-white rounded-sm hover:bg-green-700"
-          >
-            Mark Delivered
-          </button>
+          {order?.status !== "delivered" && (
+            <button
+              onClick={markAsDelivered}
+              className="flex items-center gap-2 px-6 py-2 bg-black text-white text-[10px] font-bold uppercase tracking-[0.2em] hover:bg-zinc-800 transition-all active:scale-95"
+            >
+              <FaCheckCircle /> Mark as Delivered
+            </button>
+          )}
         </div>
 
-        {/* HEADER */}
-        <div className="bg-white border border-gray-200 rounded-sm p-6 flex flex-col md:flex-row gap-6">
-          <div className="w-16 h-16 bg-gray-900 text-white flex items-center justify-center text-xl rounded-sm">
-            <FaBoxOpen />
-          </div>
-
-          <div className="flex-1">
-            <h1 className="text-xl font-bold">
-              Order <span className="text-gray-400">#{order?.orderno}</span>
-            </h1>
-
-            <span className={getStatusStyle(order?.status)}>
-              {order?.status}
-            </span>
-
-            <div className="flex gap-4 text-xs text-gray-500 mt-2">
-              <span className="flex items-center gap-1">
+        <div className="flex flex-wrap items-end justify-between gap-6 mb-10">
+          <div>
+            <div className="flex items-center gap-4 mb-2">
+              <h1 className="text-4xl font-black tracking-tighter italic uppercase">
+                Order <span className="text-zinc-300">#{order?.orderno}</span>
+              </h1>
+              <span className={getStatusStyle(order?.status)}>
+                {order?.status}
+              </span>
+            </div>
+            <div className="flex gap-6 text-[11px] font-bold text-zinc-400 uppercase tracking-widest">
+              <span className="flex items-center gap-2">
                 <FaRegCalendarAlt />{" "}
                 {new Date(order?.createdAt).toLocaleString("en-IN")}
               </span>
-
-              <span className="flex items-center gap-1">
-                <FaHashtag /> {order?._id}
+              <span className="flex items-center gap-2">
+                <FaHashtag /> SystemID: {order?._id}
               </span>
             </div>
           </div>
         </div>
 
-        {/* GRID */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-          {/* CUSTOMER */}
-          <div className="bg-white border rounded-sm">
-            <div className="p-3 border-b bg-gray-50 flex justify-between">
-              <h3 className="text-xs font-bold uppercase">Customer Info</h3>
-              <FaUser />
-            </div>
-
-            <div className="p-4 space-y-3 text-xs">
-              <div className="flex justify-between">
-                <span>Name</span>
-                <span className="font-bold">{order?.customername}</span>
-              </div>
-
-              <div className="flex justify-between">
-                <span>Phone</span>
-                <span className="font-bold">{order?.phoneno}</span>
-              </div>
-            </div>
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-px bg-zinc-200 border border-zinc-200 mb-10 shadow-2xl">
+          <div className="bg-white p-8">
+            <h3 className="text-[10px] font-black uppercase tracking-[0.2em] text-zinc-400 mb-6 flex items-center gap-2">
+              <FaUser size={10} /> Customer Information
+            </h3>
+            <p className="text-lg font-black leading-none mb-2">
+              {order?.customername}
+            </p>
+            <p className="text-sm font-medium text-zinc-500 tracking-tight italic">
+              {order?.phoneno}
+            </p>
           </div>
 
-          {/* SHIPPING */}
-          <div className="bg-white border rounded-sm">
-            <div className="p-3 border-b bg-gray-50 flex justify-between">
-              <h3 className="text-xs font-bold uppercase">Shipping</h3>
-              <FaMapMarkerAlt />
-            </div>
-
-            <div className="p-4 text-xs font-bold">
+          <div className="bg-white p-8">
+            <h3 className="text-[10px] font-black uppercase tracking-[0.2em] text-zinc-400 mb-6 flex items-center gap-2">
+              <FaMapMarkerAlt size={10} /> Shipping Destination
+            </h3>
+            <p className="text-xs font-bold leading-relaxed uppercase tracking-tight text-zinc-700">
               {order?.shippingaddress}
-              <br />
-              PIN: {order?.pincode}
+              <span className="block mt-4 pt-4 border-t border-zinc-50 text-black">
+                PINCODE: {order?.pincode}
+              </span>
+            </p>
+          </div>
+
+          <div className="bg-white p-8">
+            <h3 className="text-[10px] font-black uppercase tracking-[0.2em] text-zinc-400 mb-6 flex items-center gap-2">
+              <FaReceipt size={10} /> Payment Summary
+            </h3>
+            <div className="space-y-4">
+              <div className="flex justify-between border-b border-zinc-50 pb-2">
+                <span className="text-[10px] font-bold text-zinc-400 uppercase">
+                  Method
+                </span>
+                <span className="text-xs font-black">
+                  {order?.payment ? "RAZORPAY_ONLINE" : "CASH_ON_DELIVERY"}
+                </span>
+              </div>
+              <div className="flex justify-between">
+                <span className="text-[10px] font-bold text-zinc-400 uppercase">
+                  Status
+                </span>
+                <span
+                  className={`text-[10px] px-2 py-0.5 font-black border ${order?.payment ? "bg-black text-white border-black" : "bg-white text-zinc-400 border-zinc-200"}`}
+                >
+                  {order?.payment ? "PAID_VERIFIED" : "PENDING_COLLECTION"}
+                </span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-10">
+          <div className="lg:col-span-2">
+            <h2 className="text-xs font-black uppercase tracking-[0.3em] mb-4 border-l-4 border-black pl-3">
+              Manifest
+            </h2>
+            <div className="border border-zinc-200 overflow-hidden">
+              <table className="w-full text-left border-collapse">
+                <thead>
+                  <tr className="bg-zinc-50 border-b border-zinc-200 text-[10px] font-black uppercase text-zinc-400">
+                    <th className="px-6 py-4">Item Description</th>
+                    <th className="px-6 py-4 text-center">Qty</th>
+                    <th className="px-6 py-4 text-right">Price</th>
+                  </tr>
+                </thead>
+                <tbody className="divide-y divide-zinc-100">
+                  {order?.items?.map((item, i) => (
+                    <tr key={i} className="bg-white">
+                      <td className="px-6 py-5">
+                        <span className="text-sm font-black block">
+                          {item.name}
+                        </span>
+                        <span className="text-[9px] text-zinc-400 tracking-widest uppercase">
+                          ID: {item.productId?._id?.slice(-8)}
+                        </span>
+                      </td>
+                      <td className="px-6 py-5 text-center text-sm font-bold">
+                        x{item.quantity}
+                      </td>
+                      <td className="px-6 py-5 text-right text-sm font-black">
+                        ₹
+                        {(
+                          item.productId?.price * item.quantity
+                        ).toLocaleString()}
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
             </div>
           </div>
 
-          {/* PAYMENT */}
-          <div className="bg-white border rounded-sm">
-            <div className="p-3 border-b bg-gray-50 flex justify-between">
-              <h3 className="text-xs font-bold uppercase">Payment Info</h3>
-              <FaRupeeSign />
+          <div className="space-y-6">
+            <h2 className="text-xs font-black uppercase tracking-[0.3em] mb-4 border-l-4 border-black pl-3">
+              Financials
+            </h2>
+            <div className="bg-black text-white p-8 shadow-xl">
+              <div className="space-y-3 border-b border-zinc-800 pb-6 mb-6">
+                <div className="flex justify-between text-[11px] font-bold text-zinc-400 uppercase">
+                  <span>Gross Subtotal</span>
+                  <span>₹{subtotal.toLocaleString()}</span>
+                </div>
+                <div className="flex justify-between text-[11px] font-bold text-zinc-400 uppercase">
+                  <span className="flex items-center gap-1">
+                    <FaTag size={10} /> Savings / Discount
+                  </span>
+                  <span className="text-white">
+                    - ₹{discountAmount.toLocaleString()}
+                  </span>
+                </div>
+              </div>
+              <div className="flex justify-between items-center">
+                <span className="text-xs font-black uppercase tracking-widest">
+                  Net Total
+                </span>
+                <span className="text-3xl font-black italic tracking-tighter">
+                  ₹{order?.ordertotal?.toLocaleString()}
+                </span>
+              </div>
             </div>
 
-            <div className="p-4 space-y-3 text-xs">
-              <div className="flex justify-between">
-                <span>Method</span>
-                <span className="font-bold">
-                  {order?.payment ? "Online (Razorpay)" : "Cash on Delivery"}
-                </span>
-              </div>
-
-              <div className="flex justify-between">
-                <span>Status</span>
-                <span className="font-bold">
-                  {order?.payment ? "Paid" : "Pending"}
-                </span>
-              </div>
-
-              {order?.payment && (
-                <>
+            {order?.payment && (
+              <div className="bg-white border border-zinc-200 p-6">
+                <h3 className="text-[10px] font-black uppercase tracking-widest mb-4 flex items-center gap-2">
+                  <FaCheckCircle size={10} /> Transaction Logs
+                </h3>
+                <div className="space-y-3 font-mono text-[10px] text-zinc-500 uppercase">
                   <div className="flex justify-between">
-                    <span>Payment ID</span>
-                    <span className="font-bold">
+                    <span>Pay_ID:</span>
+                    <span className="text-black font-bold">
                       {order.payment.razorpay_payment_id}
                     </span>
                   </div>
-
                   <div className="flex justify-between">
-                    <span>Order ID</span>
-                    <span className="font-bold">
+                    <span>Order_Ref:</span>
+                    <span className="text-black font-bold">
                       {order.payment.razorpay_order_id}
                     </span>
                   </div>
-
                   <div className="flex justify-between">
-                    <span>Paid On</span>
-                    <span className="font-bold">
+                    <span>Logged_At:</span>
+                    <span className="text-black font-bold">
                       {new Date(order.payment.createdAt).toLocaleString(
                         "en-IN",
                       )}
                     </span>
                   </div>
-                </>
-              )}
-            </div>
-          </div>
-        </div>
-
-        {/* ITEMS */}
-        <div className="bg-white border rounded-sm">
-          <table className="w-full text-xs">
-            <thead>
-              <tr className="border-b text-gray-400">
-                <th className="p-3 text-left">Item</th>
-                <th>Qty</th>
-                <th>Price</th>
-                <th className="text-right pr-4">Total</th>
-              </tr>
-            </thead>
-
-            <tbody>
-              {order?.items?.map((item, i) => (
-                <tr key={i} className="border-b">
-                  <td className="p-3 font-bold">{item.name}</td>
-                  <td>{item.quantity}</td>
-                  <td>₹{item.productId?.price}</td>
-                  <td className="text-right pr-4 font-bold">
-                    ₹{item.productId?.price * item.quantity}
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-
-          {/* TOTAL */}
-          <div className="p-4 flex justify-end bg-gray-50">
-            <span className="text-lg font-bold">₹ {order?.ordertotal}</span>
+                </div>
+              </div>
+            )}
           </div>
         </div>
       </div>

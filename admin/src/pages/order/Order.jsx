@@ -108,12 +108,15 @@ const Order = () => {
       getAllOrders();
     }
 
-    if (type === "returned") {
-      filterByStatus("returned");
+    if (type === "pending") {
+      filterByStatus("pending");
     }
 
     if (type === "canceled") {
       filterByStatus("canceled");
+    }
+    if (type === "delivered") {
+      filterByStatus("delivered");
     }
   };
   useEffect(() => {
@@ -198,10 +201,16 @@ const Order = () => {
               text="All"
             />
             <FilterBtn
-              active={filter === "returned"}
-              onClick={() => handleFilter("returned")}
+              active={filter === "pending"}
+              onClick={() => handleFilter("pending")}
               icon={<FaUndoAlt />}
-              text="Returned"
+              text="Pending"
+            />
+            <FilterBtn
+              active={filter === "delivered"}
+              onClick={() => handleFilter("delivered")}
+              icon={<FaUndoAlt />}
+              text="delivered"
             />
             <FilterBtn
               active={filter === "canceled"}
