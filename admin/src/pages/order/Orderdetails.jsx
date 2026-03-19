@@ -12,7 +12,6 @@ import {
   FaHashtag,
 } from "react-icons/fa";
 import { orderApis } from "../../apis/order";
-import toast from "react-hot-toast";
 
 const Orderdetails = () => {
   const { id } = useParams();
@@ -20,12 +19,10 @@ const Orderdetails = () => {
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
 
-  // --- Logic remains identical ---
   const getSingleOrder = async () => {
     try {
       setLoading(true);
       const res = await orderApis.getSingle(id);
-      console.log("single order", res);
 
       if (res.order) {
         setOrder(res.order);
@@ -40,8 +37,8 @@ const Orderdetails = () => {
   const markAsDelivered = async () => {
     try {
       setLoading(true);
-      const res = await orderApis.updateStatus(id, {status:"delivered"});
-      console.log("response", res);
+      await orderApis.updateStatus(id, { status: "delivered" });
+      getSingleOrder(); // refresh
       setLoading(false);
     } catch (error) {
       setLoading(false);
@@ -76,139 +73,172 @@ const Orderdetails = () => {
         </div>
       </Layout>
     );
-  // if (!order) return null;
 
   return (
     <Layout>
       <div className="space-y-6">
-        {/* TOP NAVIGATION & ACTIONS */}
+        {/* TOP NAV */}
         <div className="flex items-center justify-between border-b border-gray-100 pb-4">
           <button
             onClick={() => navigate("/order")}
-            className="flex items-center gap-2 text-[11px] font-bold uppercase tracking-widest text-gray-400 hover:text-gray-900 transition-colors"
+            className="flex items-center gap-2 text-[11px] font-bold uppercase tracking-widest text-gray-400 hover:text-gray-900"
           >
             <FaArrowLeft size={10} /> Back to Orders
           </button>
 
-          <div className="flex gap-2">
-            <button onClick={markAsDelivered} className="px-4 py-2 text-[11px] font-bold uppercase tracking-widest bg-green-600 text-white rounded-sm hover:bg-green-700 transition-all">
-              Mark Delivered
-            </button>
-          </div>
+          <button
+            onClick={markAsDelivered}
+            className="px-4 py-2 text-[11px] font-bold uppercase tracking-widest bg-green-600 text-white rounded-sm hover:bg-green-700"
+          >
+            Mark Delivered
+          </button>
         </div>
 
-        {/* ORDER SUMMARY HEADER */}
-        <div className="bg-white border border-gray-200 rounded-sm p-6 flex flex-col md:flex-row items-center md:items-start gap-6">
-          <div className="w-16 h-16 bg-gray-900 text-white flex items-center justify-center text-xl font-bold rounded-sm shadow-sm">
+        {/* HEADER */}
+        <div className="bg-white border border-gray-200 rounded-sm p-6 flex flex-col md:flex-row gap-6">
+          <div className="w-16 h-16 bg-gray-900 text-white flex items-center justify-center text-xl rounded-sm">
             <FaBoxOpen />
           </div>
-          <div className="flex-1 text-center md:text-left">
-            <div className="flex flex-col md:flex-row md:items-center gap-2 mb-2">
-              <h1 className="text-xl font-bold text-gray-900 tracking-tight flex items-center gap-2">
-                Order <span className="text-gray-400">#{order?.orderno}</span>
-              </h1>
-              <span className={getStatusStyle(order?.status)}>
-                {order?.status}
+
+          <div className="flex-1">
+            <h1 className="text-xl font-bold">
+              Order <span className="text-gray-400">#{order?.orderno}</span>
+            </h1>
+
+            <span className={getStatusStyle(order?.status)}>
+              {order?.status}
+            </span>
+
+            <div className="flex gap-4 text-xs text-gray-500 mt-2">
+              <span className="flex items-center gap-1">
+                <FaRegCalendarAlt />{" "}
+                {new Date(order?.createdAt).toLocaleString("en-IN")}
               </span>
-            </div>
-            <div className="flex flex-wrap justify-center md:justify-start gap-4 text-xs text-gray-500 font-medium">
-              <span className="flex items-center gap-1.5">
-                <FaRegCalendarAlt className="text-gray-300" /> Placed on{" "}
-                {new Date(order?.createdAt).toLocaleString("en-IN")}{" "}
-              </span>
-              <span className="flex items-center gap-1.5">
-                <FaHashtag className="text-gray-300" /> ID: {order?._id}
+
+              <span className="flex items-center gap-1">
+                <FaHashtag /> {order?._id}
               </span>
             </div>
           </div>
         </div>
 
-        {/* CUSTOMER & SHIPPING GRID */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          {/* Customer Details */}
-          <div className="bg-white border border-gray-200 rounded-sm">
-            <div className="px-4 py-3 border-b border-gray-100 flex items-center justify-between bg-gray-50/50">
-              <h3 className="text-xs font-bold text-gray-900 uppercase tracking-widest">
-                Customer Information
-              </h3>
-              <FaUser className="text-gray-300 text-xs" />
+        {/* GRID */}
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+          {/* CUSTOMER */}
+          <div className="bg-white border rounded-sm">
+            <div className="p-3 border-b bg-gray-50 flex justify-between">
+              <h3 className="text-xs font-bold uppercase">Customer Info</h3>
+              <FaUser />
             </div>
-            <div className="p-4 space-y-4">
-              <div className="flex items-center justify-between text-xs">
-                <span className="text-gray-400 font-medium">Full Name</span>
-                <span className="text-gray-900 font-bold">
-                  {order?.customername}
-                </span>
+
+            <div className="p-4 space-y-3 text-xs">
+              <div className="flex justify-between">
+                <span>Name</span>
+                <span className="font-bold">{order?.customername}</span>
               </div>
-              <div className="flex items-center justify-between text-xs">
-                <span className="text-gray-400 font-medium">Phone Number</span>
-                <span className="text-gray-900 font-bold">
-                  {order?.phoneno}
-                </span>
+
+              <div className="flex justify-between">
+                <span>Phone</span>
+                <span className="font-bold">{order?.phoneno}</span>
               </div>
             </div>
           </div>
 
-          {/* Shipping Address */}
-          <div className="bg-white border border-gray-200 rounded-sm">
-            <div className="px-4 py-3 border-b border-gray-100 flex items-center justify-between bg-gray-50/50">
-              <h3 className="text-xs font-bold text-gray-900 uppercase tracking-widest">
-                Shipping Address
-              </h3>
-              <FaMapMarkerAlt className="text-gray-300 text-xs" />
+          {/* SHIPPING */}
+          <div className="bg-white border rounded-sm">
+            <div className="p-3 border-b bg-gray-50 flex justify-between">
+              <h3 className="text-xs font-bold uppercase">Shipping</h3>
+              <FaMapMarkerAlt />
             </div>
-            <div className="p-4">
-              <p className="text-xs font-bold text-gray-900 leading-relaxed uppercase tracking-tight">
-                {order?.shippingaddress}
-                <br />
-                PIN: {order?.pincode}
-              </p>
+
+            <div className="p-4 text-xs font-bold">
+              {order?.shippingaddress}
+              <br />
+              PIN: {order?.pincode}
+            </div>
+          </div>
+
+          {/* PAYMENT */}
+          <div className="bg-white border rounded-sm">
+            <div className="p-3 border-b bg-gray-50 flex justify-between">
+              <h3 className="text-xs font-bold uppercase">Payment Info</h3>
+              <FaRupeeSign />
+            </div>
+
+            <div className="p-4 space-y-3 text-xs">
+              <div className="flex justify-between">
+                <span>Method</span>
+                <span className="font-bold">
+                  {order?.payment ? "Online (Razorpay)" : "Cash on Delivery"}
+                </span>
+              </div>
+
+              <div className="flex justify-between">
+                <span>Status</span>
+                <span className="font-bold">
+                  {order?.payment ? "Paid" : "Pending"}
+                </span>
+              </div>
+
+              {order?.payment && (
+                <>
+                  <div className="flex justify-between">
+                    <span>Payment ID</span>
+                    <span className="font-bold">
+                      {order.payment.razorpay_payment_id}
+                    </span>
+                  </div>
+
+                  <div className="flex justify-between">
+                    <span>Order ID</span>
+                    <span className="font-bold">
+                      {order.payment.razorpay_order_id}
+                    </span>
+                  </div>
+
+                  <div className="flex justify-between">
+                    <span>Paid On</span>
+                    <span className="font-bold">
+                      {new Date(order.payment.createdAt).toLocaleString(
+                        "en-IN",
+                      )}
+                    </span>
+                  </div>
+                </>
+              )}
             </div>
           </div>
         </div>
 
-        {/* ITEMS TABLE */}
-        <div className="bg-white border border-gray-200 rounded-sm shadow-sm overflow-hidden">
-          <div className="px-4 py-3 border-b border-gray-100 bg-gray-50/50">
-            <h3 className="text-xs font-bold text-gray-900 uppercase tracking-widest">
-              Order Manifest
-            </h3>
-          </div>
-          <table className="w-full text-left border-collapse">
+        {/* ITEMS */}
+        <div className="bg-white border rounded-sm">
+          <table className="w-full text-xs">
             <thead>
-              <tr className="border-b border-gray-100 text-[10px] uppercase tracking-widest font-bold text-gray-400">
-                <th className="px-6 py-4">Item Description</th>
-                <th className="px-6 py-4">Qty</th>
-                <th className="px-6 py-4">Unit Price</th>
-                <th className="px-6 py-4 text-right">Total</th>
+              <tr className="border-b text-gray-400">
+                <th className="p-3 text-left">Item</th>
+                <th>Qty</th>
+                <th>Price</th>
+                <th className="text-right pr-4">Total</th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-gray-50">
-              {order?.items?.map((item, index) => (
-                <tr key={index} className="text-xs text-gray-700">
-                  <td className="px-6 py-4 font-bold text-gray-900">
-                    {item.name}
-                  </td>
-                  <td className="px-6 py-4 font-medium">{item?.quantity}</td>
-                  <td className="px-6 py-4 font-medium">₹{item?.price}</td>
-                  <td className="px-6 py-4 text-right font-bold text-gray-900">
-                    ₹₹{item?.productId?.price * item?.quantity}
+
+            <tbody>
+              {order?.items?.map((item, i) => (
+                <tr key={i} className="border-b">
+                  <td className="p-3 font-bold">{item.name}</td>
+                  <td>{item.quantity}</td>
+                  <td>₹{item.productId?.price}</td>
+                  <td className="text-right pr-4 font-bold">
+                    ₹{item.productId?.price * item.quantity}
                   </td>
                 </tr>
               ))}
             </tbody>
           </table>
 
-          {/* TOTAL FOOTER */}
-          <div className="bg-gray-50 px-6 py-4 border-t border-gray-100 flex justify-end">
-            <div className="flex items-center gap-4">
-              <span className="text-[10px] font-bold text-gray-400 uppercase tracking-[0.2em]">
-                Grand Total
-              </span>
-              <span className="text-xl font-black text-gray-900 flex items-center">
-                <FaRupeeSign size={14} className="mt-1" /> {order?.ordertotal}
-              </span>
-            </div>
+          {/* TOTAL */}
+          <div className="p-4 flex justify-end bg-gray-50">
+            <span className="text-lg font-bold">₹ {order?.ordertotal}</span>
           </div>
         </div>
       </div>
