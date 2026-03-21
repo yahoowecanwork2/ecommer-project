@@ -364,6 +364,50 @@ export const adminGetProductsByKeyword = async (req, res) => {
     });
   }
 };
+export const adminGetProductsByName = async (req, res) => {
+  try {
+    const { name } = req.params;
+    if (!name) {
+      return res.status(400).json({
+        success: false,
+        message: "name is required",
+      });
+    }
+    const sortDirection = -1;
+    const startIndex = 0;
+    const limit = 10;
+    const products = await Product.find({
+      name: { $regex: name, $options: "i" },
+    })
+      .select("name slug uniqueId stock image price available insale")
+      .sort({ createdAt: sortDirection })
+      .skip(startIndex)
+      .limit(limit);
+    const formattedProducts = products.map((product) => ({
+      _id: product._id,
+      name: product.name,
+      slug: product.slug,
+      uniqueId: product.uniqueId,
+      stock: product.stock,
+      price: product.price,
+      available: product.available,
+      insale: product.insale,
+      image: product.image?.length > 0 ? product.image[0] : null,
+    }));
+
+    return res.status(200).json({
+      success: true,
+      totalProducts: formattedProducts.length,
+      products: formattedProducts,
+    });
+  } catch (error) {
+    console.error(error);
+    return res.status(500).json({
+      success: false,
+      message: "Failed to get products by name",
+    });
+  }
+};
 
 export const adminGetProductsByCategory = async (req, res) => {
   try {

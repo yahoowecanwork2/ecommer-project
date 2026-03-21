@@ -4,6 +4,7 @@ import {
   adminGetProducts,
   adminGetProductsByCategory,
   adminGetProductsByKeyword,
+  adminGetProductsByName,
   adminGetSingleProduct,
   createProduct,
   deleteProduct,
@@ -40,6 +41,11 @@ productRoutes.get(
   "/admin/filter/:keyword",
   checkAdmin,
   adminGetProductsByKeyword,
+);
+productRoutes.get(
+  "/admin/filterbyName/:name",
+  checkAdmin,
+  adminGetProductsByName,
 );
 productRoutes.get(
   "/admin/filter-by-cat/:categoryId",
