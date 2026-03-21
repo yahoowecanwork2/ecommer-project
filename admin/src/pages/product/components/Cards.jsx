@@ -6,14 +6,12 @@ import { useNavigate } from "react-router-dom";
 const Cards = ({ item }) => {
   const navigate = useNavigate();
 
-  // Handle availability logic exactly as provided
-  const isAvailable = item?.available === "yes";
+  const isAvailable = item?.stock > 0;
 
   return (
     <div className="group relative bg-white border border-gray-200 rounded-sm overflow-hidden shadow-sm hover:shadow-md transition-all duration-300 flex flex-col">
-      
       {/* IMAGE CONTAINER */}
-      <div 
+      <div
         onClick={() => navigate(`/product-detail/${item._id}`)}
         className="relative h-48 overflow-hidden cursor-pointer bg-gray-50"
       >
@@ -22,14 +20,16 @@ const Cards = ({ item }) => {
           alt={item?.name}
           className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
         />
-        
+
         {/* STATUS BADGE */}
         <div className="absolute top-2 left-2">
-          <span className={`px-2 py-0.5 text-[9px] font-bold uppercase tracking-widest border rounded-sm shadow-sm ${
-            isAvailable 
-              ? "bg-green-500 text-white border-green-500" 
-              : "bg-white text-red-600 border-red-100"
-          }`}>
+          <span
+            className={`px-2 py-0.5 text-[9px] font-bold uppercase tracking-widest border rounded-sm shadow-sm ${
+              isAvailable
+                ? "bg-green-500 text-white border-green-500"
+                : "bg-white text-red-600 border-red-100"
+            }`}
+          >
             {isAvailable ? "In Stock" : "Sold Out"}
           </span>
         </div>
@@ -49,7 +49,9 @@ const Cards = ({ item }) => {
         {/* DETAILS GRID */}
         <div className="mt-4 pt-4 border-t border-gray-50 flex justify-between items-center">
           <div className="flex flex-col">
-            <span className="text-[9px] text-gray-400 font-bold uppercase tracking-widest">Price</span>
+            <span className="text-[9px] text-gray-400 font-bold uppercase tracking-widest">
+              Price
+            </span>
             <span className="flex items-center text-sm font-black text-gray-900">
               <FaRupeeSign className="text-[10px]" />
               {item?.price}
@@ -57,7 +59,9 @@ const Cards = ({ item }) => {
           </div>
 
           <div className="flex flex-col items-end">
-            <span className="text-[9px] text-gray-400 font-bold uppercase tracking-widest">Stock</span>
+            <span className="text-[9px] text-gray-400 font-bold uppercase tracking-widest">
+              Stock
+            </span>
             <span className="flex items-center gap-1 text-xs font-bold text-gray-700">
               <MdInventory size={12} className="text-gray-300" />
               {item?.stock}

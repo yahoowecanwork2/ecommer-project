@@ -25,6 +25,7 @@ const Product = () => {
   const [loading, setLoading] = useState(false);
   const [products, setProducts] = useState([]);
   const [filterByCategories, setFilterByCategories] = useState([]);
+  const [filterByName, setFilterByName] = useState([]);
   const [categories, setCategories] = useState([]);
   const [selectedCategory, setSelectedCategory] = useState("");
   const [showModal, setShowModal] = useState(false);
@@ -48,6 +49,7 @@ const Product = () => {
         fetchProducts();
       } else {
         setProducts([]);
+        setFilterByName([]);
         setLoading(true);
         const res = await productApi.filterByCategories(value, 1, limit);
         setFilterByCategories(res.products);
@@ -80,13 +82,18 @@ const Product = () => {
     }
   };
 
-  const fetchProducts = async () => {
+  // filter by name
+  const handleSearch = async (value) => {
+    setSearch(value);
+    setCategories([]);
+    setFilterByCategories([]);
+
     try {
-      setFilterByCategories([]);
       setLoading(true);
-      const startIndex = (page - 1) * limit;
-      const res = await productApi.get(startIndex, limit);
-      setProducts(res.products);
+      const res = await productApi.filterByName(value);
+      console.log("filter by name", res);
+
+      setFilterByName(res.products);
       setLoading(false);
     } catch (error) {
       setLoading(false);
@@ -94,6 +101,27 @@ const Product = () => {
     }
   };
 
+  const fetchProducts = async () => {
+    try {
+      setFilterByCategories([]);
+      setFilterByName([]);
+      setLoading(true);
+      const startIndex = (page - 1) * limit;
+      const res = await productApi.get(startIndex, limit);
+      console.log("all product", res);
+
+      setProducts(res.products);
+      setLoading(false);
+    } catch (error) {
+      setLoading(false);
+      console.log(error);
+    }
+  };
+  const getDisplayData = () => {
+    if (search) return filterByName;
+    if (selectedCategory) return filterByCategories;
+    return products;
+  };
   useEffect(() => {
     fetchProducts(page);
     getCategories();
@@ -108,7 +136,6 @@ const Product = () => {
   return (
     <Layout>
       <div className="space-y-6">
-
         {/* HEADER SECTION */}
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-gray-100 pb-4">
           <div>
@@ -169,7 +196,7 @@ const Product = () => {
                 placeholder="Search products..."
                 className="w-full pl-10 pr-4 py-2 text-xs border border-gray-200 rounded-sm bg-gray-50 focus:bg-white focus:ring-1 focus:ring-gray-900 outline-none transition-all"
                 value={search}
-                onChange={(e) => setSearch(e.target.value)}
+                onChange={(e) => handleSearch(e.target.value)}
               />
             </div>
 
@@ -224,8 +251,7 @@ const Product = () => {
           </div>
         ) : (
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
-            {renderCards(products)}
-            {renderCards(filterByCategories)}
+            {renderCards(getDisplayData())}
           </div>
         )}
 

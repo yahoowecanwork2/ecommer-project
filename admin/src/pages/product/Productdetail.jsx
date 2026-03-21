@@ -33,6 +33,8 @@ const Productdetail = () => {
   const getSingleProduct = async () => {
     try {
       const res = await productApi.getSingle(id);
+      console.log("product detail", res);
+
       setProduct(res.product);
       setActiveImg(res.product.image[0]?.url);
     } catch (error) {
@@ -95,7 +97,6 @@ const Productdetail = () => {
         </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
-          
           {/* LEFT: IMAGE GALLERY (4 cols) */}
           <div className="lg:col-span-5 space-y-4">
             <div className="bg-white border border-gray-200 rounded-sm p-4 relative group">
@@ -121,10 +122,15 @@ const Productdetail = () => {
                   key={i}
                   onClick={() => setActiveImg(img.url)}
                   className={`relative w-20 h-20 flex-shrink-0 border transition-all rounded-sm overflow-hidden bg-gray-50 ${
-                    activeImg === img.url ? "border-gray-900 ring-1 ring-gray-900" : "border-gray-200"
+                    activeImg === img.url
+                      ? "border-gray-900 ring-1 ring-gray-900"
+                      : "border-gray-200"
                   }`}
                 >
-                  <img src={img.url} className="w-full h-full object-cover mix-blend-multiply" />
+                  <img
+                    src={img.url}
+                    className="w-full h-full object-cover mix-blend-multiply"
+                  />
                 </button>
               ))}
             </div>
@@ -132,21 +138,21 @@ const Productdetail = () => {
 
           {/* RIGHT: DATA SECTION (7 cols) */}
           <div className="lg:col-span-7 space-y-6">
-            
             {/* Primary Info */}
             <div className="bg-white border border-gray-200 rounded-sm p-6 shadow-sm">
               <div className="flex items-center gap-2 mb-2">
-                 <span className="text-[10px] font-bold text-gray-400 uppercase tracking-[0.2em] flex items-center gap-1">
+                <span className="text-[10px] font-bold text-gray-400 uppercase tracking-[0.2em] flex items-center gap-1">
                   <MdCategory /> {product?.category?.name}
                 </span>
               </div>
               <h2 className="text-2xl font-black text-gray-900 uppercase tracking-tight mb-4">
                 {product?.name}
               </h2>
-              
+
               <div className="flex items-baseline gap-4 mb-6">
                 <span className="text-3xl font-black text-gray-900 flex items-center gap-1">
-                  <span className="text-lg font-bold mt-1">₹</span>{product?.price}
+                  <span className="text-lg font-bold mt-1">₹</span>
+                  {product?.price}
                 </span>
                 {product?.discount > 0 && (
                   <span className="text-[10px] font-bold bg-green-500 text-white px-2 py-1 rounded-sm uppercase tracking-widest">
@@ -162,11 +168,12 @@ const Productdetail = () => {
 
             {/* Inventory & Status Grid */}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              
               {/* Stock Tile */}
               <div className="bg-white border border-gray-200 rounded-sm p-4 flex items-center justify-between">
                 <div>
-                  <p className="text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-1">Current Stock</p>
+                  <p className="text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-1">
+                    Current Stock
+                  </p>
                   <p className="text-lg font-black text-gray-900 flex items-center gap-2">
                     <MdInventory className="text-gray-300" /> {product?.stock}
                   </p>
@@ -180,14 +187,26 @@ const Productdetail = () => {
               </div>
 
               {/* Status Tile */}
-              <div className={`border rounded-sm p-4 flex items-center gap-3 ${
-                product?.available === "yes" ? "bg-green-50 border-green-100 text-green-700" : "bg-red-50 border-red-100 text-red-700"
-              }`}>
-                {product?.available === "yes" ? <FaCheckCircle size={20} /> : <FaTimesCircle size={20} />}
+              <div
+                className={`border rounded-sm p-4 flex items-center gap-3 ${
+                  product?.available === "yes"
+                    ? "bg-green-50 border-green-100 text-green-700"
+                    : "bg-red-50 border-red-100 text-red-700"
+                }`}
+              >
+                {product?.available === "yes" ? (
+                  <FaCheckCircle size={20} />
+                ) : (
+                  <FaTimesCircle size={20} />
+                )}
                 <div>
-                  <p className="text-[10px] font-bold uppercase tracking-widest opacity-70 mb-0.5">Availability</p>
+                  <p className="text-[10px] font-bold uppercase tracking-widest opacity-70 mb-0.5">
+                    Availability
+                  </p>
                   <p className="text-xs font-black uppercase tracking-tight">
-                    {product?.available === "yes" ? "Available" : "Out of Stock"}
+                    {product?.available === "yes"
+                      ? "Available"
+                      : "Out of Stock"}
                   </p>
                 </div>
               </div>
@@ -195,10 +214,16 @@ const Productdetail = () => {
               {/* Refund Policy */}
               <div className="bg-white border border-gray-200 rounded-sm p-4 flex items-center justify-between col-span-1 md:col-span-2">
                 <div className="flex items-center gap-4">
-                  <div className="bg-gray-50 p-2 rounded-sm"><GiTakeMyMoney size={20} className="text-gray-400" /></div>
+                  <div className="bg-gray-50 p-2 rounded-sm">
+                    <GiTakeMyMoney size={20} className="text-gray-400" />
+                  </div>
                   <div>
-                    <p className="text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-1">Refund Policy</p>
-                    <p className="text-xs font-black text-gray-900 uppercase">{product?.refund}% Money Back Guarantee</p>
+                    <p className="text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-1">
+                      Refund Policy
+                    </p>
+                    <p className="text-xs font-black text-gray-900 uppercase">
+                      {product?.refund}% Money Back Guarantee
+                    </p>
                   </div>
                 </div>
                 <button
@@ -212,7 +237,9 @@ const Productdetail = () => {
 
             {/* Metadata Footer */}
             <div className="bg-gray-50 border border-gray-100 rounded-sm p-4">
-              <p className="text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-2">Search Keywords</p>
+              <p className="text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-2">
+                Search Keywords
+              </p>
               <div className="flex flex-wrap gap-2 text-[11px] text-gray-600 font-medium">
                 {product?.keywords || "No keywords defined"}
               </div>
@@ -222,16 +249,32 @@ const Productdetail = () => {
 
         {/* MODAL COMPONENTS */}
         {openEdit && (
-          <Updatefileds product={product} setOpenEdit={setOpenEdit} refresh={getSingleProduct} />
+          <Updatefileds
+            product={product}
+            setOpenEdit={setOpenEdit}
+            refresh={getSingleProduct}
+          />
         )}
         {openStock && (
-          <Update product={product} setOpenStock={setOpenStock} refresh={getSingleProduct} />
+          <Update
+            product={product}
+            setOpenStock={setOpenStock}
+            refresh={getSingleProduct}
+          />
         )}
         {openRefund && (
-          <Updaterefund product={product} setOpenRefund={setOpenRefund} refresh={getSingleProduct} />
+          <Updaterefund
+            product={product}
+            setOpenRefund={setOpenRefund}
+            refresh={getSingleProduct}
+          />
         )}
         {openImage && (
-          <Updateimage product={product} setOpenImage={setOpenImage} refresh={getSingleProduct} />
+          <Updateimage
+            product={product}
+            setOpenImage={setOpenImage}
+            refresh={getSingleProduct}
+          />
         )}
       </div>
     </Layout>

@@ -6,7 +6,8 @@ const Updatefields = ({ product, setOpenEdit, refresh }) => {
   const [form, setForm] = useState({
     name: product.name,
     description: product.description,
-    category: product.category.name,
+    category: product.category._id,
+    categoryName: product.category.name,
     keywords: product.keywords,
     discount: product.discount,
     price: product.price,
@@ -129,10 +130,10 @@ const Updatefields = ({ product, setOpenEdit, refresh }) => {
             </label>
             <input
               className="w-full border border-gray-200 p-2.5 rounded-sm text-xs font-mono bg-gray-50/30 focus:border-gray-900 transition-all outline-none"
-              name="category"
-              value={form.category}
+              name="categoryName"
+              value={form.categoryName}
               onChange={handleChange}
-              placeholder="Category ID"
+              placeholder="Category"
             />
           </div>
 

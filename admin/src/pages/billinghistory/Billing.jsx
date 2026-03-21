@@ -62,7 +62,7 @@ const Billing = () => {
                 Billing History
               </p>
 
-              {user?.previousSubscrip.length > 0 && (
+              {user?.previousSubscrip?.length > 0 && (
                 <input
                   type="text"
                   placeholder="Search Invoice..."
@@ -92,7 +92,7 @@ const Billing = () => {
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-gray-50">
-                  {payments.length === 0 ? (
+                  {payments?.length === 0 ? (
                     <tr>
                       <td colSpan="5" className="py-14 text-center">
                         <div className="flex flex-col items-center gap-3 text-gray-400">
@@ -110,13 +110,13 @@ const Billing = () => {
                       </td>
                     </tr>
                   ) : (
-                    payments.map((pay) => (
+                    payments?.map((pay) => (
                       <tr
                         key={pay._id}
                         className="hover:bg-gray-50 transition-colors"
                       >
                         <td className="px-4 py-4 text-[11px] font-black text-gray-900">
-                          {pay.razorpay_payment_id}
+                          {pay?.razorpay_payment_id}
                         </td>
 
                         <td className="px-4 py-4 text-[11px] text-gray-500 font-medium uppercase">

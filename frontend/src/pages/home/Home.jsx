@@ -159,7 +159,7 @@ const Home = () => {
       url: video5,
       user: "@kuddi_diaries",
     },
-     {
+    {
       id: 5,
       url: video3,
       user: "@kuddi_diaries",
@@ -304,7 +304,6 @@ const Home = () => {
           {/* --- Product Grid --- */}
           <div className="grid grid-cols-2 lg:grid-cols-4 gap-x-4 gap-y-10 md:gap-x-8 md:gap-y-12">
             {products?.slice(0, 8).map((item, i) => (
-              /* Dynamic Link using slug */
               <Link
                 key={i}
                 to={`/product-detail/${item.slug}`}
@@ -312,6 +311,13 @@ const Home = () => {
               >
                 {/* Card Image Container */}
                 <div className="relative aspect-[3/4] overflow-hidden rounded-[24px] bg-[#f3f3f3] mb-4 transition-all duration-500">
+                  {/* Discount Badge */}
+                  {item.discount > 0 && (
+                    <div className="absolute top-2 left-2 bg-red-500 text-white text-[10px] px-2 py-1 rounded z-10">
+                      {item.discount}% OFF
+                    </div>
+                  )}
+
                   <img
                     src={item?.image?.url || item?.img}
                     className="w-full h-full object-cover transition-transform duration-[1.2s] group-hover:scale-110"
@@ -332,13 +338,30 @@ const Home = () => {
                   <h3 className="text-[13px] md:text-[14px] text-gray-800 font-medium truncate mb-1">
                     {item.name}
                   </h3>
+
+                  {/* Price Section FIXED */}
                   <div className="flex items-center justify-center gap-2">
-                    <p className="text-[15px] font-bold text-[#c9a07a]">
-                      ₹{item.price}
-                    </p>
-                    <span className="text-[10px] text-gray-400 line-through">
-                      ₹{Math.round(item.price * 1.3)}
-                    </span>
+                    {item.discount > 0 ? (
+                      <>
+                        {/* Discounted Price */}
+                        <p className="text-[15px] font-bold text-[#c9a07a]">
+                          ₹
+                          {Math.round(
+                            item.price - (item.price * item.discount) / 100,
+                          )}
+                        </p>
+
+                        {/* Original Price */}
+                        <span className="text-[10px] text-gray-400 line-through">
+                          ₹{item.price}
+                        </span>
+                      </>
+                    ) : (
+                      /* No Discount */
+                      <p className="text-[15px] font-bold text-[#c9a07a]">
+                        ₹{item.price}
+                      </p>
+                    )}
                   </div>
                 </div>
               </Link>
