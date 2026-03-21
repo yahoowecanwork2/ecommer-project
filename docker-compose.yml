@@ -10,6 +10,8 @@ services:
       - ./server/.env
     networks:
       - proxy-net
+    volumes:
+      - ./uploads:/app/uploads
 
   frontend:
     build:
