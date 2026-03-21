@@ -1,7 +1,7 @@
 import express from "express";
 import {
   createCategory,
-  deleteCategory,
+  // deleteCategory,
   getCategories,
   getCategoryNames,
   updateCategory,
@@ -28,6 +28,6 @@ categoryRoutes.post(
 categoryRoutes.put("/update-name/:categoryId", checkAdmin, updateCategory);
 
 //Delete category
-categoryRoutes.delete("/delete/:categoryId", checkAdmin, deleteCategory)
+// categoryRoutes.delete("/delete/:categoryId", checkAdmin, deleteCategory);
 
 export default categoryRoutes;
