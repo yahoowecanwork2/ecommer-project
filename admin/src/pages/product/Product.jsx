@@ -86,6 +86,8 @@ const Product = () => {
       setLoading(true);
       const startIndex = (page - 1) * limit;
       const res = await productApi.get(startIndex, limit);
+      console.log("all product", res);
+
       setProducts(res.products);
       setLoading(false);
     } catch (error) {
@@ -108,7 +110,6 @@ const Product = () => {
   return (
     <Layout>
       <div className="space-y-6">
-
         {/* HEADER SECTION */}
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-gray-100 pb-4">
           <div>

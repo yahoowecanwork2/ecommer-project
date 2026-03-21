@@ -236,7 +236,7 @@ const Order = () => {
                 </tr>
               </thead>
               <tbody className="divide-y divide-gray-100">
-                {orders.map((order) => (
+                {orders?.map((order) => (
                   <Card key={order._id} order={order} />
                 ))}
               </tbody>
