@@ -11,7 +11,7 @@ services:
     networks:
       - proxy-net
     volumes:
-      - /home/deployer/apps/ecommerce-module/server/uploads:/app/uploads
+      - ./server/uploads:/app/uploads
 
   frontend:
     build:
