@@ -14,7 +14,7 @@ export const categoriesApi = {
     return res.data;
   },
   update: async (data, categoryId) => {
-    const res = await api.update(`/category/update-name/${categoryId}`, data);
+    const res = await api.put(`/category/update-name/${categoryId}`, data);
     return res.data;
   },
   delete: async (categoryId) => {
