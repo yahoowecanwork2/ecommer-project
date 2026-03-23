@@ -1,5 +1,7 @@
 import { Category } from "../models/Category.js";
 import { generateSlug } from "../utils/slugGenerate.js";
+import fs from "fs";
+import path from "path";
 
 export const getCategoryNames = async (req, res) => {
   try {
@@ -105,18 +107,49 @@ export const updateCategory = async (req, res) => {
 
 export const deleteCategory = async (req, res) => {
   try {
+    const category = await Category.findById(req.params.categoryId);
+
+    if (!category) {
+      return res.status(404).json({ message: "Category not found" });
+    }
+
+    // 🧹 Delete image(s)
+    if (category.image) {
+
+      // If image is array
+      if (Array.isArray(category.image)) {
+        category.image.forEach((img) => {
+          if (img.url) {
+            const fileName = path.basename(img.url);
+            const imagePath = path.join("uploads", fileName);
+
+            if (fs.existsSync(imagePath)) {
+              fs.unlinkSync(imagePath);
+            }
+          }
+        });
+      } 
+      
+      // If single image object
+      else if (category.image.url) {
+        const fileName = path.basename(category.image.url);
+        const imagePath = path.join("uploads", fileName);
+
+        if (fs.existsSync(imagePath)) {
+          fs.unlinkSync(imagePath);
+        }
+      }
+    }
+    // 🗑️ Delete category
     const deletedCategory = await Category.findByIdAndDelete(
       req.params.categoryId
     );
 
-    if (!deletedCategory) {
-      return res.status(404).json({ message: "Category not found" });
-    }
-
     res.status(200).json({
-      message: "Category deleted successfully",
+      message: "Category and image deleted successfully",
       data: deletedCategory,
     });
+
   } catch (error) {
     res.status(500).json({
       message: "Error deleting category",

@@ -2,6 +2,7 @@ import { removeFiles } from "../middleware/uploadProducts.js";
 import Product from "../models/Product.js";
 import { generateProducttId } from "../utils/idGenerate.js";
 import { generateSlug } from "../utils/slugGenerate.js";
+import fs from "fs";
 import path from "path";
 
 export const userGetProducts = async (req, res) => {
@@ -681,10 +682,39 @@ export const updateProductRefund = async (req, res) => {
 
 export const deleteProduct = async (req, res) => {
   try {
+    const product = await Product.findById(req.params.productId);
+
+    if (!product) {
+      return res.status(404).json({
+        success: false,
+        message: "Product not found",
+      });
+    }
+
+    // Delete images
+    if (product.image && Array.isArray(product.image)) {
+      product.image.forEach((img) => {
+        if (img.url) {
+          // Extract filename from URL
+          const fileName = img.url.split("/uploads/")[1];
+
+          if (fileName) {
+            const imagePath = path.join("uploads", fileName);
+
+            if (fs.existsSync(imagePath)) {
+              fs.unlinkSync(imagePath);
+            }
+          }
+        }
+      });
+    }
+
+    // Delete product
     await Product.findByIdAndDelete(req.params.productId);
+
     return res.status(200).json({
       success: true,
-      message: "Product and all related data deleted successfully",
+      message: "Product and images deleted successfully",
     });
   } catch (error) {
     console.error("Error deleting product:", error);
