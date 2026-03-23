@@ -6,6 +6,7 @@ import Resetpassword from "../pages/auth/Resetpassword";
 import { Navigate, Route, Routes } from "react-router-dom";
 import Protectedroutes from "../middleware/Protectedroutes";
 import { lazy } from "react";
+import Categorie from "../pages/category/Categorie";
 
 const User = lazy(() => import("../pages/users/User"));
 const Product = lazy(() => import("../pages/product/Product"));
@@ -42,6 +43,14 @@ const Pagesroutes = () => {
           element={
             <Protectedroutes>
               <Userdetail />
+            </Protectedroutes>
+          }
+        />
+        <Route
+          path="/categorie"
+          element={
+            <Protectedroutes>
+              <Categorie />
             </Protectedroutes>
           }
         />

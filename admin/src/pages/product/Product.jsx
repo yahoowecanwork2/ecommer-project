@@ -149,10 +149,16 @@ const Product = () => {
 
           <div className="flex gap-2">
             <button
-              onClick={() => setCreateCategories(true)}
+              onClick={() => navigate("/categorie")}
               className="bg-gray-100 text-gray-900 px-4 py-2 rounded-sm text-[11px] font-bold uppercase tracking-widest border border-gray-200 hover:bg-gray-200 transition-all flex items-center gap-2"
             >
               <MdCategory className="text-sm" /> Categories
+            </button>
+            <button
+              onClick={() => setCreateCategories(true)}
+              className="bg-gray-100 text-gray-900 px-4 py-2 rounded-sm text-[11px] font-bold uppercase tracking-widest border border-gray-200 hover:bg-gray-200 transition-all flex items-center gap-2"
+            >
+              <MdCategory className="text-sm" /> Create Categories
             </button>
             <button
               onClick={() => setShowModal(true)}
