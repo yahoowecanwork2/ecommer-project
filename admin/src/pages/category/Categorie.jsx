@@ -58,28 +58,30 @@ const Categorie = () => {
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-          {categories.map((cat) => (
+          {categories?.map((cat) => (
             <div
-              key={cat._id}
+              key={cat?._id}
               className="group relative border border-gray-200 overflow-hidden bg-white hover:border-black transition-all duration-500 shadow-sm hover:shadow-xl"
             >
               <div className="aspect-square bg-gray-100 overflow-hidden">
-                {cat.images && cat.images[0] ? (
-                  <img
-                    src={cat.images[0]}
-                    alt={cat.name}
-                    className="w-full h-full object-cover grayscale group-hover:grayscale-0 transition-all duration-700 transform group-hover:scale-110"
-                  />
-                ) : (
-                  <div className="w-full h-full flex items-center justify-center text-gray-300">
-                    No Image
-                  </div>
-                )}
+                <div className="aspect-square bg-gray-100 overflow-hidden">
+                  {cat?.image && cat?.image?.length > 0 ? (
+                    <img
+                      src={cat.image[0].url}
+                      alt={cat.name}
+                      className="w-full h-full object-cover transition-all duration-700 transform group-hover:scale-110"
+                    />
+                  ) : (
+                    <div className="w-full h-full flex items-center justify-center text-gray-300">
+                      No Image
+                    </div>
+                  )}
+                </div>
               </div>
 
               <div className="p-4 flex justify-between items-center">
                 <h3 className="font-bold text-lg uppercase tracking-tight">
-                  {cat.name}
+                  {cat?.name}
                 </h3>
                 <div className="flex gap-3">
                   <button
