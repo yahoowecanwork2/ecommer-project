@@ -405,33 +405,63 @@ export const adminGetProducts = async (req, res) => {
     const startIndex = parseInt(req.query.startIndex) || 0;
     const limit = parseInt(req.query.limit) || 10;
     const sortDirection = req.query.sort === "asc" ? 1 : -1;
+
     const products = await Product.find()
-      .select("name slug uniqueId stock image price available insale")
+      .select("name slug uniqueId variants available insale createdAt")
       .sort({ createdAt: sortDirection })
       .skip(startIndex)
       .limit(limit);
-    const formattedProducts = products.map((product) => ({
-      _id: product._id,
-      name: product.name,
-      slug: product.slug,
-      uniqueId: product.uniqueId,
-      stock: product.stock,
-      price: product.price,
-      available: product.available,
-      insale: product.insale,
-      image: product.image?.length > 0 ? product.image[0] : null,
-    }));
+
+    const formattedProducts = products.map((product) => {
+      // ✅ all variants
+      const variants = product.variants || [];
+
+      // ✅ total stock (all variants ka sum)
+      const totalStock = variants.reduce((acc, v) => acc + (v.stock || 0), 0);
+
+      // ✅ lowest price (best for UI)
+      const prices = variants.map((v) => v.price || 0);
+      const minPrice = prices.length > 0 ? Math.min(...prices) : 0;
+
+      // ✅ first image (first variant se)
+      const firstImage =
+        variants.length > 0 && variants[0].image && variants[0].image.length > 0
+          ? variants[0].image[0].url
+          : null;
+
+      return {
+        _id: product._id,
+        name: product.name,
+        slug: product.slug,
+        uniqueId: product.uniqueId,
+
+        // ✅ calculated fields
+        stock: totalStock,
+        price: minPrice,
+
+        available: product.available,
+        insale: product.insale,
+
+        image: firstImage,
+      };
+    });
+
+    // ✅ total count (pagination ke liye)
+    const totalProducts = await Product.countDocuments();
 
     return res.status(200).json({
       success: true,
-      totalProducts: formattedProducts.length,
+      totalProducts,
+      currentCount: formattedProducts.length,
       products: formattedProducts,
     });
   } catch (error) {
-    console.error(error);
+    console.error("Admin Get Products Error:", error);
+
     return res.status(500).json({
       success: false,
       message: "Failed to get all products",
+      error: error.message,
     });
   }
 };
