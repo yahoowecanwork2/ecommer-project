@@ -3,7 +3,7 @@ import { api } from ".";
 // product api
 export const productApi = {
   create: async (data) => {
-    const res = await api.post("/product/create", data);
+    const res = await api.post("/product/creates", data);
     return res.data;
   },
   get: async (startIndex = 0, limit = 10) => {

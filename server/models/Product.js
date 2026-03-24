@@ -28,6 +28,20 @@ const productSchema = new mongoose.Schema(
       type: String,
       required: true,
     },
+    image: [
+      {
+        url: {
+          type: String,
+          required: true,
+        },
+        index: {
+          type: Number,
+          required: true,
+        },
+      },
+    ],
+
+    // ✅ VARIANTS (ONLY SIZE DATA)
     variants: [
       {
         size: {
@@ -35,26 +49,8 @@ const productSchema = new mongoose.Schema(
           enum: ["S", "M", "L", "XL", "XXL", "Free Size"],
           required: true,
         },
-        price: {
-          type: Number,
-          required: true,
-        },
-        stock: {
-          type: Number,
-          required: true,
-        },
-        image: [
-          {
-            url: {
-              type: String,
-              required: true,
-            },
-            index: {
-              type: Number,
-              required: true,
-            },
-          },
-        ],
+        price: Number,
+        stock: Number,
       },
     ],
     // stock: {
