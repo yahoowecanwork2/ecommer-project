@@ -39,11 +39,112 @@ export const checkoutPayment = async (req, res) => {
   }
 };
 
+// export const createOrder = async (req, res) => {
+//   try {
+//     const {
+//       items,
+//       customername,
+//       phoneno,
+//       emailid,
+//       shippingaddress,
+//       pincode,
+//       alternateno,
+//       calculatedamount,
+//       discount,
+//       ordertotal,
+//       paymentType,
+//       razorpay_order_id,
+//       razorpay_payment_id,
+//       razorpay_signature,
+//     } = req.body;
+
+//     // 🛑 Validate items
+//     if (!items || items.length === 0) {
+//       return res.status(400).json({
+//         success: false,
+//         message: "Order items required",
+//       });
+//     }
+
+//     let paymentDoc = null;
+
+//     console.log(razorpay_order_id,razorpay_payment_id,razorpay_signature);
+
+//     // 💳 Handle online payment
+//     if (paymentType === "online") {
+//       if (!razorpay_order_id || !razorpay_payment_id || !razorpay_signature) {
+//         return res.status(400).json({
+//           success: false,
+//           message: "Razorpay payment details required",
+//         });
+//       }
+
+//       // 🔐 Verify Razorpay signature
+//       const body = razorpay_order_id + "|" + razorpay_payment_id;
+
+//       const expectedSignature = crypto
+//         .createHmac("sha256", process.env.RAZORPAY_SECRET)
+//         .update(body.toString())
+//         .digest("hex");
+
+//       if (expectedSignature !== razorpay_signature) {
+//         return res.status(400).json({
+//           success: false,
+//           message: "Invalid payment signature",
+//         });
+//       }
+
+//       // ✅ Create payment first
+//       paymentDoc = await Payment.create({
+//         razorpay_order_id,
+//         razorpay_payment_id,
+//         razorpay_signature,
+//         customerId: req.id,
+//         amount: ordertotal,
+//       });
+//     }
+
+//     // 📦 Create order (now safe ✅)
+//     const order = await Order.create({
+//       items,
+//       customerId: req.id,
+//       orderno: generateOrderId(),
+//       customername,
+//       phoneno,
+//       emailid,
+//       shippingaddress,
+//       pincode,
+//       alternateno,
+//       calculatedamount,
+//       discount,
+//       ordertotal,
+//       paymentType,
+//       payment: paymentDoc?._id, // ✅ important fix
+//       paymentstatus: paymentType === "online" ? "complete" : "pending",
+//     });
+
+//     return res.status(201).json({
+//       success: true,
+//       message: "Order created successfully",
+//       order,
+//     });
+//   } catch (error) {
+//     console.error("Create Order Error:", error);
+//     return res.status(500).json({
+//       success: false,
+//       message: "Server Error",
+//     });
+//   }
+// };
+
+import Product from "../models/Product.js";
+import Products from "../models/Products.js";
 
 export const createOrder = async (req, res) => {
   try {
     const {
       items,
+
       customername,
       phoneno,
       emailid,
@@ -67,10 +168,35 @@ export const createOrder = async (req, res) => {
       });
     }
 
-    let paymentDoc = null;
+    // 🔥 STEP 1: STOCK VALIDATION
+    for (let item of items) {
+      const product = await Product.findById(item.productId);
 
-    console.log(razorpay_order_id,razorpay_payment_id,razorpay_signature);
-    
+      if (!product) {
+        return res.status(404).json({
+          success: false,
+          message: "Product not found",
+        });
+      }
+
+      const variant = product.variants.find((v) => v.size === item.size);
+
+      if (!variant) {
+        return res.status(400).json({
+          success: false,
+          message: `Size ${item.size} not available`,
+        });
+      }
+
+      if (variant.stock < item.quantity) {
+        return res.status(400).json({
+          success: false,
+          message: `Out of stock for size ${item.size}`,
+        });
+      }
+    }
+
+    let paymentDoc = null;
 
     // 💳 Handle online payment
     if (paymentType === "online") {
@@ -81,7 +207,6 @@ export const createOrder = async (req, res) => {
         });
       }
 
-      // 🔐 Verify Razorpay signature
       const body = razorpay_order_id + "|" + razorpay_payment_id;
 
       const expectedSignature = crypto
@@ -96,7 +221,6 @@ export const createOrder = async (req, res) => {
         });
       }
 
-      // ✅ Create payment first
       paymentDoc = await Payment.create({
         razorpay_order_id,
         razorpay_payment_id,
@@ -106,10 +230,11 @@ export const createOrder = async (req, res) => {
       });
     }
 
-    // 📦 Create order (now safe ✅)
+    // 📦 STEP 2: CREATE ORDER
     const order = await Order.create({
       items,
-      customerId: req.id,
+      // customerId: req.id,
+      customerId: req.id || req.body.customerId,
       orderno: generateOrderId(),
       customername,
       phoneno,
@@ -121,9 +246,24 @@ export const createOrder = async (req, res) => {
       discount,
       ordertotal,
       paymentType,
-      payment: paymentDoc?._id, // ✅ important fix
+      payment: paymentDoc?._id,
       paymentstatus: paymentType === "online" ? "complete" : "pending",
     });
+
+    // 🔥 STEP 3: STOCK REDUCE (MOST IMPORTANT)
+    for (let item of items) {
+      await Products.updateOne(
+        {
+          _id: item.productId,
+          "variants.size": item.size,
+        },
+        {
+          $inc: {
+            "variants.$.stock": -item.quantity,
+          },
+        },
+      );
+    }
 
     return res.status(201).json({
       success: true,
@@ -140,6 +280,8 @@ export const createOrder = async (req, res) => {
 };
 
 // my orders
+
+//
 export const getMyOrders = async (req, res) => {
   try {
     const userId = req.id;

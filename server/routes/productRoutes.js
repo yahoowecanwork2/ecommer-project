@@ -6,7 +6,7 @@ import {
   adminGetProductsByKeyword,
   adminGetProductsByName,
   adminGetSingleProduct,
-  createProduct,
+  createProducts,
   deleteProduct,
   filterProduct,
   filterProductByName,
@@ -29,13 +29,15 @@ const productRoutes = express.Router();
 // filter by name
 // get single
 productRoutes.get("/all", userGetProducts);
+// productRoutes.get("/alls", usersGetProducts);
 productRoutes.get("/filter-by-cat/:categoryId", userGetProductsByCategoy);
 productRoutes.get("/filter/:keyword", filterProduct);
 productRoutes.get("/filter-by/:name", filterProductByName);
 productRoutes.get("/get-single/:slug", getProductBySlug);
 
 // ------------------ admin routes -------------------------
-productRoutes.post("/create", checkAdmin, uploadProducts, createProduct);
+// productRoutes.post("/create", checkAdmin, uploadProducts, createProducts);
+productRoutes.post("/creates", checkAdmin, uploadProducts, createProducts);
 productRoutes.get("/admin/get-all", checkAdmin, adminGetProducts);
 productRoutes.get(
   "/admin/filter/:keyword",

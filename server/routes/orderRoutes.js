@@ -22,7 +22,8 @@ const orderRoutes = express.Router();
 
 // --------------------------------------- user routes -------------------------------------
 orderRoutes.post("/checkout", isAuthenticated, checkoutPayment);
-orderRoutes.post("/create", isAuthenticated, createOrder);
+// orderRoutes.post("/create", isAuthenticated, createOrder);
+orderRoutes.post("/create", createOrder);
 orderRoutes.get("/get-my", isAuthenticated, getMyOrders);
 orderRoutes.get("/get-single/:orderId", isAuthenticated, getSingleOrder);
 orderRoutes.put(
