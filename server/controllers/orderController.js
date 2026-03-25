@@ -608,27 +608,30 @@ export const allUsersOrders = async (req, res) => {
     const page = parseInt(req.query.page) || 1;
     const limit = parseInt(req.query.limit) || 10;
     const skip = (page - 1) * limit;
+
     // Get total count for frontend pagination
     const totalOrders = await Order.countDocuments();
-    // Fetch paginated orders
+
+    // Fetch paginated orders with full item details
     const orders = await Order.find()
       .select(
         `orderno 
-        customername 
-        phoneno 
-        shippingaddress 
-        pincode 
-        ordertotal 
-        delivereddate 
-        status 
-        cancelStatus 
-        return 
-        createdAt
-        items.name 
-        items.quantity 
-        items.itemId 
-        items.itemModel
-      `,
+         customername 
+         phoneno 
+         shippingaddress 
+         pincode 
+         ordertotal 
+         delivereddate 
+         status 
+         cancelStatus 
+         return 
+         createdAt
+         items.name 
+         items.quantity 
+         items.size
+         items.price
+         items.imageurl
+         items.productId`,
       )
       .sort({ createdAt: -1 })
       .skip(skip)
@@ -656,19 +659,24 @@ export const getUserOrderById = async (req, res) => {
     const order = await Order.findById(req.params.orderId)
       .select(
         `
-        orderno 
+        orderno
         customerId
-        customername 
-        phoneno 
-        shippingaddress 
-        pincode 
-        ordertotal 
-        delivereddate 
-        status 
-        cancelStatus 
-        return 
+        customername
+        phoneno
+        shippingaddress
+        pincode
+        ordertotal
+        delivereddate
+        status
+        cancelStatus
+        return
         createdAt
-        items
+        items.name
+        items.quantity
+        items.size
+        items.price
+        items.imageurl
+        items.productId
       `,
       )
       .populate({
@@ -706,28 +714,40 @@ export const getUserOrderById = async (req, res) => {
 export const filterByStatus = async (req, res) => {
   try {
     const { status } = req.body;
-    const orderCount = (await Order.find({ status: status })).length;
-    const orders = await Order.find({ status: status })
+
+    // Total count of filtered orders
+    const orderCount = await Order.countDocuments({ status });
+
+    // Fetch orders with items' details
+    const orders = await Order.find({ status })
       .select(
-        `orderno 
-        customername 
-        phoneno 
-        shippingaddress 
-        pincode 
-        ordertotal 
-        delivereddate 
-        status 
-        cancelStatus 
-        return 
+        `
+        orderno
+        customername
+        phoneno
+        shippingaddress
+        pincode
+        ordertotal
+        delivereddate
+        status
+        cancelStatus
+        return
         createdAt
-        items.name 
-        items.quantity 
-        items.productId 
-        items.itemModel
+        items.name
+        items.quantity
+        items.size
+        items.price
+        items.imageurl
+        items.productId
       `,
       )
+      .populate({
+        path: "items.productId",
+        select: "name price image slug",
+      })
       .sort({ createdAt: -1 })
       .lean();
+
     return res.status(200).json({
       success: true,
       orderCount,
@@ -775,33 +795,50 @@ export const filterOrderByDate = async (req, res) => {
 export const filterByReturnStatus = async (req, res) => {
   try {
     const { returnstatus } = req.params;
-    const orderCount = (await Order.find({ return: returnstatus })).length;
+    const page = parseInt(req.query.page) || 1;
+    const limit = parseInt(req.query.limit) || 10;
+    const skip = (page - 1) * limit;
+
+    // Total count of filtered orders
+    const orderCount = await Order.countDocuments({ return: returnstatus });
+
+    // Fetch orders with items' details
     const orders = await Order.find({ return: returnstatus })
       .select(
-        `orderno 
-        customername 
-        phoneno 
-        shippingaddress 
-        pincode 
-        ordertotal 
-        delivereddate 
-        status 
-        cancelStatus 
-        return 
+        `
+        orderno
+        customername
+        phoneno
+        shippingaddress
+        pincode
+        ordertotal
+        delivereddate
+        status
+        cancelStatus
+        return
         createdAt
-        items.name 
-        items.quantity 
-        items.productId 
-        items.itemModel
+        items.name
+        items.quantity
+        items.size
+        items.price
+        items.imageurl
+        items.productId
       `,
       )
+      .populate({
+        path: "items.productId",
+        select: "name price image slug",
+      })
       .sort({ createdAt: -1 })
       .skip(skip)
       .limit(limit)
       .lean();
+
     return res.status(200).json({
       success: true,
       orderCount,
+      currentPage: page,
+      totalPages: Math.ceil(orderCount / limit),
       orders,
     });
   } catch (error) {
@@ -815,34 +852,52 @@ export const filterByReturnStatus = async (req, res) => {
 export const filterByCancelStatus = async (req, res) => {
   try {
     const { cancelstatus } = req.body;
-    const orderCount = (await Order.find({ cancelStatus: cancelstatus }))
-      .length;
+    const page = parseInt(req.query.page) || 1;
+    const limit = parseInt(req.query.limit) || 10;
+    const skip = (page - 1) * limit;
+
+    // Total count of filtered orders
+    const orderCount = await Order.countDocuments({
+      cancelStatus: cancelstatus,
+    });
+
+    // Fetch orders with items' details
     const orders = await Order.find({ cancelStatus: cancelstatus })
       .select(
-        `orderno 
-        customername 
-        phoneno 
-        shippingaddress 
-        pincode 
-        ordertotal 
-        delivereddate 
-        status 
-        cancelStatus 
-        return 
+        `
+        orderno
+        customername
+        phoneno
+        shippingaddress
+        pincode
+        ordertotal
+        delivereddate
+        status
+        cancelStatus
+        return
         createdAt
-        items.name 
-        items.quantity 
-        items.productId 
-        items.itemModel
+        items.name
+        items.quantity
+        items.size
+        items.price
+        items.imageurl
+        items.productId
       `,
       )
+      .populate({
+        path: "items.productId",
+        select: "name price image slug",
+      })
       .sort({ createdAt: -1 })
       .skip(skip)
       .limit(limit)
       .lean();
+
     return res.status(200).json({
       success: true,
       orderCount,
+      currentPage: page,
+      totalPages: Math.ceil(orderCount / limit),
       orders,
     });
   } catch (error) {
