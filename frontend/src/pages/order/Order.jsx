@@ -29,20 +29,20 @@ const Order = () => {
 
   useEffect(() => {
     if (user) {
-      setForm((prev) => ({
-        ...prev,
+      setForm({
         customername: user.name || "",
         phoneno: user.phoneno || "",
         emailid: user.email || "",
+        alternateno: "",
         shippingaddress: `${user.address?.locality || ""}, ${user.address?.city || ""}, ${user.address?.state || ""}`,
         pincode: user.address?.pinCode || "",
-      }));
+      });
     }
   }, [user]);
 
   useEffect(() => {
     const fetchCart = async () => {
-      if (items.length > 0) return;
+      if (items.length) return;
       try {
         setLoading(true);
         const res = await authApi.myCart();
@@ -50,7 +50,7 @@ const Order = () => {
           res.cart.forEach((item) => dispatch(addOrIncrementInCart(item)));
         }
       } catch (err) {
-        console.error("Cart error:", err);
+        console.error("Cart fetch error:", err);
       } finally {
         setLoading(false);
       }
@@ -62,6 +62,7 @@ const Order = () => {
     setForm({ ...form, [e.target.name]: e.target.value });
   };
 
+  // COD Order
   const createCodOrder = async () => {
     try {
       setLoading(true);
@@ -73,14 +74,15 @@ const Order = () => {
         ordertotal: total,
         paymentType: "cod",
       });
+
       if (res.success) {
-        toast.success("Order Placed");
+        toast.success("Order Placed Successfully");
         await authApi.clearCart();
         dispatch(clearCart());
         navigate("/my-order");
       }
     } catch (error) {
-      toast.error("Order Failed");
+      toast.error(error?.response?.data?.message || "Order Failed");
     } finally {
       setLoading(false);
     }
@@ -133,7 +135,7 @@ const Order = () => {
       };
       new window.Razorpay(options).open();
     } catch (error) {
-      toast.error("Payment Failed");
+      toast.error("Payment Failed", error);
     } finally {
       setLoading(false);
     }
@@ -239,9 +241,9 @@ const Order = () => {
               03. Review
             </h2>
             <div className="space-y-6 mb-12">
-              {items.map((item) => (
+              {items.map((item, i) => (
                 <div
-                  key={item.productId}
+                  key={`${item.productId}-${item.size}-${i}`}
                   className="flex justify-between items-center text-sm border-b border-gray-50 pb-4"
                 >
                   <span className="font-serif italic text-gray-600">

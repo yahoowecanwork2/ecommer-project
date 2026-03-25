@@ -3,6 +3,7 @@ import Order from "../models/Order.js";
 import { Payment } from "../models/Payment.js";
 import { generateOrderId } from "../utils/idGenerate.js";
 import crypto from "crypto";
+import Product from "../models/Product.js";
 
 //------------------------------ user controller ---------------------------
 // use rozer pay payment method check out payment
@@ -137,14 +138,10 @@ export const checkoutPayment = async (req, res) => {
 //   }
 // };
 
-import Product from "../models/Product.js";
-import Products from "../models/Products.js";
-
 export const createOrder = async (req, res) => {
   try {
     const {
-      items,
-
+      items, // Cart items from frontend
       customername,
       phoneno,
       emailid,
@@ -175,7 +172,7 @@ export const createOrder = async (req, res) => {
       if (!product) {
         return res.status(404).json({
           success: false,
-          message: "Product not found",
+          message: `Product not found: ${item.name}`,
         });
       }
 
@@ -184,14 +181,14 @@ export const createOrder = async (req, res) => {
       if (!variant) {
         return res.status(400).json({
           success: false,
-          message: `Size ${item.size} not available`,
+          message: `Size ${item.size} not available for ${item.name}`,
         });
       }
 
       if (variant.stock < item.quantity) {
         return res.status(400).json({
           success: false,
-          message: `Out of stock for size ${item.size}`,
+          message: `Out of stock for size ${item.size} of ${item.name}`,
         });
       }
     }
@@ -230,10 +227,19 @@ export const createOrder = async (req, res) => {
       });
     }
 
-    // 📦 STEP 2: CREATE ORDER
+    // 📦 STEP 2: PREPARE ORDER ITEMS WITH IMAGE URL
+    const orderItems = items.map((item) => ({
+      name: item.name,
+      imageurl: item.imageUrl, // ✅ exact image from cart
+      productId: item.productId,
+      quantity: item.quantity,
+      size: item.size,
+      price: item.price,
+    }));
+
+    // 📦 STEP 3: CREATE ORDER
     const order = await Order.create({
-      items,
-      // customerId: req.id,
+      items: orderItems,
       customerId: req.id || req.body.customerId,
       orderno: generateOrderId(),
       customername,
@@ -250,9 +256,9 @@ export const createOrder = async (req, res) => {
       paymentstatus: paymentType === "online" ? "complete" : "pending",
     });
 
-    // 🔥 STEP 3: STOCK REDUCE (MOST IMPORTANT)
+    // 🔥 STEP 4: REDUCE STOCK
     for (let item of items) {
-      await Products.updateOne(
+      await Product.updateOne(
         {
           _id: item.productId,
           "variants.size": item.size,
@@ -278,6 +284,144 @@ export const createOrder = async (req, res) => {
     });
   }
 };
+// export const createOrder = async (req, res) => {
+//   try {
+//     const {
+//       items,
+
+//       customername,
+//       phoneno,
+//       emailid,
+//       shippingaddress,
+//       pincode,
+//       alternateno,
+//       calculatedamount,
+//       discount,
+//       ordertotal,
+//       paymentType,
+//       razorpay_order_id,
+//       razorpay_payment_id,
+//       razorpay_signature,
+//     } = req.body;
+
+//     // 🛑 Validate items
+//     if (!items || items.length === 0) {
+//       return res.status(400).json({
+//         success: false,
+//         message: "Order items required",
+//       });
+//     }
+
+//     // 🔥 STEP 1: STOCK VALIDATION
+//     for (let item of items) {
+//       const product = await Product.findById(item.productId);
+
+//       if (!product) {
+//         return res.status(404).json({
+//           success: false,
+//           message: "Product not found",
+//         });
+//       }
+
+//       const variant = product.variants.find((v) => v.size === item.size);
+
+//       if (!variant) {
+//         return res.status(400).json({
+//           success: false,
+//           message: `Size ${item.size} not available`,
+//         });
+//       }
+
+//       if (variant.stock < item.quantity) {
+//         return res.status(400).json({
+//           success: false,
+//           message: `Out of stock for size ${item.size}`,
+//         });
+//       }
+//     }
+
+//     let paymentDoc = null;
+
+//     // 💳 Handle online payment
+//     if (paymentType === "online") {
+//       if (!razorpay_order_id || !razorpay_payment_id || !razorpay_signature) {
+//         return res.status(400).json({
+//           success: false,
+//           message: "Razorpay payment details required",
+//         });
+//       }
+
+//       const body = razorpay_order_id + "|" + razorpay_payment_id;
+
+//       const expectedSignature = crypto
+//         .createHmac("sha256", process.env.RAZORPAY_SECRET)
+//         .update(body.toString())
+//         .digest("hex");
+
+//       if (expectedSignature !== razorpay_signature) {
+//         return res.status(400).json({
+//           success: false,
+//           message: "Invalid payment signature",
+//         });
+//       }
+
+//       paymentDoc = await Payment.create({
+//         razorpay_order_id,
+//         razorpay_payment_id,
+//         razorpay_signature,
+//         customerId: req.id,
+//         amount: ordertotal,
+//       });
+//     }
+
+//     // 📦 STEP 2: CREATE ORDER
+//     const order = await Order.create({
+//       items,
+//       // customerId: req.id,
+//       customerId: req.id || req.body.customerId,
+//       orderno: generateOrderId(),
+//       customername,
+//       phoneno,
+//       emailid,
+//       shippingaddress,
+//       pincode,
+//       alternateno,
+//       calculatedamount,
+//       discount,
+//       ordertotal,
+//       paymentType,
+//       payment: paymentDoc?._id,
+//       paymentstatus: paymentType === "online" ? "complete" : "pending",
+//     });
+
+//     // 🔥 STEP 3: STOCK REDUCE (MOST IMPORTANT)
+//     for (let item of items) {
+//       await Product.updateOne(
+//         {
+//           _id: item.productId,
+//           "variants.size": item.size,
+//         },
+//         {
+//           $inc: {
+//             "variants.$.stock": -item.quantity,
+//           },
+//         },
+//       );
+//     }
+
+//     return res.status(201).json({
+//       success: true,
+//       message: "Order created successfully",
+//       order,
+//     });
+//   } catch (error) {
+//     console.error("Create Order Error:", error);
+//     return res.status(500).json({
+//       success: false,
+//       message: "Server Error",
+//     });
+//   }
+// };
 
 // my orders
 
@@ -286,32 +430,37 @@ export const getMyOrders = async (req, res) => {
   try {
     const userId = req.id;
 
-    const page = parseInt(req.query.page) || 1;
-    const limit = parseInt(req.query.limit) || 10;
+    // Pagination
+    const page = Math.max(parseInt(req.query.page) || 1, 1);
+    const limit = Math.max(parseInt(req.query.limit) || 10, 1);
     const skip = (page - 1) * limit;
 
     const query = { customerId: userId };
 
+    // Total orders count
     const totalOrders = await Order.countDocuments(query);
 
+    // Fetch orders with selected fields
     const orders = await Order.find(query)
       .select(
         `
-        orderno 
-        customername 
-        phoneno 
-        shippingaddress 
-        pincode 
-        ordertotal 
-        delivereddate 
-        status 
-        cancelStatus 
-        return 
+        orderno
+        customername
+        phoneno
+        shippingaddress
+        pincode
+        ordertotal
+        delivereddate
+        status
+        cancelStatus
+        return
         createdAt
-        items.name 
-        items.quantity 
+        items.name
+        items.quantity
         items.productId
         items.imageurl
+        items.size
+        items.price
       `,
       )
       .sort({ createdAt: -1 })
@@ -319,19 +468,25 @@ export const getMyOrders = async (req, res) => {
       .limit(limit)
       .lean();
 
+    // Pagination metadata
+    const totalPages = Math.ceil(totalOrders / limit);
+    const hasNextPage = page < totalPages;
+    const hasPrevPage = page > 1;
+
     return res.status(200).json({
       success: true,
       currentPage: page,
-      totalPages: Math.ceil(totalOrders / limit),
+      totalPages,
       totalOrders,
+      hasNextPage,
+      hasPrevPage,
       orders,
     });
   } catch (error) {
-    console.log("Get My Orders Error:", error);
-
+    console.error("Get My Orders Error:", error);
     return res.status(500).json({
       success: false,
-      message: error.message,
+      message: "Server Error: " + error.message,
     });
   }
 };

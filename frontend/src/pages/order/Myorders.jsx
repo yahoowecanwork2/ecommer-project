@@ -12,6 +12,8 @@ const Myorders = () => {
     try {
       setLoading(true);
       const res = await orderApi.myOrder();
+      console.log("my-order", res);
+
       if (res.success) setOrders(res.orders);
     } catch (error) {
       console.log(error);
@@ -36,7 +38,6 @@ const Myorders = () => {
       <Header />
 
       <main className="max-w-5xl mx-auto pt-26 pb-20 px-6">
-        
         {/* Page Header */}
         <div className="flex items-center justify-between mb-12">
           <div>
@@ -55,10 +56,7 @@ const Myorders = () => {
         {orders?.length > 0 ? (
           <div className="space-y-6">
             {orders.map((order) => (
-              <div
-                key={order._id}
-                className=" p-"
-              >
+              <div key={order._id} className=" p-">
                 <Card order={order} />
               </div>
             ))}
