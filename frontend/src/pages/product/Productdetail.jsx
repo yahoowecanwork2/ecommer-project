@@ -48,9 +48,11 @@ const Productdetail = () => {
     const payload = {
       productId: product._id,
       slug: product.slug,
-      price: finalPrice, // 🔥 important
+      price: finalPrice,
       size: selectedSize,
       imageUrl: activeImg,
+      name: product.name || "",
+      description: product.description || "",
     };
     try {
       dispatch(addOrIncrementInCart(payload));

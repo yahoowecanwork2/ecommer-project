@@ -40,11 +40,6 @@ const Cart = () => {
     }
   };
 
-  // useEffect(() => {
-  //   if (!cartItems || cartItems.length === 0) {
-  //     fetchCart();
-  //   }
-  // }, []);
   useEffect(() => {
     if (userId) {
       fetchCart();
