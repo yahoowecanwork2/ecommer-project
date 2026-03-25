@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { authApi } from "../../apis/auth";
 import {
@@ -23,10 +23,15 @@ const Cart = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const cartItems = useSelector((state) => state.cart.items);
+  const userId = useSelector((state) => state.user.user?._id);
+  // const [cart, setCart] = useState([]);
+  console.log(userId);
 
   const fetchCart = async () => {
     try {
       const res = await authApi.myCart();
+      console.log("FULL RESPONSE ", res);
+
       if (res?.cart) {
         dispatch(setCartItems(res.cart));
       }
@@ -35,41 +40,109 @@ const Cart = () => {
     }
   };
 
+  // useEffect(() => {
+  //   if (!cartItems || cartItems.length === 0) {
+  //     fetchCart();
+  //   }
+  // }, []);
   useEffect(() => {
-    if (!cartItems || cartItems.length === 0) {
+    if (userId) {
       fetchCart();
     }
-  }, []);
-
+  }, [userId]);
   // API Logic Helpers
+  // const updateQty = async (item, newQty) => {
+  //   if (newQty < 1) return;
+  //   try {
+  //     await authApi.updateQuantity({
+  //       productId: item.productId,
+  //       size: item.size,
+  //       imageUrl: item.imageUrl,
+  //       quantity: newQty,
+  //     });
+  //     if (newQty > item.quantity) {
+  //       dispatch(
+  //         addOrIncrementInCart({ productId: item.productId, quantity: newQty }),
+  //       );
+  //     } else {
+  //       dispatch(decrementOrRemoveInCart({ productId: item.productId }));
+  //     }
+  //   } catch (error) {
+  //     console.error("Update qty error:", error);
+  //   }
+  // };
   const updateQty = async (item, newQty) => {
     if (newQty < 1) return;
+
     try {
       await authApi.updateQuantity({
         productId: item.productId,
+        size: item.size,
+        imageUrl: item.imageUrl,
         quantity: newQty,
       });
+
+      // Pass all required fields to match your Redux slice
       if (newQty > item.quantity) {
         dispatch(
-          addOrIncrementInCart({ productId: item.productId, quantity: newQty }),
+          addOrIncrementInCart({
+            productId: item.productId,
+            price: item.price,
+            slug: item.slug,
+            name: item.name,
+            description: item.description,
+            imageUrl: item.imageUrl,
+            size: item.size,
+          }),
         );
       } else {
-        dispatch(decrementOrRemoveInCart({ productId: item.productId }));
+        dispatch(
+          decrementOrRemoveInCart({
+            productId: item.productId,
+            size: item.size,
+            imageUrl: item.imageUrl,
+          }),
+        );
       }
     } catch (error) {
       console.error("Update qty error:", error);
     }
   };
+  // const handleRemoveItem = async (item) => {
+  //   try {
+  //     await authApi.removeItemFromCart({
+  //       productId: item.productId,
+  //       size: item.size,
+  //       imageUrl: item.imageUrl,
+  //     });
 
-  const handleRemoveItem = async (productId) => {
+  //     // dispatch(removeItemInCart(item));
+  //     dispatch(
+  //       removeItemInCart({
+  //         productId: item.productId,
+  //         size: item.size,
+  //         imageUrl: item.imageUrl,
+  //       }),
+  //     );
+  //   } catch (error) {
+  //     console.error("Remove item error:", error);
+  //   }
+  // };
+  const handleRemoveItem = async (item) => {
     try {
-      await authApi.removeItemFromCart(productId);
-      dispatch(removeItemInCart(productId));
+      await authApi.removeItemFromCart(item);
+
+      dispatch(
+        removeItemInCart({
+          productId: item.productId,
+          size: item.size,
+          imageUrl: item.imageUrl,
+        }),
+      );
     } catch (error) {
       console.error("Remove item error:", error);
     }
   };
-
   // EMPTY STATE
   if (!cartItems || cartItems.length === 0) {
     return (
@@ -115,17 +188,18 @@ const Cart = () => {
           {/* LEFT: ITEMS LIST */}
           <div className="lg:col-span-8">
             <div className="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
-              {cartItems.map((item) => (
+              {cartItems?.map((item) => (
                 <div
-                  key={item.productId}
+                  // key={item.productId}
+                  key={`${item.productId}-${item.size}-${item.imageUrl}`}
                   className="p-6 sm:p-8 flex flex-col sm:flex-row gap-6 border-b border-gray-100 last:border-0"
                 >
                   {/* Image */}
                   <div className="w-full sm:w-32 h-40 bg-gray-50 rounded-xl overflow-hidden flex-shrink-0">
                     <img
-                      src={item.imageUrl}
+                      src={item?.imageUrl}
                       className="w-full h-full object-cover"
-                      alt={item.name}
+                      alt={item?.name}
                     />
                   </div>
 
@@ -134,14 +208,14 @@ const Cart = () => {
                     <div className="flex justify-between items-start">
                       <div>
                         <h3 className="text-lg font-medium text-gray-900">
-                          {item.name}
+                          {item?.name}
                         </h3>
                         <p className="text-sm text-gray-400 mt-1 uppercase tracking-wider">
                           Premium Selection
                         </p>
                       </div>
                       <p className="text-lg font-semibold text-gray-900">
-                        ₹{item.price.toLocaleString()}
+                        ₹{item?.price?.toLocaleString()}
                       </p>
                     </div>
 
@@ -149,16 +223,16 @@ const Cart = () => {
                       {/* Modern Qty Controls */}
                       <div className="flex items-center border border-gray-200 rounded-lg">
                         <button
-                          onClick={() => updateQty(item, item.quantity - 1)}
+                          onClick={() => updateQty(item, item?.quantity - 1)}
                           className="p-2 hover:bg-gray-50 transition-colors text-gray-600"
                         >
                           <IoRemoveOutline size={18} />
                         </button>
                         <span className="px-4 text-sm font-medium w-10 text-center">
-                          {item.quantity}
+                          {item?.quantity}
                         </span>
                         <button
-                          onClick={() => updateQty(item, item.quantity + 1)}
+                          onClick={() => updateQty(item, item?.quantity + 1)}
                           className="p-2 hover:bg-gray-50 transition-colors text-gray-600"
                         >
                           <IoAddOutline size={18} />
@@ -166,7 +240,8 @@ const Cart = () => {
                       </div>
 
                       <button
-                        onClick={() => handleRemoveItem(item.productId)}
+                        // onClick={() => handleRemoveItem(item.productId)}
+                        onClick={() => handleRemoveItem(item)}
                         className="flex items-center gap-1 text-xs font-medium text-gray-400 hover:text-red-500 transition-colors"
                       >
                         <IoTrashOutline size={16} /> Remove
@@ -205,12 +280,12 @@ const Cart = () => {
               </div>
 
               <button
-  onClick={() => navigate(`/order`)}
-  className="w-full bg-[#1a1a1a] text-white py-5 text-[11px] font-bold uppercase tracking-[0.2em] flex items-center justify-center gap-3 hover:bg-[#c9a07a] transition-all duration-500 shadow-xl shadow-gray-100/50 group active:scale-95 mb-6"
->
-  Checkout Now
-  <IoArrowForward className="text-sm group-hover:translate-x-2 transition-transform duration-500" />
-</button>
+                onClick={() => navigate(`/order`)}
+                className="w-full bg-[#1a1a1a] text-white py-5 text-[11px] font-bold uppercase tracking-[0.2em] flex items-center justify-center gap-3 hover:bg-[#c9a07a] transition-all duration-500 shadow-xl shadow-gray-100/50 group active:scale-95 mb-6"
+              >
+                Checkout Now
+                <IoArrowForward className="text-sm group-hover:translate-x-2 transition-transform duration-500" />
+              </button>
 
               <div className="flex items-center justify-center gap-2 text-gray-400 text-[11px] uppercase tracking-widest">
                 <IoShieldCheckmarkOutline className="text-green-500" /> Secure

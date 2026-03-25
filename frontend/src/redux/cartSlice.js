@@ -8,22 +8,58 @@ export const cartSlice = createSlice({
   },
 
   reducers: {
-    // this function store cart daat come with api 
+    // this function store cart daat come with api
     setCartItems: (state, action) => {
       state.items = action.payload || [];
 
       state.subtotal = state.items.reduce(
         (acc, item) =>
           acc + Number(item.price || 0) * Number(item.quantity || 0),
-        0
+        0,
       );
     },
     // add or increase item quantity if exist
     // store [0] imeg orl
+    // addOrIncrementInCart: (state, action) => {
+    //   const { productId, price, slug, name, description, imageUrl } =
+    //     action.payload;
+    //   const item = state.items.find((i) => i.productId === productId);
+    //   if (item) {
+    //     item.quantity += 1;
+    //   } else {
+    //     state.items.push({
+    //       productId,
+    //       slug,
+    //       price,
+    //       name,
+    //       description,
+    //       imageUrl,
+    //       quantity: 1,
+    //     });
+    //   }
+    //   state.subtotal = state.items.reduce(
+    //     (acc, item) =>
+    //       acc + Number(item.price || 0) * Number(item.quantity || 0),
+    //     0,
+    //   );
+    // },
+
     addOrIncrementInCart: (state, action) => {
-      const { productId, price, slug, name, description, imageUrl } =
-        action.payload;
-      const item = state.items.find((i) => i.productId === productId);
+      const {
+        productId,
+        price,
+        slug,
+        name,
+        description,
+        imageUrl,
+        size, // ✅ ADD
+      } = action.payload;
+
+      // ✅ FIX (product + size)
+      const item = state.items.find(
+        (i) => i.productId === productId && i.size === size,
+      );
+
       if (item) {
         item.quantity += 1;
       } else {
@@ -34,9 +70,11 @@ export const cartSlice = createSlice({
           name,
           description,
           imageUrl,
+          size, // ✅ ADD
           quantity: 1,
         });
       }
+
       state.subtotal = state.items.reduce(
         (acc, item) =>
           acc + Number(item.price || 0) * Number(item.quantity || 0),
@@ -44,34 +82,76 @@ export const cartSlice = createSlice({
       );
     },
 
-    
-
     // decrease quantity if exist if not exist remove item
-decrementOrRemoveInCart: (state, action) => {
-  const { productId } = action.payload;
-  const item = state.items.find((i) => i.productId === productId);
-  if (!item) return;
-  if (item.quantity > 1) {
-    item.quantity -= 1;
-  } else {
-    state.items = state.items.filter((i) => i.productId !== productId);
-  }
-  state.subtotal = state.items.reduce(
-    (acc, item) =>
-      acc + Number(item.price || 0) * Number(item.quantity || 0),
-    0
-  );
-},  
+    // decrementOrRemoveInCart: (state, action) => {
+    //   const { productId } = action.payload;
+    //   const item = state.items.find((i) => i.productId === productId);
+    //   if (!item) return;
+    //   if (item.quantity > 1) {
+    //     item.quantity -= 1;
+    //   } else {
+    //     state.items = state.items.filter((i) => i.productId !== productId);
+    //   }
+    //   state.subtotal = state.items.reduce(
+    //     (acc, item) =>
+    //       acc + Number(item.price || 0) * Number(item.quantity || 0),
+    //     0,
+    //   );
+    // },
+    decrementOrRemoveInCart: (state, action) => {
+      const { productId, size, imageUrl } = action.payload;
 
+      const item = state.items.find(
+        (i) =>
+          i.productId === productId &&
+          i.size === size &&
+          i.imageUrl === imageUrl,
+      );
 
+      if (!item) return;
 
-    removeItemInCart: (state, action) => {
-      const productId = action.payload;
-      state.items = state.items.filter((i) => i.productId !== productId);
+      if (item.quantity > 1) {
+        item.quantity -= 1;
+      } else {
+        state.items = state.items.filter(
+          (i) =>
+            !(
+              i.productId === productId &&
+              i.size === size &&
+              i.imageUrl === imageUrl
+            ),
+        );
+      }
 
       state.subtotal = state.items.reduce(
-        (acc, item) =>
-          acc + Number(item.price || 0) * Number(item.quantity || 0),
+        (acc, item) => acc + item.price * item.quantity,
+        0,
+      );
+    },
+    // removeItemInCart: (state, action) => {
+    //   const productId = action.payload;
+    //   state.items = state.items.filter((i) => i.productId !== productId);
+
+    //   state.subtotal = state.items.reduce(
+    //     (acc, item) =>
+    //       acc + Number(item.price || 0) * Number(item.quantity || 0),
+    //     0,
+    //   );
+    // },
+    removeItemInCart: (state, action) => {
+      const { productId, size, imageUrl } = action.payload;
+
+      state.items = state.items.filter(
+        (i) =>
+          !(
+            i.productId === productId &&
+            i.size === size &&
+            i.imageUrl === imageUrl
+          ),
+      );
+
+      state.subtotal = state.items.reduce(
+        (acc, item) => acc + item.price * item.quantity,
         0,
       );
     },
@@ -88,5 +168,5 @@ export const {
   decrementOrRemoveInCart,
   removeItemInCart,
   clearCart,
-  setCartItems
+  setCartItems,
 } = cartSlice.actions;

@@ -40,7 +40,7 @@ userRoutes.put("/profile-update", isAuthenticated, userUpdateProfile);
 userRoutes.put("/send-mail", isAuthenticated, sendEmailToUser);
 
 // cart
-userRoutes.get("/my-cart", isAuthenticated, getMyCartItems);
+userRoutes.get("/cart", isAuthenticated, getMyCartItems);
 userRoutes.put("/cart/add-item", isAuthenticated, addItemToCart);
 userRoutes.put("/cart/remove-item", isAuthenticated, removeFromCart);
 userRoutes.put("/cart/update-quantity", isAuthenticated, updateCartQuantity);

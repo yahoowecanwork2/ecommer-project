@@ -20,8 +20,11 @@ export const userGetProducts = async (req, res) => {
       .skip(startIndex)
       .limit(limit);
 
+    const total = await Product.countDocuments();
+
     const formattedProducts = products.map((product) => {
-      const defaultVariant = product.variants?.[0];
+      const defaultVariant =
+        product.variants?.find((v) => v.stock > 0) || product.variants?.[0];
 
       const totalStock = product.variants?.reduce(
         (acc, v) => acc + (v.stock || 0),
@@ -43,13 +46,13 @@ export const userGetProducts = async (req, res) => {
         available: totalStock > 0,
         insale: product.insale,
 
-        image: product.image?.length > 0 ? product.image[0] : null,
+        image: product.image?.length > 0 ? product.image[0].url : null,
       };
     });
 
     return res.status(200).json({
       success: true,
-      totalProducts: formattedProducts.length,
+      totalProducts: total,
       products: formattedProducts,
     });
   } catch (error) {
@@ -300,19 +303,52 @@ export const filterProductByName = async (req, res) => {
 export const getProductBySlug = async (req, res) => {
   try {
     const { slug } = req.params;
+
     const product = await Product.findOne({ slug }).select(
-      "-refund -refundReason",
+      "name slug uniqueId description keywords variants image discount insale createdAt",
     );
+
     if (!product) {
       return res.status(404).json({
         success: false,
         message: "Product not found",
       });
     }
+
+    // ✅ default variant
+    const defaultVariant = product.variants?.[0];
+
+    // ✅ total stock
+    const totalStock = product.variants?.reduce(
+      (acc, v) => acc + (v.stock || 0),
+      0,
+    );
+
+    const formattedProduct = {
+      _id: product._id,
+      name: product.name,
+      slug: product.slug,
+      uniqueId: product.uniqueId,
+      description: product.description,
+      keywords: product.keywords,
+
+      // ✅ IMPORTANT
+      price: defaultVariant?.price || 0,
+      stock: totalStock,
+      available: totalStock > 0,
+
+      discount: product.discount,
+      insale: product.insale,
+
+      image: product.image || [],
+
+      variants: product.variants || [],
+    };
+
     res.status(200).json({
       success: true,
       message: "Product by slug fetched successfully",
-      product,
+      product: formattedProduct,
     });
   } catch (error) {
     res.status(500).json({

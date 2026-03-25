@@ -41,7 +41,7 @@ export const authApi = {
 
   // ------------------------- cart apis -------------------------------------
   myCart: async () => {
-    const res = await api.get("/user/my-cart");
+    const res = await api.get(`/user/cart`);
     return res.data;
   },
 
@@ -50,11 +50,18 @@ export const authApi = {
     return res.data;
   },
 
-  removeItemFromCart: async (productId) => {
-    const res = await api.put("/user/cart/remove-item", { productId });
+  // removeItemFromCart: async (productId) => {
+  //   const res = await api.put("/user/cart/remove-item", { productId });
+  //   return res.data;
+  // },
+  removeItemFromCart: async (item) => {
+    const res = await api.put("/user/cart/remove-item", {
+      productId: item.productId,
+      size: item.size,
+      imageUrl: item.imageUrl,
+    });
     return res.data;
   },
-
   updateQuantity: async (data) => {
     const res = await api.put("/user/cart/update-quantity", data);
     return res.data;
