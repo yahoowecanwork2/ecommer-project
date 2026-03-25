@@ -11,27 +11,41 @@ export const userGetProducts = async (req, res) => {
     const startIndex = parseInt(req.query.startIndex) || 0;
     const limit = parseInt(req.query.limit) || 10;
     const sortDirection = req.query.sort === "asc" ? 1 : -1;
+
     const products = await Product.find()
       .select(
-        "name slug uniqueId description keywords stock image discount price available insale",
+        "name slug uniqueId description keywords variants image discount insale createdAt",
       )
       .sort({ createdAt: sortDirection })
       .skip(startIndex)
       .limit(limit);
-    const formattedProducts = products.map((product) => ({
-      _id: product._id,
-      name: product.name,
-      slug: product.slug,
-      uniqueId: product.uniqueId,
-      description: product.description,
-      keywords: product.keywords,
-      stock: product.stock,
-      discount: product.discount,
-      price: product.price,
-      available: product.available,
-      insale: product.insale,
-      image: product.image?.length > 0 ? product.image[0] : null,
-    }));
+
+    const formattedProducts = products.map((product) => {
+      const defaultVariant = product.variants?.[0];
+
+      const totalStock = product.variants?.reduce(
+        (acc, v) => acc + (v.stock || 0),
+        0,
+      );
+
+      return {
+        _id: product._id,
+        name: product.name,
+        slug: product.slug,
+        uniqueId: product.uniqueId,
+        description: product.description,
+        keywords: product.keywords,
+
+        price: defaultVariant?.price || 0,
+        stock: totalStock,
+
+        discount: product.discount,
+        available: totalStock > 0,
+        insale: product.insale,
+
+        image: product.image?.length > 0 ? product.image[0] : null,
+      };
+    });
 
     return res.status(200).json({
       success: true,
@@ -46,73 +60,93 @@ export const userGetProducts = async (req, res) => {
     });
   }
 };
-export const usersGetProducts = async (req, res) => {
-  try {
-    const startIndex = parseInt(req.query.startIndex) || 0;
-    const limit = parseInt(req.query.limit) || 10;
-    const sortDirection = req.query.sort === "asc" ? 1 : -1;
-    const products = await Products.find()
-      .select(
-        "name slug uniqueId description keywords stock image discount price available insale",
-      )
-      .sort({ createdAt: sortDirection })
-      .skip(startIndex)
-      .limit(limit);
-    const formattedProducts = products.map((product) => ({
-      _id: product._id,
-      name: product.name,
-      slug: product.slug,
-      uniqueId: product.uniqueId,
-      description: product.description,
-      keywords: product.keywords,
-      stock: product.stock,
-      discount: product.discount,
-      price: product.price,
-      available: product.available,
-      insale: product.insale,
-      image: product.image?.length > 0 ? product.image[0] : null,
-    }));
+// export const usersGetProducts = async (req, res) => {
+//   try {
+//     const startIndex = parseInt(req.query.startIndex) || 0;
+//     const limit = parseInt(req.query.limit) || 10;
+//     const sortDirection = req.query.sort === "asc" ? 1 : -1;
+//     const products = await Products.find()
+//       .select(
+//         "name slug uniqueId description keywords stock image discount price available insale",
+//       )
+//       .sort({ createdAt: sortDirection })
+//       .skip(startIndex)
+//       .limit(limit);
+//     const formattedProducts = products.map((product) => ({
+//       _id: product._id,
+//       name: product.name,
+//       slug: product.slug,
+//       uniqueId: product.uniqueId,
+//       description: product.description,
+//       keywords: product.keywords,
+//       stock: product.stock,
+//       discount: product.discount,
+//       price: product.price,
+//       available: product.available,
+//       insale: product.insale,
+//       image: product.image?.length > 0 ? product.image[0] : null,
+//     }));
 
-    return res.status(200).json({
-      success: true,
-      totalProducts: formattedProducts.length,
-      products: formattedProducts,
-    });
-  } catch (error) {
-    console.error(error);
-    return res.status(500).json({
-      success: false,
-      message: "Failed to get all products",
-    });
-  }
-};
+//     return res.status(200).json({
+//       success: true,
+//       totalProducts: formattedProducts.length,
+//       products: formattedProducts,
+//     });
+//   } catch (error) {
+//     console.error(error);
+//     return res.status(500).json({
+//       success: false,
+//       message: "Failed to get all products",
+//     });
+//   }
+// };
 
 export const userGetProductsByCategoy = async (req, res) => {
   try {
     const startIndex = parseInt(req.query.startIndex) || 0;
     const limit = parseInt(req.query.limit) || 10;
     const sortDirection = req.query.sort === "asc" ? 1 : -1;
-    const products = await Product.find({ category: req.params.categoryId })
+
+    const products = await Product.find({
+      category: req.params.categoryId,
+    })
       .select(
-        "name slug uniqueId description keywords stock image discount price available insale",
+        "name slug uniqueId description keywords variants image discount insale createdAt",
       )
       .sort({ createdAt: sortDirection })
       .skip(startIndex)
       .limit(limit);
-    const formattedProducts = products.map((product) => ({
-      _id: product._id,
-      name: product.name,
-      slug: product.slug,
-      uniqueId: product.uniqueId,
-      description: product.description,
-      keywords: product.keywords,
-      stock: product.stock,
-      discount: product.discount,
-      price: product.price,
-      available: product.available,
-      insale: product.insale,
-      image: product.image?.length > 0 ? product.image[0] : null,
-    }));
+
+    const formattedProducts = products.map((product) => {
+      // ✅ default variant (first one)
+      const defaultVariant = product.variants?.[0];
+
+      // ✅ total stock (sum of all variants)
+      const totalStock = product.variants?.reduce(
+        (acc, v) => acc + (v.stock || 0),
+        0,
+      );
+
+      return {
+        _id: product._id,
+        name: product.name,
+        slug: product.slug,
+        uniqueId: product.uniqueId,
+        description: product.description,
+        keywords: product.keywords,
+
+        // ✅ derived from variants
+        price: defaultVariant?.price || 0,
+        stock: totalStock,
+        available: totalStock > 0,
+
+        discount: product.discount,
+        insale: product.insale,
+
+        // ✅ first image
+        image: product.image?.length > 0 ? product.image[0] : null,
+      };
+    });
 
     return res.status(200).json({
       success: true,
@@ -123,7 +157,7 @@ export const userGetProductsByCategoy = async (req, res) => {
     console.error(error);
     return res.status(500).json({
       success: false,
-      message: "Failed to get all products",
+      message: "Failed to get category products",
     });
   }
 };
@@ -139,47 +173,63 @@ export const filterProduct = async (req, res) => {
       });
     }
 
-    const product = await Product.findOne({
+    const products = await Product.find({
       keywords: { $regex: keyword, $options: "i" },
     }).select(
-      "name slug uniqueId description keywords stock image discount price available insale",
+      "name slug uniqueId description keywords variants image discount insale createdAt",
     );
 
-    if (!product) {
+    if (!products || products.length === 0) {
       return res.status(404).json({
         success: false,
-        message: "Product not found",
+        message: "No products found",
       });
     }
 
-    const formattedProduct = {
-      _id: product._id,
-      name: product.name,
-      slug: product.slug,
-      uniqueId: product.uniqueId,
-      description: product.description,
-      keywords: product.keywords,
-      stock: product.stock,
-      discount: product.discount,
-      price: product.price,
-      available: product.available,
-      insale: product.insale,
-      image: product.image?.length > 0 ? product.image[0] : null,
-    };
+    const formattedProducts = products.map((product) => {
+      // ✅ default variant
+      const defaultVariant = product.variants?.[0];
+
+      // ✅ total stock
+      const totalStock = product.variants?.reduce(
+        (acc, v) => acc + (v.stock || 0),
+        0,
+      );
+
+      return {
+        _id: product._id,
+        name: product.name,
+        slug: product.slug,
+        uniqueId: product.uniqueId,
+        description: product.description,
+        keywords: product.keywords,
+
+        // ✅ derived fields
+        price: defaultVariant?.price || 0,
+        stock: totalStock,
+        available: totalStock > 0,
+
+        discount: product.discount,
+        insale: product.insale,
+
+        // ✅ first image
+        image: product.image?.length > 0 ? product.image[0] : null,
+      };
+    });
 
     return res.status(200).json({
       success: true,
-      product: formattedProduct,
+      totalProducts: formattedProducts.length,
+      products: formattedProducts,
     });
   } catch (error) {
     console.error(error);
     return res.status(500).json({
       success: false,
-      message: "Failed to get product",
+      message: "Failed to filter products",
     });
   }
 };
-// search by single name
 export const filterProductByName = async (req, res) => {
   try {
     const { name } = req.params;
@@ -191,43 +241,56 @@ export const filterProductByName = async (req, res) => {
       });
     }
 
-    const product = await Product.findOne({
+    const products = await Product.find({
       name: { $regex: name, $options: "i" },
     }).select(
-      "name slug uniqueId description keywords stock image discount price available insale",
+      "name slug uniqueId description keywords variants image discount insale createdAt",
     );
 
-    if (!product) {
+    if (!products || products.length === 0) {
       return res.status(404).json({
         success: false,
-        message: "Product not found",
+        message: "No products found",
       });
     }
 
-    const formattedProduct = {
-      _id: product._id,
-      name: product.name,
-      slug: product.slug,
-      uniqueId: product.uniqueId,
-      description: product.description,
-      keywords: product.keywords,
-      stock: product.stock,
-      discount: product.discount,
-      price: product.price,
-      available: product.available,
-      insale: product.insale,
-      image: product.image?.length > 0 ? product.image[0] : null,
-    };
+    const formattedProducts = products.map((product) => {
+      const defaultVariant = product.variants?.[0];
+
+      const totalStock = product.variants?.reduce(
+        (acc, v) => acc + (v.stock || 0),
+        0,
+      );
+
+      return {
+        _id: product._id,
+        name: product.name,
+        slug: product.slug,
+        uniqueId: product.uniqueId,
+        description: product.description,
+        keywords: product.keywords,
+
+        price: defaultVariant?.price || 0,
+        stock: totalStock,
+        available: totalStock > 0,
+
+        discount: product.discount,
+        insale: product.insale,
+
+        image: product.image?.length > 0 ? product.image[0] : null,
+      };
+    });
 
     return res.status(200).json({
       success: true,
-      product: formattedProduct,
+      totalProducts: formattedProducts.length,
+      products: formattedProducts,
     });
   } catch (error) {
     console.error(error);
     return res.status(500).json({
       success: false,
-      message: "Failed to get product",
+      message: "Failed to filter products by name",
     });
   }
 };
