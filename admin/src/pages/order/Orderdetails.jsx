@@ -26,6 +26,8 @@ const Orderdetails = () => {
     try {
       setLoading(true);
       const res = await orderApis.getSingle(id);
+      console.log("order-details", res);
+
       if (res.order) setOrder(res.order);
       setLoading(false);
     } catch (error) {
@@ -73,14 +75,10 @@ const Orderdetails = () => {
       </Layout>
     );
 
-  // Totals Calculation
   const subtotal =
-    order?.items?.reduce(
-      (acc, item) => acc + item.productId?.price * item.quantity,
-      0,
-    ) || 0;
-  const discountAmount = order?.discount || 0;
-
+    order?.items?.reduce((acc, item) => acc + item.price * item.quantity, 0) ||
+    0;
+  const discountAmount = Number(order?.discount || 0);
   return (
     <Layout>
       <div className="max-w-6xl mx-auto pb-20 font-sans text-zinc-900">
@@ -185,30 +183,49 @@ const Orderdetails = () => {
               <table className="w-full text-left border-collapse">
                 <thead>
                   <tr className="bg-zinc-50 border-b border-zinc-200 text-[10px] font-black uppercase text-zinc-400">
-                    <th className="px-6 py-4">Item Description</th>
+                    <th className="px-6 py-4">Item</th>
                     <th className="px-6 py-4 text-center">Qty</th>
                     <th className="px-6 py-4 text-right">Price</th>
                   </tr>
                 </thead>
+
                 <tbody className="divide-y divide-zinc-100">
                   {order?.items?.map((item, i) => (
                     <tr key={i} className="bg-white">
                       <td className="px-6 py-5">
-                        <span className="text-sm font-black block">
-                          {item.name}
-                        </span>
-                        <span className="text-[9px] text-zinc-400 tracking-widest uppercase">
-                          ID: {item.productId?._id?.slice(-8)}
-                        </span>
+                        <div className="flex items-center gap-4">
+                          <img
+                            src={item?.imageurl}
+                            alt={item?.name}
+                            className="w-16 h-20 object-cover rounded border"
+                            onError={(e) => {
+                              e.target.src =
+                                "https://via.placeholder.com/80x100?text=No+Image";
+                            }}
+                          />
+
+                          <div>
+                            <span className="text-sm font-black block">
+                              {item?.name}
+                            </span>
+
+                            <span className="text-[12px] text-zinc-900 uppercase">
+                              Size: {item?.size}
+                            </span>
+
+                            <span className="block text-[9px] text-zinc-300">
+                              ID: {item?.productId?._id?.slice(-8)}
+                            </span>
+                          </div>
+                        </div>
                       </td>
+
                       <td className="px-6 py-5 text-center text-sm font-bold">
-                        x{item.quantity}
+                        x{item?.quantity}
                       </td>
+
                       <td className="px-6 py-5 text-right text-sm font-black">
-                        ₹
-                        {(
-                          item.productId?.price * item.quantity
-                        ).toLocaleString()}
+                        ₹{(item?.price * item?.quantity).toLocaleString()}
                       </td>
                     </tr>
                   ))}
@@ -225,14 +242,14 @@ const Orderdetails = () => {
               <div className="space-y-3 border-b border-zinc-800 pb-6 mb-6">
                 <div className="flex justify-between text-[11px] font-bold text-zinc-400 uppercase">
                   <span>Gross Subtotal</span>
-                  <span>₹{subtotal.toLocaleString()}</span>
+                  <span>₹{subtotal?.toLocaleString()}</span>
                 </div>
                 <div className="flex justify-between text-[11px] font-bold text-zinc-400 uppercase">
                   <span className="flex items-center gap-1">
                     <FaTag size={10} /> Savings / Discount
                   </span>
                   <span className="text-white">
-                    - ₹{discountAmount.toLocaleString()}
+                    - ₹{discountAmount?.toLocaleString()}
                   </span>
                 </div>
               </div>
