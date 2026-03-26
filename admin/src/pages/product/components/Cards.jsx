@@ -16,7 +16,7 @@ const Cards = ({ item }) => {
         className="relative h-48 overflow-hidden cursor-pointer bg-gray-50"
       >
         <img
-          src={item?.image?.url}
+          src={item?.image}
           alt={item?.name}
           className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
         />
