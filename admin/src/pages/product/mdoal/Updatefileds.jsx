@@ -62,153 +62,194 @@ const Updatefields = ({ product, setOpenEdit, refresh }) => {
   };
 
   return (
-    <div className="fixed inset-0 bg-black/40 flex items-center justify-center z-50">
-      <div className="bg-white w-full max-w-3xl p-6 space-y-5 overflow-y-auto max-h-[90vh]">
-        {/* HEADER */}
-        <div className="flex justify-between items-center">
-          <h2 className="font-bold text-lg">Update Product</h2>
-          <button onClick={() => setOpenEdit(false)}>
-            <FaTimes />
-          </button>
+   <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-50 p-4">
+  <div className="bg-white w-full max-w-3xl rounded-xl shadow-2xl overflow-hidden flex flex-col max-h-[90vh]">
+    
+    {/* HEADER - Sticky & Clean */}
+    <div className="px-6 py-4 border-b border-gray-100 flex justify-between items-center bg-white sticky top-0 z-10">
+      <div>
+        <h2 className="font-bold text-xl text-gray-800">Update Product</h2>
+        <p className="text-xs text-gray-400">Modify product details and inventory variants</p>
+      </div>
+      <button 
+        onClick={() => setOpenEdit(false)}
+        className="p-2 hover:bg-gray-100 rounded-full transition-colors text-gray-500"
+      >
+        <FaTimes size={18} />
+      </button>
+    </div>
+
+    {/* SCROLLABLE BODY */}
+    <div className="p-6 overflow-y-auto space-y-6">
+      
+      {/* BASIC INFO SECTION */}
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <div className="space-y-1">
+          <label className="text-[10px] font-bold uppercase text-gray-400 ml-1">Product Name</label>
+          <input
+            name="name"
+            value={form.name}
+            onChange={handleChange}
+            placeholder="Product Name"
+            className="w-full border border-gray-200 rounded-lg p-3 text-sm focus:ring-2 focus:ring-black/5 focus:border-black outline-none transition-all"
+          />
         </div>
 
-        {/* NAME */}
-        <input
-          name="name"
-          value={form.name}
-          onChange={handleChange}
-          placeholder="Product Name"
-          className="w-full border p-2"
-        />
+        <div className="space-y-1">
+          <label className="text-[10px] font-bold uppercase text-gray-400 ml-1">Keywords</label>
+          <input
+            name="keywords"
+            value={form.keywords}
+            onChange={handleChange}
+            placeholder="e.g. Cotton, Summer, Blue"
+            className="w-full border border-gray-200 rounded-lg p-3 text-sm focus:ring-2 focus:ring-black/5 focus:border-black outline-none transition-all"
+          />
+        </div>
 
-        {/* KEYWORDS */}
-        <input
-          name="keywords"
-          value={form.keywords}
-          onChange={handleChange}
-          placeholder="Keywords"
-          className="w-full border p-2"
-        />
+        <div className="space-y-1">
+          <label className="text-[10px] font-bold uppercase text-gray-400 ml-1">Discount (%)</label>
+          <input
+            name="discount"
+            value={form.discount}
+            onChange={handleChange}
+            placeholder="Discount %"
+            className="w-full border border-gray-200 rounded-lg p-3 text-sm focus:ring-2 focus:ring-black/5 focus:border-black outline-none transition-all"
+          />
+        </div>
 
-        {/* DISCOUNT */}
-        <input
-          name="discount"
-          value={form.discount}
-          onChange={handleChange}
-          placeholder="Discount %"
-          className="w-full border p-2"
-        />
+        <div className="space-y-1">
+          <label className="text-[10px] font-bold uppercase text-gray-400 ml-1">Category (Read-only)</label>
+          <input
+            name="categoryName"
+            value={form.categoryName}
+            onChange={handleChange}
+            className="w-full border border-gray-100 bg-gray-50 rounded-lg p-3 text-sm text-gray-500 cursor-not-allowed"
+            disabled
+          />
+        </div>
+      </div>
 
-        {/* CATEGORY */}
-        <input
-          name="categoryName"
-          value={form.categoryName}
-          onChange={handleChange}
-          className="w-full border p-2"
-          disabled
-        />
-
-        {/* DESCRIPTION */}
+      {/* DESCRIPTION */}
+      <div className="space-y-1">
+        <label className="text-[10px] font-bold uppercase text-gray-400 ml-1">Description</label>
         <textarea
           name="description"
           value={form.description}
           onChange={handleChange}
-          className="w-full border p-2"
+          rows={4}
+          placeholder="Describe the product..."
+          className="w-full border border-gray-200 rounded-lg p-3 text-sm focus:ring-2 focus:ring-black/5 focus:border-black outline-none transition-all resize-none"
         />
+      </div>
 
-        {/* 🔥 VARIANTS SECTION */}
-        <div>
-          <h3 className="font-bold mb-2">Variants</h3>
+      {/* 🔥 VARIANTS SECTION - Better Layout */}
+      <div className="bg-gray-50 p-4 rounded-xl border border-gray-100">
+        <div className="flex justify-between items-center mb-4">
+          <h3 className="font-bold text-gray-700 flex items-center gap-2 text-sm">
+            <span className="w-2 h-2 bg-black rounded-full"></span> Variants & Pricing
+          </h3>
+        </div>
 
+        <div className="space-y-3">
           {form.variants.map((variant, index) => (
-            <div key={index} className="flex gap-2 mb-2 items-center">
-              {/* SIZE */}
-              <select
-                value={variant.size}
-                onChange={(e) =>
-                  handleVariantChange(index, "size", e.target.value)
-                }
-                className="border p-2"
-              >
-                <option>S</option>
-                <option>M</option>
-                <option>L</option>
-                <option>XL</option>
-                <option>XXL</option>
-                <option>Free Size</option>
-              </select>
+            <div key={index} className="flex flex-wrap md:flex-nowrap gap-3 bg-white p-3 rounded-lg border border-gray-200 shadow-sm items-end">
+              <div className="flex-1 min-w-[100px]">
+                <label className="text-[9px] font-bold text-gray-400 uppercase">Size</label>
+                <select
+                  value={variant.size}
+                  onChange={(e) => handleVariantChange(index, "size", e.target.value)}
+                  className="w-full border-b border-gray-200 py-1 text-sm focus:border-black outline-none bg-transparent"
+                >
+                  <option>S</option>
+                  <option>M</option>
+                  <option>L</option>
+                  <option>XL</option>
+                  <option>XXL</option>
+                  <option>Free Size</option>
+                </select>
+              </div>
 
-              {/* PRICE */}
-              <input
-                type="number"
-                value={variant.price}
-                onChange={(e) =>
-                  handleVariantChange(index, "price", e.target.value)
-                }
-                placeholder="Price"
-                className="border p-2 w-24"
-              />
+              <div className="flex-1 min-w-[80px]">
+                <label className="text-[9px] font-bold text-gray-400 uppercase">Price (₹)</label>
+                <input
+                  type="number"
+                  value={variant.price}
+                  onChange={(e) => handleVariantChange(index, "price", e.target.value)}
+                  className="w-full border-b border-gray-200 py-1 text-sm focus:border-black outline-none"
+                />
+              </div>
 
-              {/* STOCK */}
-              <input
-                type="number"
-                value={variant.stock}
-                onChange={(e) =>
-                  handleVariantChange(index, "stock", e.target.value)
-                }
-                placeholder="Stock"
-                className="border p-2 w-24"
-              />
+              <div className="flex-1 min-w-[80px]">
+                <label className="text-[9px] font-bold text-gray-400 uppercase">Stock</label>
+                <input
+                  type="number"
+                  value={variant.stock}
+                  onChange={(e) => handleVariantChange(index, "stock", e.target.value)}
+                  className="w-full border-b border-gray-200 py-1 text-sm focus:border-black outline-none"
+                />
+              </div>
 
-              {/* REMOVE */}
               <button
                 onClick={() => removeVariant(index)}
-                className="text-red-600"
+                className="text-red-400 hover:text-red-600 p-2 text-xs font-bold uppercase transition-colors"
               >
                 Remove
               </button>
             </div>
           ))}
-
-          {/* ADD BUTTON */}
-          <button
-            onClick={addVariant}
-            className="mt-2 px-3 py-1 bg-gray-800 text-white"
-          >
-            + Add Variant
-          </button>
         </div>
 
-        {/* REMARK */}
-        <input
-          name="remark"
-          value={form.remark}
-          onChange={handleChange}
-          placeholder="Admin Remark"
-          className="w-full border p-2"
-        />
+        <button
+          onClick={addVariant}
+          className="mt-4 w-full py-2 border-2 border-dashed border-gray-300 rounded-lg text-gray-500 hover:text-black hover:border-black text-xs font-bold transition-all uppercase tracking-widest"
+        >
+          + Add New Variant
+        </button>
+      </div>
 
-        {/* RATING */}
-        <input
-          name="averageRating"
-          value={form.averageRating}
-          onChange={handleChange}
-          placeholder="Rating"
-          className="w-full border p-2"
-        />
-
-        {/* BUTTONS */}
-        <div className="flex justify-end gap-3">
-          <button onClick={() => setOpenEdit(false)}>Cancel</button>
-          <button
-            onClick={handleUpdate}
-            className="bg-black text-white px-4 py-2"
-          >
-            Update
-          </button>
+      {/* ADMIN SECTION */}
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <div className="space-y-1">
+          <label className="text-[10px] font-bold uppercase text-gray-400 ml-1">Admin Remark</label>
+          <input
+            name="remark"
+            value={form.remark}
+            onChange={handleChange}
+            placeholder="Internal notes..."
+            className="w-full border border-gray-200 rounded-lg p-3 text-sm focus:ring-2 focus:ring-black/5"
+          />
+        </div>
+        <div className="space-y-1">
+          <label className="text-[10px] font-bold uppercase text-gray-400 ml-1">Rating Display</label>
+          <input
+            name="averageRating"
+            value={form.averageRating}
+            onChange={handleChange}
+            placeholder="4.5"
+            className="w-full border border-gray-200 rounded-lg p-3 text-sm focus:ring-2 focus:ring-black/5"
+          />
         </div>
       </div>
     </div>
+
+    {/* FOOTER - Actions */}
+    <div className="p-6 border-t border-gray-100 flex justify-end items-center gap-4 bg-gray-50/50">
+      <button 
+        onClick={() => setOpenEdit(false)}
+        className="text-sm font-bold text-gray-500 hover:text-black transition-colors"
+      >
+        Discard Changes
+      </button>
+      <button
+        onClick={handleUpdate}
+        className="bg-black text-white px-8 py-3 rounded-lg text-sm font-bold shadow-lg shadow-black/10 hover:bg-gray-800 transition-all active:scale-95"
+      >
+        Update Product
+      </button>
+    </div>
+
+  </div>
+</div>
   );
 };
 
