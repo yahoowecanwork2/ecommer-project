@@ -319,7 +319,7 @@ const Home = () => {
                   )}
 
                   <img
-                    src={item?.image?.url || item?.img}
+                    src={item?.image || item?.img}
                     className="w-full h-full object-cover transition-transform duration-[1.2s] group-hover:scale-110"
                     alt={item.name}
                   />

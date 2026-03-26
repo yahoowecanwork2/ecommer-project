@@ -61,7 +61,6 @@ const Cards = ({ item }) => {
     >
       {/* --- IMAGE SECTION (Sharp Edges, No Curves) --- */}
       <div className="relative aspect-[3/4.2] bg-[#F2F2F2] overflow-hidden">
-        
         {/* 'Ready to Ship' Badge */}
         <div className="absolute top-0 left-0 z-10 bg-[#7A4431] text-white text-[8px] font-bold px-2 py-1 uppercase tracking-tighter">
           Ready to Ship
@@ -72,13 +71,17 @@ const Cards = ({ item }) => {
           onClick={addToWishlist}
           className="absolute top-2 right-2 z-10 text-[#2D1B2D] opacity-0 group-hover:opacity-100 transition-opacity duration-300"
         >
-          {wish ? <FaHeart size={16} className="text-[#7A4431]" /> : <FaRegHeart size={16} />}
+          {wish ? (
+            <FaHeart size={16} className="text-[#7A4431]" />
+          ) : (
+            <FaRegHeart size={16} />
+          )}
         </button>
 
         {/* Main Product Image */}
-        {item?.image?.url ? (
+        {item?.image ? (
           <img
-            src={item.image.url}
+            src={item.image}
             alt={item.name}
             className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
           />
