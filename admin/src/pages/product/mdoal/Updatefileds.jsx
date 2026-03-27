@@ -63,7 +63,7 @@ const Updatefields = ({ product, setOpenEdit, refresh }) => {
 
   return (
    <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-50 p-4">
-  <div className="bg-white w-full max-w-3xl rounded-xl shadow-2xl overflow-hidden flex flex-col max-h-[90vh]">
+  <div className="bg-white w-full max-w-3xl overflow-hidden flex flex-col max-h-[90vh]">
     
     {/* HEADER - Sticky & Clean */}
     <div className="px-6 py-4 border-b border-gray-100 flex justify-between items-center bg-white sticky top-0 z-10">
@@ -242,7 +242,7 @@ const Updatefields = ({ product, setOpenEdit, refresh }) => {
       </button>
       <button
         onClick={handleUpdate}
-        className="bg-black text-white px-8 py-3 rounded-lg text-sm font-bold shadow-lg shadow-black/10 hover:bg-gray-800 transition-all active:scale-95"
+        className="bg-black text-white px-8 py-3 text-sm font-bold shadow-lg shadow-black/10 hover:bg-gray-800 transition-all active:scale-95"
       >
         Update Product
       </button>

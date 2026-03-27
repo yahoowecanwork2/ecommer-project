@@ -51,7 +51,7 @@ const Categorie = () => {
           </h1>
           <button
             onClick={() => setOpenCreate(true)}
-            className="flex items-center gap-2 bg-black text-white px-6 py-2 hover:bg-gray-800 transition-all duration-300 rounded-full text-sm font-bold tracking-widest uppercase"
+            className="flex items-center gap-2 bg-black text-white px-4 py-2 hover:bg-gray-800 transition-all duration-300 text-sm font-bold tracking-widest uppercase"
           >
             <FaPlus size={12} /> Create
           </button>

@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { FaTimes, FaImage, FaTag } from "react-icons/fa";
 import { categoriesApi } from "../../../apis/categories";
+import { MdCloudUpload } from "react-icons/md";
 
 const CreateCategories = ({ setOpen }) => {
   const [name, setName] = useState("");
@@ -63,83 +64,106 @@ const CreateCategories = ({ setOpen }) => {
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-gray-900/40 backdrop-blur-sm p-4">
-      <div className="relative w-full max-w-lg bg-white border border-gray-200 rounded-sm shadow-2xl">
-        {/* HEADER */}
-        <div className="flex justify-between items-center px-6 py-4 border-b bg-gray-50">
-          <div>
-            <h3 className="text-sm font-black uppercase tracking-wider">
-              Create Category
-            </h3>
-          </div>
-          <button onClick={() => setOpen(false)}>
-            <FaTimes size={14} />
-          </button>
-        </div>
-
-        {/* FORM */}
-        <form onSubmit={handleSubmit} className="p-6 space-y-6">
-          {/* NAME */}
-          <div>
-            <label className="text-xs font-bold uppercase text-gray-400">
-              Category Name
-            </label>
-            <div className="flex items-center gap-2 border px-3 py-2">
-              <FaTag />
-              <input
-                type="text"
-                placeholder="ELECTRONICS"
-                className="w-full outline-none"
-                value={name}
-                onChange={(e) => setName(e.target.value)}
-              />
-            </div>
-          </div>
-
-          {/* IMAGE UPLOAD */}
-          <div>
-            <label className="text-xs font-bold uppercase text-gray-400">
-              Upload Images
-            </label>
-
-            {/* file input 🔥 */}
-            <input
-              type="file"
-              multiple
-              accept="image/*"
-              onChange={handleImageChange}
-              className="mt-2"
-            />
-
-            {/* preview */}
-            <div className="flex gap-2 flex-wrap mt-3">
-              {preview.map((img, i) => (
-                <div key={i} className="relative">
-                  <img src={img} className="w-20 h-20 object-cover rounded" />
-                  <button
-                    type="button"
-                    onClick={() => removeImage(i)}
-                    className="absolute top-0 right-0 bg-black text-white text-xs px-1"
-                  >
-                    X
-                  </button>
-                </div>
-              ))}
-            </div>
-          </div>
-
-          {/* BUTTONS */}
-          <div className="flex justify-end gap-2">
-            <button type="button" onClick={() => setOpen(false)}>
-              Cancel
-            </button>
-            <button type="submit" className="bg-black text-white px-4 py-2">
-              Create
-            </button>
-          </div>
-        </form>
+ <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/20 backdrop-blur-[2px] p-4">
+  {/* MODAL CONTAINER - Minimal & Professional */}
+  <div className="relative w-full max-w-md bg-white border border-gray-100 overflow-hidden">
+    
+    {/* HEADER - Very Clean */}
+    <div className="flex justify-between items-center px-6 py-5 border-b border-gray-50">
+      <div>
+        <h3 className="text-sm font-bold text-gray-900 uppercase tracking-wider">
+          Create Category
+        </h3>
+        <p className="text-[11px] text-gray-400 mt-0.5 font-medium">Add a new organization level to your store</p>
       </div>
+      <button 
+        onClick={() => setOpen(false)}
+        className="text-gray-400 hover:text-gray-900 transition-colors p-1"
+      >
+        <FaTimes size={16} />
+      </button>
     </div>
+
+    {/* FORM CONTENT */}
+    <form onSubmit={handleSubmit} className="p-6 space-y-6">
+      
+      {/* NAME INPUT SECTION */}
+      <div className="space-y-1.5">
+        <label className="text-[11px] font-bold uppercase tracking-widest text-gray-500 ml-0.5">
+          Category Name
+        </label>
+        <div className="flex items-center gap-3 border border-gray-200 rounded-md px-3.5 py-2.5 bg-gray-50/50 focus-within:bg-white focus-within:ring-2 focus-within:ring-gray-900/5 focus-within:border-gray-900 transition-all">
+          <FaTag className="text-gray-400" size={12} />
+          <input
+            type="text"
+            placeholder="e.g. Electronics"
+            className="w-full outline-none bg-transparent text-sm font-medium text-gray-900 placeholder:text-gray-300"
+            value={name}
+            onChange={(e) => setName(e.target.value)}
+            required
+          />
+        </div>
+      </div>
+
+      {/* IMAGE UPLOAD SECTION */}
+      <div className="space-y-2">
+        <label className="text-[11px] font-bold uppercase tracking-widest text-gray-500 ml-0.5">
+          Cover Image
+        </label>
+        
+        {/* REFINED UPLOAD BOX */}
+        <label className="group flex flex-col items-center justify-center w-full h-32 border border-dashed border-gray-200 rounded-md cursor-pointer hover:bg-gray-50 transition-all">
+          <div className="flex flex-col items-center justify-center py-4">
+            <MdCloudUpload size={24} className="text-gray-300 group-hover:text-gray-400 transition-colors" />
+            <p className="text-[11px] text-gray-400 mt-2 font-medium">Click to select images</p>
+          </div>
+          <input
+            type="file"
+            multiple
+            accept="image/*"
+            onChange={handleImageChange}
+            className="hidden"
+          />
+        </label>
+
+        {/* PREVIEW GRID - Soft & Organized */}
+        {preview.length > 0 && (
+          <div className="flex gap-3 mt-4 flex-wrap">
+            {preview.map((img, i) => (
+              <div key={i} className="relative w-16 h-16 rounded-md border border-gray-100 overflow-hidden group shadow-sm">
+                <img src={img} className="w-full h-full object-cover" />
+                <button
+                  type="button"
+                  onClick={() => removeImage(i)}
+                  className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 flex items-center justify-center transition-opacity text-white"
+                >
+                  <FaTimes size={10} />
+                </button>
+              </div>
+            ))}
+          </div>
+        )}
+      </div>
+
+      {/* FOOTER BUTTONS - Balanced */}
+      <div className="flex items-center gap-3 pt-4 border-t border-gray-50">
+        <button 
+          type="button" 
+          onClick={() => setOpen(false)}
+          className="flex-1 px-4 py-2.5 text-xs font-bold uppercase tracking-widest text-gray-400 hover:text-gray-900 transition-colors"
+        >
+          Cancel
+        </button>
+        <button 
+          type="submit" 
+          className="flex-[1.5] bg-gray-900 text-white py-2.5 text-xs font-bold uppercase tracking-widest hover:bg-black transition-all shadow-sm active:scale-[0.98]"
+        >
+          Create Category
+        </button>
+      </div>
+    </form>
+  </div>
+</div>
   );
 };
 
