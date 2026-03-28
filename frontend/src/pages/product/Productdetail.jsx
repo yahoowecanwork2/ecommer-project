@@ -216,44 +216,53 @@ const Productdetail = () => {
 
             {/* Size Selector */}
             <div className="space-y-4">
-              <div className="flex justify-between items-center">
-                <p className="text-[10px] font-black uppercase tracking-widest text-gray-500">
+              {/* Header Section */}
+              <div className="flex justify-between items-end">
+                <p className="text-[11px] font-bold uppercase tracking-widest text-gray-900">
                   Select Size
                 </p>
-                <button className="text-[9px] font-bold text-[#7A4431] border-b border-[#7A4431] uppercase">
+                <button className="text-[10px] font-semibold text-[#7A4431] border-b border-[#7A4431]/30 hover:border-[#7A4431] transition-colors uppercase pb-0.5">
                   Size Guide
                 </button>
               </div>
-              {/* <div className="grid grid-cols-6 border-l border-t border-gray-100 max-w-sm">
-                {["XS", "S", "M", "L", "XL", "2XL"].map((size) => (
-                  <button
-                    key={size}
-                    onClick={() => setSelectedSize(size)}
-                    className={`h-11 flex items-center justify-center text-[11px] font-bold border-r border-b border-gray-100 transition-all ${
-                      selectedSize === size
-                        ? "bg-[#7A4431] text-white"
-                        : "bg-white text-gray-400 hover:text-[#7A4431]"
-                    }`}
-                  >
-                    {size}
-                  </button>
-                ))}
-              </div> */}
-              {[
-                ...new Map(product?.variants.map((v) => [v.size, v])).values(),
-              ].map((v, i) => (
-                <button
-                  key={i}
-                  onClick={() => setSelectedSize(v.size)}
-                  className={`h-11 ${
-                    selectedSize === v.size
-                      ? "bg-[#7A4431] text-white"
-                      : "text-gray-400"
-                  }`}
-                >
-                  {v.size}
-                </button>
-              ))}
+
+              {/* Size Selection Grid */}
+              <div className="grid grid-cols-4 sm:grid-cols-6 gap-2">
+                {[
+                  ...new Map(
+                    product?.variants?.map((v) => [v.size, v]),
+                  ).values(),
+                ].map((v, i) => {
+                  const isSelected = selectedSize === v.size;
+                  const isOutOfStock = v.inventory <= 0; // Optional: Agar stock check karna ho
+
+                  return (
+                    <button
+                      key={i}
+                      disabled={isOutOfStock}
+                      onClick={() => setSelectedSize(v.size)}
+                      className={`
+            relative h-10 flex items-center justify-center text-[12px] font-medium transition-all duration-200 border
+            ${
+              isSelected
+                ? "bg-[#7A4431] border-[#7A4431] text-white shadow-md scale-[1.02] z-10"
+                : "bg-white border-gray-200 text-gray-600 hover:border-[#7A4431] hover:text-[#7A4431]"
+            }
+            ${isOutOfStock ? "opacity-40 cursor-not-allowed bg-gray-50 overflow-hidden" : "cursor-pointer"}
+          `}
+                    >
+                      {v.size}
+
+                      {/* Out of Stock Diagonal Line (Optional) */}
+                      {isOutOfStock && (
+                        <div className="absolute inset-0 w-full h-full">
+                          <div className="absolute top-1/2 left-0 w-full h-[1px] bg-gray-300 -rotate-45"></div>
+                        </div>
+                      )}
+                    </button>
+                  );
+                })}
+              </div>
             </div>
 
             {/* Action Buttons */}
