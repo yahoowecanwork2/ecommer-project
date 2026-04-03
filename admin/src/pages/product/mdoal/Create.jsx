@@ -30,9 +30,14 @@ const Create = ({ setShowModal }) => {
   // ✅ GET CATEGORIES
   useEffect(() => {
     const getCategories = async () => {
-      const res = await categoriesApi.getByName();
-      if (res.success) setCategories(res.categoriesNames);
+      try {
+        const res = await categoriesApi.getByName();
+        if (res.success) setCategories(res.categoriesNames);
+      } catch (error) {
+        console.error("Category fetch error:", error);
+      }
     };
+
     getCategories();
   }, []);
 
@@ -61,9 +66,11 @@ const Create = ({ setShowModal }) => {
     if (e.key === "Enter" || e.key === ",") {
       e.preventDefault();
       const val = keywordInput.trim().toLowerCase();
+
       if (val && !keywords.includes(val)) {
         setKeywords([...keywords, val]);
       }
+
       setKeywordInput("");
     }
   };
@@ -81,7 +88,7 @@ const Create = ({ setShowModal }) => {
     setImageGroups(updated);
   };
 
-  // SUB IMAGES (🔥 MAX 3)
+  // SUB IMAGES (MAX 3)
   const handleSubImages = (i, files) => {
     const updated = [...imageGroups];
 
@@ -100,7 +107,7 @@ const Create = ({ setShowModal }) => {
   const removeSubImage = (groupIndex, subIndex) => {
     const updated = [...imageGroups];
     updated[groupIndex].subImages = updated[groupIndex].subImages.filter(
-      (_, i) => i !== subIndex,
+      (_, i) => i !== subIndex
     );
     setImageGroups(updated);
   };
@@ -116,11 +123,24 @@ const Create = ({ setShowModal }) => {
   // ✅ TOTAL IMAGE COUNT (MIN 4)
   const getTotalImages = () => {
     let count = 0;
+
     imageGroups.forEach((group) => {
       if (group.main) count += 1;
       count += group.subImages.length;
     });
+
     return count;
+  };
+
+  // ✅ VALIDATE EACH GROUP HAS MAIN IMAGE
+  const validateImageGroups = () => {
+    for (let i = 0; i < imageGroups.length; i++) {
+      if (!imageGroups[i].main) {
+        alert(`Main image is required for group ${i + 1} ❌`);
+        return false;
+      }
+    }
+    return true;
   };
 
   // ✅ SUBMIT
@@ -134,17 +154,22 @@ const Create = ({ setShowModal }) => {
       return;
     }
 
+    // 🔥 EACH GROUP MUST HAVE MAIN IMAGE
+    if (!validateImageGroups()) return;
+
     const data = new FormData();
 
+    // BASIC FIELDS
     Object.keys(formData).forEach((key) => {
       data.append(key, formData[key]);
     });
 
+    // KEYWORDS + VARIANTS
     data.append("keywords", keywords.join(","));
     data.append("variants", JSON.stringify(variants));
 
-    // ✅ IMAGE STRUCTURE
-    const imagesPayload = imageGroups.map((group, gIndex) => ({
+    // ✅ IMAGE STRUCTURE JSON (IMPORTANT)
+    const imageGroupsPayload = imageGroups.map((group, gIndex) => ({
       main: { url: "", index: gIndex },
       subImages: group.subImages.map((_, sIndex) => ({
         url: "",
@@ -152,25 +177,43 @@ const Create = ({ setShowModal }) => {
       })),
     }));
 
-    data.append("images", JSON.stringify(imagesPayload));
+    // ✅ SEND JSON STRUCTURE SEPARATELY
+    data.append("imageGroups", JSON.stringify(imageGroupsPayload));
 
-    // ✅ FILE ORDER (VERY IMPORTANT)
+    // ✅ SEND FILES ONLY IN "images"
     imageGroups.forEach((group) => {
-      if (group.main) data.append("images", group.main);
+      if (group.main) {
+        data.append("images", group.main);
+      }
 
       group.subImages.forEach((file) => {
         data.append("images", file);
       });
     });
 
+    // DEBUG
+    console.log("Submitting product...");
+    for (let pair of data.entries()) {
+      console.log(pair[0], pair[1]);
+    }
+
     try {
       setLoading(true);
-      await productApi.create(data);
+
+      const res = await productApi.create(data);
+
+      console.log("Create product response:", res);
+
       alert("Product Created ✅");
       setShowModal(false);
     } catch (err) {
-      console.log(err);
-      alert("Error creating product ❌");
+      console.error("Create product error:", err);
+
+      if (err?.response?.data?.message) {
+        alert(err.response.data.message);
+      } else {
+        alert("Error creating product ❌");
+      }
     } finally {
       setLoading(false);
     }
@@ -207,6 +250,7 @@ const Create = ({ setShowModal }) => {
                 required
               />
             </div>
+
             <div className="space-y-1">
               <label className="text-sm font-semibold text-gray-700">
                 Category
@@ -274,10 +318,11 @@ const Create = ({ setShowModal }) => {
                       <option>XL</option>
                       <option>L</option>
                       <option>M</option>
-                      <option>s</option>
+                      <option>S</option>
                       <option>Free Size</option>
                     </select>
                   </div>
+
                   <div className="flex-1 min-w-[100px]">
                     <label className="text-[10px] uppercase font-bold text-gray-500">
                       Price
@@ -285,12 +330,14 @@ const Create = ({ setShowModal }) => {
                     <input
                       type="number"
                       placeholder="0.00"
+                      value={v.price}
                       onChange={(e) =>
                         handleVariantChange(i, "price", e.target.value)
                       }
                       className="w-full border-b-2 border-gray-200 py-1 outline-none focus:border-blue-500"
                     />
                   </div>
+
                   <div className="flex-1 min-w-[100px]">
                     <label className="text-[10px] uppercase font-bold text-gray-500">
                       Stock
@@ -298,12 +345,14 @@ const Create = ({ setShowModal }) => {
                     <input
                       type="number"
                       placeholder="Qty"
+                      value={v.stock}
                       onChange={(e) =>
                         handleVariantChange(i, "stock", e.target.value)
                       }
                       className="w-full border-b-2 border-gray-200 py-1 outline-none focus:border-blue-500"
                     />
                   </div>
+
                   <button
                     type="button"
                     onClick={() => removeVariant(i)}
@@ -334,7 +383,7 @@ const Create = ({ setShowModal }) => {
                   key={i}
                   className="bg-blue-50 text-blue-700 px-3 py-1 rounded-full text-sm font-medium border border-blue-100 flex items-center gap-2"
                 >
-                  {k}{" "}
+                  {k}
                   <FaTimes
                     className="cursor-pointer hover:text-red-500"
                     onClick={() => removeKeyword(i)}
@@ -392,6 +441,7 @@ const Create = ({ setShowModal }) => {
                         <input
                           type="file"
                           className="hidden"
+                          accept="image/*"
                           onChange={(e) =>
                             handleMainImage(i, e.target.files[0])
                           }
@@ -413,6 +463,7 @@ const Create = ({ setShowModal }) => {
                           type="file"
                           multiple
                           className="hidden"
+                          accept="image/*"
                           onChange={(e) => handleSubImages(i, e.target.files)}
                         />
                       </label>

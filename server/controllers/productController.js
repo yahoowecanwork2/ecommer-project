@@ -434,9 +434,9 @@ export const createProducts = async (req, res) => {
       variants,
       discount,
       insale,
+      imageGroups,
     } = req.body;
 
-    // ✅ parse variants
     const parsedVariants = JSON.parse(variants);
 
     if (!parsedVariants || parsedVariants.length === 0) {
@@ -446,20 +446,17 @@ export const createProducts = async (req, res) => {
       });
     }
 
-    // ✅ IMPORTANT: parse grouped images
-    // frontend se JSON me aayega
     let parsedImages = [];
 
     try {
-      parsedImages = JSON.parse(req.body.images);
+      parsedImages = JSON.parse(imageGroups);
     } catch (err) {
       return res.status(400).json({
         success: false,
-        message: "Invalid images format",
+        message: "Invalid imageGroups format",
       });
     }
 
-    // ❗ safety check
     if (!parsedImages || parsedImages.length === 0) {
       return res.status(400).json({
         success: false,
@@ -467,19 +464,15 @@ export const createProducts = async (req, res) => {
       });
     }
 
-    // ✅ OPTIONAL: agar tum multer use kar rahi ho (files upload)
-    // to unhe map karke assign kar sakti ho
     if (req.files && req.files.length > 0) {
       let fileIndex = 0;
 
       parsedImages = parsedImages.map((group, groupIndex) => {
-        // main image
         const mainFile = req.files[fileIndex++];
         const mainUrl = mainFile
           ? `${req.protocol}://${req.get("host")}/uploads/${mainFile.filename}`
           : group.main.url;
 
-        // sub images
         const subImages = group.subImages.map((sub, subIndex) => {
           const subFile = req.files[fileIndex++];
           const subUrl = subFile
@@ -502,7 +495,6 @@ export const createProducts = async (req, res) => {
       });
     }
 
-    // ✅ create product
     const product = await Product.create({
       name,
       category,
@@ -511,7 +503,7 @@ export const createProducts = async (req, res) => {
       description,
       keywords,
       variants: parsedVariants,
-      images: parsedImages, // 🔥 NEW STRUCTURE
+      images: parsedImages,
       discount,
       insale,
     });
@@ -521,9 +513,8 @@ export const createProducts = async (req, res) => {
       product,
     });
   } catch (error) {
-    console.log(error);
+    console.log("CREATE PRODUCT ERROR:", error);
 
-    // ❗ cleanup files
     if (req.files) {
       req.files.forEach((file) => {
         removeFiles(`uploads/${file.filename}`);
@@ -532,7 +523,7 @@ export const createProducts = async (req, res) => {
 
     res.status(500).json({
       success: false,
-      message: "Error creating product",
+      message: error.message || "Error creating product",
     });
   }
 };
