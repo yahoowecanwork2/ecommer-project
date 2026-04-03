@@ -37,7 +37,24 @@ productRoutes.get("/get-single/:slug", getProductBySlug);
 
 // ------------------ admin routes -------------------------
 // productRoutes.post("/create", checkAdmin, uploadProducts, createProducts);
-productRoutes.post("/creates", checkAdmin, uploadProducts, createProducts);
+productRoutes.post(
+  "/creates",
+  (req, res, next) => {
+    uploadProducts(req, res, function (err) {
+      if (err) {
+        console.error("MULTER ERROR:", err);
+
+        return res.status(500).json({
+          success: false,
+          message: err.message || "Upload error",
+        });
+      }
+      next();
+    });
+  },
+  checkAdmin,
+  createProducts,
+);
 productRoutes.get("/admin/get-all", checkAdmin, adminGetProducts);
 productRoutes.get(
   "/admin/filter/:keyword",
