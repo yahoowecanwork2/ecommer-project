@@ -437,9 +437,6 @@ export const createProducts = async (req, res) => {
       imageGroups,
     } = req.body;
 
-    console.log("BODY:", req.body);
-    console.log("FILES:", req.files);
-
     const parsedVariants = JSON.parse(variants);
 
     if (!parsedVariants || parsedVariants.length === 0) {
