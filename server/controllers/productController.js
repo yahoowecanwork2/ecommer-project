@@ -361,32 +361,32 @@ export const getProductBySlug = async (req, res) => {
 
 // --------------------------- admin --------------------------------
 
-// export const createProduct = async (req, res) => {
+// export const createProducts = async (req, res) => {
 //   try {
 //     const {
 //       name,
 //       category,
 //       description,
 //       keywords,
-//       stock,
-//       price,
-//       discount,
+//       variants,
 //       available,
+//       discount,
 //       insale,
 //     } = req.body;
 
-//     // check required images
-//     if (!req.files || req.files.length < 4) {
+//     const parsedVariants = JSON.parse(variants);
+
+//     if (!parsedVariants || parsedVariants.length === 0) {
 //       return res.status(400).json({
 //         success: false,
-//         message: "Minimum 4 images required",
+//         message: "Variants required",
 //       });
 //     }
 
-//     // map uploaded images
-//     const imageData = req.files.map((file, index) => ({
+//     // ✅ MULTIPLE IMAGES (GLOBAL)
+//     const images = req.files.map((file, index) => ({
 //       url: `${req.protocol}://${req.get("host")}/uploads/${file.filename}`,
-//       index: index,
+//       index,
 //     }));
 
 //     const product = await Product.create({
@@ -396,23 +396,20 @@ export const getProductBySlug = async (req, res) => {
 //       uniqueId: generateProducttId(name),
 //       description,
 //       keywords,
-//       stock,
-//       price,
-//       discount,
+//       variants: parsedVariants,
+//       image: images,
 //       available,
+//       discount,
 //       insale,
-//       image: imageData,
 //     });
 
 //     res.status(201).json({
 //       success: true,
-//       message: "Product created successfully",
 //       product,
 //     });
 //   } catch (error) {
 //     console.log(error);
 
-//     // if error remove uploaded files
 //     if (req.files) {
 //       req.files.forEach((file) => {
 //         removeFiles(`uploads/${file.filename}`);
@@ -422,10 +419,11 @@ export const getProductBySlug = async (req, res) => {
 //     res.status(500).json({
 //       success: false,
 //       message: "Error creating product",
-//       error: error.message,
 //     });
 //   }
 // };
+
+// subimage
 export const createProducts = async (req, res) => {
   try {
     const {
@@ -434,11 +432,11 @@ export const createProducts = async (req, res) => {
       description,
       keywords,
       variants,
-      available,
       discount,
       insale,
     } = req.body;
 
+    // ✅ parse variants
     const parsedVariants = JSON.parse(variants);
 
     if (!parsedVariants || parsedVariants.length === 0) {
@@ -448,12 +446,63 @@ export const createProducts = async (req, res) => {
       });
     }
 
-    // ✅ MULTIPLE IMAGES (GLOBAL)
-    const images = req.files.map((file, index) => ({
-      url: `${req.protocol}://${req.get("host")}/uploads/${file.filename}`,
-      index,
-    }));
+    // ✅ IMPORTANT: parse grouped images
+    // frontend se JSON me aayega
+    let parsedImages = [];
 
+    try {
+      parsedImages = JSON.parse(req.body.images);
+    } catch (err) {
+      return res.status(400).json({
+        success: false,
+        message: "Invalid images format",
+      });
+    }
+
+    // ❗ safety check
+    if (!parsedImages || parsedImages.length === 0) {
+      return res.status(400).json({
+        success: false,
+        message: "Images are required",
+      });
+    }
+
+    // ✅ OPTIONAL: agar tum multer use kar rahi ho (files upload)
+    // to unhe map karke assign kar sakti ho
+    if (req.files && req.files.length > 0) {
+      let fileIndex = 0;
+
+      parsedImages = parsedImages.map((group, groupIndex) => {
+        // main image
+        const mainFile = req.files[fileIndex++];
+        const mainUrl = mainFile
+          ? `${req.protocol}://${req.get("host")}/uploads/${mainFile.filename}`
+          : group.main.url;
+
+        // sub images
+        const subImages = group.subImages.map((sub, subIndex) => {
+          const subFile = req.files[fileIndex++];
+          const subUrl = subFile
+            ? `${req.protocol}://${req.get("host")}/uploads/${subFile.filename}`
+            : sub.url;
+
+          return {
+            url: subUrl,
+            index: subIndex,
+          };
+        });
+
+        return {
+          main: {
+            url: mainUrl,
+            index: groupIndex,
+          },
+          subImages,
+        };
+      });
+    }
+
+    // ✅ create product
     const product = await Product.create({
       name,
       category,
@@ -462,8 +511,7 @@ export const createProducts = async (req, res) => {
       description,
       keywords,
       variants: parsedVariants,
-      image: images,
-      available,
+      images: parsedImages, // 🔥 NEW STRUCTURE
       discount,
       insale,
     });
@@ -475,6 +523,7 @@ export const createProducts = async (req, res) => {
   } catch (error) {
     console.log(error);
 
+    // ❗ cleanup files
     if (req.files) {
       req.files.forEach((file) => {
         removeFiles(`uploads/${file.filename}`);
@@ -487,7 +536,6 @@ export const createProducts = async (req, res) => {
     });
   }
 };
-
 // get all Products
 export const adminGetProducts = async (req, res) => {
   try {

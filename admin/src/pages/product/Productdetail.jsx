@@ -24,9 +24,9 @@ const Productdetail = () => {
   const navigate = useNavigate();
 
   const [product, setProduct] = useState(null);
-  const [activeImg, setActiveImg] = useState("");
   const [selectedVariant, setSelectedVariant] = useState(null);
-
+  const [activeImg, setActiveImg] = useState("");
+  const [activeGroup, setActiveGroup] = useState(null);
   const [openEdit, setOpenEdit] = useState(false);
   const [openStock, setOpenStock] = useState(false);
   const [openRefund, setOpenRefund] = useState(false);
@@ -36,11 +36,17 @@ const Productdetail = () => {
   const getSingleProduct = async () => {
     try {
       const res = await productApi.getSingle(id);
+      console.log("single", res);
 
       setProduct(res.product);
-      setActiveImg(res.product.image[0]?.url);
 
-      // ✅ Default variant select
+      // ✅ default first group select
+      const firstGroup = res.product.images[0];
+      setActiveGroup(firstGroup);
+
+      // ✅ default image = main image
+      setActiveImg(firstGroup?.main?.url);
+
       setSelectedVariant(res.product.variants[0]);
     } catch (error) {
       console.log(error);
@@ -64,224 +70,280 @@ const Productdetail = () => {
   useEffect(() => {
     if (id) getSingleProduct();
   }, [id]);
-
   if (!product)
     return (
       <Layout>
-        <div className="p-10 text-center text-[11px] font-bold uppercase tracking-[0.2em] animate-pulse text-gray-400">
-          Syncing product data...
+        <div className="h-[80vh] flex items-center justify-center">
+          <div className="flex flex-col items-center gap-4">
+            <div className="w-12 h-12 border-4 border-gray-200 border-t-black rounded-full animate-spin"></div>
+            <p className="text-xs font-bold uppercase tracking-widest text-gray-400">
+              Loading Product...
+            </p>
+          </div>
         </div>
       </Layout>
     );
 
   return (
-   <Layout>
-  <div className="max-w-7xl mx-auto space-y-8 p-4 md:p-6 bg-white min-h-screen">
-    {/* TOP BAR - Cleaner spacing and subtle border */}
-    <div className="flex items-center justify-between border-b border-gray-100 pb-6">
-      <button
-        onClick={() => navigate("/product")}
-        className="flex items-center gap-2 text-sm font-medium text-gray-500 hover:text-black transition-colors"
-      >
-        <FaArrowLeft size={12} /> Back to Products
-      </button>
-
-      <div className="flex gap-3">
-        <button
-          onClick={handleDelete}
-          className="flex items-center gap-2 px-4 py-2 text-xs font-semibold border border-red-100 text-red-600 hover:bg-red-50 rounded transition-all"
-        >
-          <FaTrash /> Delete
-        </button>
-
-        <button
-          onClick={() => setOpenEdit(true)}
-          className="flex items-center gap-2 px-6 py-2 text-xs font-semibold bg-black text-white hover:bg-gray-800 rounded shadow-sm transition-all"
-        >
-          <FaEdit /> Edit Details
-        </button>
-      </div>
-    </div>
-
-    <div className="grid lg:grid-cols-12 gap-10">
-      {/* LEFT IMAGES - Improved Gallery Style */}
-      <div className="lg:col-span-5 space-y-4">
-        <div className="border border-gray-100 rounded-xl overflow-hidden bg-gray-50 relative group">
+    <Layout>
+      <div className="max-w-[1400px] mx-auto p-4 lg:p-8 bg-white min-h-screen">
+        {/* --- HEADER BAR --- */}
+        <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-10 pb-6 border-b border-gray-100">
           <button
-            onClick={() => setOpenImage(true)}
-            className="absolute top-4 right-4 p-2 bg-white/80 backdrop-blur-sm rounded-full shadow-sm opacity-0 group-hover:opacity-100 transition-opacity"
+            onClick={() => navigate("/product")}
+            className="group flex items-center gap-2 text-sm font-semibold text-gray-500 hover:text-black transition-all"
           >
-            <FaImage className="text-gray-700" />
+            <FaArrowLeft className="group-hover:-translate-x-1 transition-transform" />{" "}
+            Back to Inventory
           </button>
 
-          <img
-            src={activeImg}
-            className="w-full h-[450px] object-contain mix-blend-multiply"
-            alt={product.name}
-          />
+          <div className="flex items-center gap-3">
+            <button
+              onClick={handleDelete}
+              className="flex items-center gap-2 px-4 py-2.5 text-xs font-bold text-red-500 bg-red-50 hover:bg-red-100 rounded-lg transition-all"
+            >
+              <FaTrash size={12} /> DELETE PRODUCT
+            </button>
+            <button
+              onClick={() => setOpenEdit(true)}
+              className="flex items-center gap-2 px-6 py-2.5 text-xs font-bold bg-black text-white hover:bg-zinc-800 rounded-lg shadow-lg shadow-gray-200 transition-all"
+            >
+              <FaEdit size={12} /> EDIT DETAILS
+            </button>
+          </div>
         </div>
 
-        <div className="flex gap-3 overflow-x-auto pb-2">
-          {product.image.map((img, i) => (
-            <img
-              key={i}
-              src={img.url}
-              onClick={() => setActiveImg(img.url)}
-              className={`w-20 h-20 rounded-lg border-2 cursor-pointer object-cover transition-all ${
-                activeImg === img.url ? "border-black scale-95" : "border-transparent hover:border-gray-200"
-              }`}
-            />
-          ))}
-        </div>
-      </div>
-
-      {/* RIGHT SECTION - Content Clarity */}
-      <div className="lg:col-span-7 space-y-8">
-        {/* PRODUCT INFO */}
-        <div className="space-y-4">
-          <div className="inline-flex items-center gap-1 px-2 py-1 bg-gray-100 rounded text-[10px] uppercase tracking-wider font-bold text-gray-600">
-            <MdCategory /> {product.category?.name}
-          </div>
-
-          <h2 className="text-3xl font-extrabold text-gray-900 tracking-tight">{product.name}</h2>
-
-          <div className="flex items-center gap-4">
-            <div className="text-3xl font-light text-gray-900">
-              ₹{selectedVariant?.price?.toLocaleString()}
-            </div>
-            {product.discount > 0 && (
-              <span className="text-xs font-bold bg-green-100 text-green-700 px-2 py-1 rounded">
-                {product.discount}% OFF
-              </span>
-            )}
-          </div>
-
-          {/* SIZE SELECTOR - More tactile feel */}
-          <div className="pt-4">
-            <p className="text-xs font-bold uppercase tracking-widest text-gray-400 mb-3">Select Size</p>
-            <div className="flex flex-wrap gap-2">
-              {product.variants.map((variant) => (
+        <div className="grid lg:grid-cols-12 gap-12">
+          {/* --- LEFT: VISUALS (Sticky) --- */}
+          <div className="lg:col-span-5 space-y-6">
+            <div className="sticky top-10 space-y-4">
+              <div className="relative aspect-square rounded-2xl overflow-hidden bg-gray-50 border border-gray-100 group">
+                <img
+                  src={activeImg}
+                  className="w-full h-full object-contain mix-blend-multiply p-4"
+                  alt="Main view"
+                />
                 <button
-                  key={variant._id}
-                  onClick={() => setSelectedVariant(variant)}
-                  disabled={variant.stock === 0}
-                  className={`min-w-[50px] px-4 py-2 text-sm font-medium border rounded-md transition-all ${
-                    selectedVariant?._id === variant._id
-                      ? "bg-black text-white border-black"
-                      : "bg-white text-gray-700 border-gray-200 hover:border-black"
-                  } ${
-                    variant.stock === 0
-                      ? "opacity-30 cursor-not-allowed bg-gray-50"
-                      : ""
-                  }`}
+                  onClick={() => setOpenImage(true)}
+                  className="absolute bottom-4 right-4 p-3 bg-white shadow-xl rounded-xl hover:scale-110 transition-transform"
                 >
-                  {variant.size}
+                  <FaImage className="text-gray-800" />
                 </button>
-              ))}
-            </div>
-          </div>
-
-          <div className="pt-4 border-t border-gray-50">
-            <p className="text-sm leading-relaxed text-gray-500 italic">
-              {product.description}
-            </p>
-          </div>
-        </div>
-
-        {/* METRICS GRID - Better alignment and icons */}
-        <div className="grid md:grid-cols-2 gap-4">
-          {/* STOCK */}
-          <div className="group border border-gray-100 p-5 rounded-xl flex justify-between items-center hover:bg-gray-50 transition-colors">
-            <div>
-              <p className="text-[10px] uppercase font-bold text-gray-400 mb-1">Stock Level</p>
-              <p className="text-xl font-bold flex items-center gap-2">
-                <MdInventory className="text-gray-400" /> {selectedVariant?.stock}
-              </p>
-            </div>
-            <button 
-              onClick={() => setOpenStock(true)}
-              className="p-2 text-gray-300 hover:text-black transition-colors"
-            >
-              <FaEdit size={14} />
-            </button>
-          </div>
-
-          {/* AVAILABILITY */}
-          <div className={`border p-5 rounded-xl flex items-center gap-3 font-semibold ${
-            selectedVariant?.stock > 0 ? "bg-green-50/50 border-green-100 text-green-700" : "bg-red-50/50 border-red-100 text-red-700"
-          }`}>
-            {selectedVariant?.stock > 0 ? (
-              <FaCheckCircle />
-            ) : (
-              <FaTimesCircle />
-            )}
-            <span>{selectedVariant?.stock > 0 ? "In Stock" : "Out of Stock"}</span>
-          </div>
-
-          {/* REFUND - Accentuated Box */}
-          <div className="border border-gray-100 p-5 col-span-2 rounded-xl flex justify-between items-center bg-gray-50/30">
-            <div className="flex gap-3 items-center">
-              <div className="p-2 bg-white rounded-lg shadow-sm">
-                <GiTakeMyMoney className="text-gray-700" size={20} />
               </div>
-              <div>
-                <p className="text-[10px] uppercase font-bold text-gray-400">Refund Policy</p>
-                <p className="font-semibold text-gray-800">{product.refund}% Refund Eligible</p>
+
+              {/* Variant Groups (Main Images) */}
+              <div className="space-y-2">
+                <p className="text-[10px] font-bold text-gray-400 uppercase tracking-tighter">
+                  Style Groups
+                </p>
+                <div className="flex gap-3 overflow-x-auto py-2 no-scrollbar">
+                  {product?.images?.map((group, i) => (
+                    <div
+                      key={i}
+                      onClick={() => {
+                        setActiveGroup(group);
+                        setActiveImg(group.main.url);
+                      }}
+                      className={`relative min-w-[70px] h-[70px] rounded-xl border-2 cursor-pointer transition-all p-1 bg-white ${
+                        activeGroup?._id === group._id
+                          ? "border-black scale-105 shadow-md"
+                          : "border-gray-100 opacity-60"
+                      }`}
+                    >
+                      <img
+                        src={group.main.url}
+                        className="w-full h-full object-cover rounded-lg"
+                      />
+                    </div>
+                  ))}
+                </div>
+              </div>
+
+              {/* Sub Images */}
+              {activeGroup?.subImages?.length > 0 && (
+                <div className="flex gap-2 overflow-x-auto pt-2">
+                  {activeGroup?.subImages?.map((img, i) => (
+                    <img
+                      key={i}
+                      src={img.url}
+                      onClick={() => setActiveImg(img.url)}
+                      className={`w-14 h-14 rounded-lg border cursor-pointer object-cover transition-all hover:opacity-100 ${
+                        activeImg === img.url
+                          ? "border-black opacity-100"
+                          : "border-transparent opacity-40"
+                      }`}
+                    />
+                  ))}
+                </div>
+              )}
+            </div>
+          </div>
+
+          {/* --- RIGHT: CONTENT --- */}
+          <div className="lg:col-span-7">
+            <div className="max-w-2xl space-y-8">
+              {/* Product Identity */}
+              <div className="space-y-3">
+                <div className="inline-flex items-center gap-2 px-3 py-1 bg-zinc-100 rounded-full text-[10px] font-bold text-zinc-600 uppercase">
+                  <MdCategory /> {product?.category?.name}
+                </div>
+                <h1 className="text-4xl font-black text-gray-900 leading-tight">
+                  {product.name}
+                </h1>
+                <div className="flex items-baseline gap-4">
+                  <span className="text-4xl font-medium text-gray-900">
+                    ₹{selectedVariant?.price?.toLocaleString()}
+                  </span>
+                  {product?.discount > 0 && (
+                    <span className="text-sm font-bold text-green-600">
+                      ({product.discount}% OFF)
+                    </span>
+                  )}
+                </div>
+              </div>
+
+              {/* Variant Selector */}
+              <div className="space-y-4">
+                <div className="flex justify-between items-end">
+                  <p className="text-xs font-bold uppercase tracking-widest text-gray-500">
+                    Available Sizes
+                  </p>
+                </div>
+                <div className="flex flex-wrap gap-3">
+                  {product.variants.map((variant) => (
+                    <button
+                      key={variant._id}
+                      onClick={() => setSelectedVariant(variant)}
+                      disabled={variant.stock === 0}
+                      className={`px-6 py-3 text-sm font-bold border-2 rounded-xl transition-all ${
+                        selectedVariant?._id === variant._id
+                          ? "bg-black text-white border-black"
+                          : "bg-white text-gray-700 border-gray-100 hover:border-gray-300"
+                      } ${variant.stock === 0 ? "opacity-30 cursor-not-allowed bg-gray-50 border-dashed" : ""}`}
+                    >
+                      {variant.size}
+                    </button>
+                  ))}
+                </div>
+              </div>
+
+              {/* Status Cards */}
+              <div className="grid sm:grid-cols-2 gap-4 pt-4">
+                <div className="p-5 rounded-2xl border border-gray-100 bg-gray-50/50 flex justify-between items-start">
+                  <div className="space-y-1">
+                    <p className="text-[10px] font-bold text-gray-400 uppercase">
+                      Inventory Status
+                    </p>
+                    <div className="flex items-center gap-2">
+                      <MdInventory className="text-gray-400" />
+                      <span className="text-xl font-bold">
+                        {selectedVariant?.stock} Units
+                      </span>
+                    </div>
+                    <div
+                      className={`text-[10px] font-bold flex items-center gap-1 mt-1 ${selectedVariant?.stock > 0 ? "text-green-600" : "text-red-600"}`}
+                    >
+                      {selectedVariant?.stock > 0 ? (
+                        <>
+                          <FaCheckCircle /> READY TO SHIP
+                        </>
+                      ) : (
+                        <>
+                          <FaTimesCircle /> OUT OF STOCK
+                        </>
+                      )}
+                    </div>
+                  </div>
+                  <button
+                    onClick={() => setOpenStock(true)}
+                    className="p-2 hover:bg-white rounded-lg transition-colors"
+                  >
+                    <FaEdit className="text-gray-400 hover:text-black" />
+                  </button>
+                </div>
+
+                <div className="p-5 rounded-2xl border border-gray-100 bg-gray-50/50 flex justify-between items-start">
+                  <div className="space-y-1">
+                    <p className="text-[10px] font-bold text-gray-400 uppercase">
+                      Returns Policy
+                    </p>
+                    <div className="flex items-center gap-2">
+                      <GiTakeMyMoney className="text-gray-400" size={20} />
+                      <span className="text-xl font-bold">
+                        {product.refund}% Refund
+                      </span>
+                    </div>
+                    <p className="text-[10px] text-gray-500 font-medium">
+                      Eligible for return within 7 days
+                    </p>
+                  </div>
+                  <button
+                    onClick={() => setOpenRefund(true)}
+                    className="text-[10px] font-black underline underline-offset-4 hover:text-blue-600"
+                  >
+                    CHANGE
+                  </button>
+                </div>
+              </div>
+
+              {/* Description */}
+              <div className="space-y-3 border-t border-gray-100 pt-8">
+                <p className="text-xs font-bold uppercase tracking-widest text-gray-500">
+                  About this product
+                </p>
+                <p className="text-gray-600 leading-relaxed font-medium">
+                  {product.description}
+                </p>
+              </div>
+
+              {/* Keywords Tagging */}
+              <div className="pt-4">
+                <div className="flex flex-wrap gap-2">
+                  {product.keywords?.split(",").map((tag, idx) => (
+                    <span
+                      key={idx}
+                      className="px-3 py-1 bg-zinc-50 border border-zinc-100 text-zinc-500 rounded text-xs font-medium"
+                    >
+                      #{tag.trim()}
+                    </span>
+                  ))}
+                </div>
               </div>
             </div>
-            <button 
-              onClick={() => setOpenRefund(true)}
-              className="text-xs font-bold text-black underline underline-offset-4 hover:text-gray-600"
-            >
-              Edit Policy
-            </button>
           </div>
         </div>
 
-        {/* KEYWORDS - Modern Tag Style */}
-        <div className="bg-gray-50 p-5 rounded-xl border border-gray-100">
-          <p className="text-[10px] uppercase font-bold text-gray-400 mb-2 tracking-widest">Metadata Keywords</p>
-          <div className="text-sm text-gray-600 font-medium">
-            {product.keywords}
-          </div>
-        </div>
+        {/* --- MODALS --- */}
+        {openEdit && (
+          <Updatefileds
+            product={product}
+            setOpenEdit={setOpenEdit}
+            refresh={getSingleProduct}
+          />
+        )}
+        {openStock && (
+          <Update
+            product={product}
+            setOpenStock={setOpenStock}
+            refresh={getSingleProduct}
+          />
+        )}
+        {openRefund && (
+          <Updaterefund
+            product={product}
+            setOpenRefund={setOpenRefund}
+            refresh={getSingleProduct}
+          />
+        )}
+        {openImage && (
+          <Updateimage
+            product={product}
+            setOpenImage={setOpenImage}
+            refresh={getSingleProduct}
+          />
+        )}
       </div>
-    </div>
-
-    {/* MODALS - Unchanged functionality */}
-    {openEdit && (
-      <Updatefileds
-        product={product}
-        setOpenEdit={setOpenEdit}
-        refresh={getSingleProduct}
-      />
-    )}
-
-    {openStock && (
-      <Update
-        product={product}
-        setOpenStock={setOpenStock}
-        refresh={getSingleProduct}
-      />
-    )}
-
-    {openRefund && (
-      <Updaterefund
-        product={product}
-        setOpenRefund={setOpenRefund}
-        refresh={getSingleProduct}
-      />
-    )}
-
-    {openImage && (
-      <Updateimage
-        product={product}
-        setOpenImage={setOpenImage}
-        refresh={getSingleProduct}
-      />
-    )}
-  </div>
-</Layout>
+    </Layout>
   );
 };
 

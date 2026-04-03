@@ -1,33 +1,30 @@
-import multer from 'multer';
+import multer from "multer";
 import { rm } from "fs/promises";
-import { generateId } from '../utils/idGenerate.js';
-
-
-
+import { generateId } from "../utils/idGenerate.js";
 
 const storage = multer.diskStorage({
-    destination(req, file, cb) {
-        // console.log("Multer storage setting destination")
-        // cb(null, "uploads/profiles")
-        cb(null, "uploads")
-    },
-    filename(req, file, cb) {
-        // console.log("multer storage generate file name")
-        // console.log(file.mimetype)
-        const id = generateId();
-        const filename = file.originalname.split(".").shift()
-        const extName = file.originalname.split(".").pop();
-        const fileName = `product_${filename}_${id}.${extName}`;
-        cb(null, fileName);
-    },
+  destination(req, file, cb) {
+    // console.log("Multer storage setting destination")
+    // cb(null, "uploads/profiles")
+    cb(null, "uploads");
+  },
+  filename(req, file, cb) {
+    // console.log("multer storage generate file name")
+    // console.log(file.mimetype)
+    const id = generateId();
+    const filename = file.originalname.split(".").shift();
+    const extName = file.originalname.split(".").pop();
+    const fileName = `product_${filename}_${id}.${extName}`;
+    cb(null, fileName);
+  },
 });
 
-
-// remove profile image from upload folder 
+// remove profile image from upload folder
 export const removeFiles = (filepath) => {
-    console.log(filepath)
-       rm(filepath);
-}
+  console.log(filepath);
+  rm(filepath);
+};
 
-// upload profilpic 
-export const uploadProducts = multer({ storage }).array("images", 5);
+// upload profilpic
+export const uploadProducts = multer({ storage }).array("images", 20);
+// export const uploadProducts = multer({ storage }).array("files", 20);

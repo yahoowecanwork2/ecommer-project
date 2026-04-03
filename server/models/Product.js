@@ -28,16 +28,43 @@ const productSchema = new mongoose.Schema(
       type: String,
       required: true,
     },
-    image: [
+    // image: [
+    //   {
+    //     url: {
+    //       type: String,
+    //       required: true,
+    //     },
+    //     index: {
+    //       type: Number,
+    //       required: true,
+    //     },
+    //   },
+    // ],
+
+    images: [
       {
-        url: {
-          type: String,
-          required: true,
+        main: {
+          url: {
+            type: String,
+            required: true,
+          },
+          index: {
+            type: Number,
+            required: true,
+          },
         },
-        index: {
-          type: Number,
-          required: true,
-        },
+        subImages: [
+          {
+            url: {
+              type: String,
+              required: true,
+            },
+            index: {
+              type: Number,
+              required: true,
+            },
+          },
+        ],
       },
     ],
 
