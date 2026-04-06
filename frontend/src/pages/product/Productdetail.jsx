@@ -18,8 +18,9 @@ const Productdetail = () => {
   const { slug } = useParams();
   const navigate = useNavigate();
   const dispatch = useDispatch();
-  const [selectedImageIndex, setSelectedImageIndex] = useState(0);
   const [product, setProduct] = useState(null);
+  const [selectedStyle, setSelectedStyle] = useState(null);
+  const [selectedImageIndex, setSelectedImageIndex] = useState(0);
   const [activeImg, setActiveImg] = useState("");
   const [selectedSize, setSelectedSize] = useState("");
   const [wish, setWish] = useState(false);
@@ -30,7 +31,10 @@ const Productdetail = () => {
       console.log("product detail", res);
 
       setProduct(res.product);
-      setActiveImg(res.product.image[0]?.url);
+      setSelectedStyle(null);
+
+      setSelectedImageIndex(0);
+      setActiveImg(res.product.images?.[0]?.main?.url);
     } catch (error) {
       console.log("Error fetching product:", error);
     }
@@ -41,6 +45,11 @@ const Productdetail = () => {
   }, [slug]);
 
   const handleAddToCart = async () => {
+    if (selectedStyle === null) {
+      alert("Please select a style");
+      return;
+    }
+
     if (!selectedSize) {
       alert("Please select a size");
       return;
@@ -69,7 +78,7 @@ const Productdetail = () => {
       price: discountedPrice,
       name: product.name,
       description: product.description,
-      imageUrl: product?.image[0]?.url || "",
+      imageUrl: product?.image || "",
     };
     try {
       dispatch(addOrIncrementInWishlist(payload));
@@ -91,12 +100,11 @@ const Productdetail = () => {
         }, {}),
       )
     : [];
-  const selectedVariant = groupedVariants[selectedImageIndex]?.find(
+  const selectedVariant = product?.variants?.find(
     (v) => v.size === selectedSize,
   );
 
   const finalPrice = selectedVariant?.price || product?.price;
-
   const discountedPrice =
     product?.discount > 0
       ? Math.round(finalPrice - (finalPrice * product.discount) / 100)
@@ -137,7 +145,7 @@ const Productdetail = () => {
 
             {/* Thumbnails */}
             <div className="flex gap-2 mt-4 overflow-x-auto no-scrollbar">
-              {product?.image.map((img, i) => (
+              {/* {product?.image.map((img, i) => (
                 <button
                   key={img._id}
                   onClick={() => {
@@ -156,6 +164,22 @@ const Productdetail = () => {
                     className="w-full h-full object-cover"
                     alt="thumb"
                   />
+                </button>
+              ))} */}
+              {[
+                product.images[selectedImageIndex]?.main,
+                ...(product.images[selectedImageIndex]?.subImages || []),
+              ].map((img, i) => (
+                <button
+                  key={i}
+                  onClick={() => setActiveImg(img.url)}
+                  className={`w-16 h-20 border ${
+                    activeImg === img.url
+                      ? "border-[#7A4431]"
+                      : "border-gray-200 opacity-60"
+                  }`}
+                >
+                  <img src={img.url} className="w-full h-full object-cover" />
                 </button>
               ))}
             </div>
@@ -189,7 +213,7 @@ const Productdetail = () => {
                 Available Options:
               </p>
               <div className="flex gap-3 overflow-x-auto pb-2 no-scrollbar">
-                {product?.image.slice(0, 4).map((img, i) => (
+                {/* {product?.image.slice(0, 4).map((img, i) => (
                   <div
                     key={i}
                     className="flex flex-col gap-2 min-w-[70px] group cursor-pointer"
@@ -209,6 +233,27 @@ const Productdetail = () => {
                     >
                       Style {i + 1}
                     </p>
+                  </div>
+                ))} */}
+                {product?.images.map((img, i) => (
+                  <div
+                    key={i}
+                    onClick={() => {
+                      setSelectedImageIndex(i);
+                      setActiveImg(img.main.url); // reset main image
+                      setSelectedSize("");
+                      setSelectedStyle(i); // ✅ add this
+                    }}
+                    className={`cursor-pointer border ${
+                      selectedImageIndex === i
+                        ? "border-[#7A4431]"
+                        : "border-gray-200"
+                    }`}
+                  >
+                    <img
+                      src={img.main.url}
+                      className="w-16 h-16 object-cover"
+                    />
                   </div>
                 ))}
               </div>
