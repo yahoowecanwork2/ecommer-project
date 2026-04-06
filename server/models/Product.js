@@ -4,7 +4,7 @@ const productSchema = new mongoose.Schema(
   {
     name: {
       type: String,
-      require: true,
+      required: true,
     },
     category: {
       type: mongoose.Schema.Types.ObjectId,
@@ -13,11 +13,11 @@ const productSchema = new mongoose.Schema(
     },
     slug: {
       type: String,
-      require: true,
+      required: true,
     },
     uniqueId: {
       type: String,
-      require: true,
+      required: true,
     },
     description: {
       type: String,

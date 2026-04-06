@@ -305,7 +305,7 @@ export const getProductBySlug = async (req, res) => {
     const { slug } = req.params;
 
     const product = await Product.findOne({ slug }).select(
-      "name slug uniqueId description keywords variants image discount insale createdAt",
+      "name slug uniqueId description keywords variants images discount insale createdAt",
     );
 
     if (!product) {
@@ -316,14 +316,41 @@ export const getProductBySlug = async (req, res) => {
     }
 
     // ✅ default variant
-    const defaultVariant = product.variants?.[0];
-
+    const defaultVariant =
+      product.variants?.find((v) => v.stock > 0) || product.variants?.[0];
     // ✅ total stock
     const totalStock = product.variants?.reduce(
       (acc, v) => acc + (v.stock || 0),
       0,
     );
+    const mainImage =
+      product.images &&
+      product.images.length > 0 &&
+      product.images[0].main &&
+      product.images[0].main.url
+        ? product.images[0].main.url
+        : null;
+    // const formattedProduct = {
+    //   _id: product._id,
+    //   name: product.name,
+    //   slug: product.slug,
+    //   uniqueId: product.uniqueId,
+    //   description: product.description,
+    //   keywords: product.keywords,
 
+    //   // ✅ IMPORTANT
+    //   price: defaultVariant?.price || 0,
+    //   stock: totalStock,
+    //   available: totalStock > 0,
+
+    //   discount: product.discount,
+    //   insale: product.insale,
+
+    //   image: mainImage,
+    //   images: product.images || [],
+
+    //   variants: product.variants || [],
+    // };
     const formattedProduct = {
       _id: product._id,
       name: product.name,
@@ -332,7 +359,6 @@ export const getProductBySlug = async (req, res) => {
       description: product.description,
       keywords: product.keywords,
 
-      // ✅ IMPORTANT
       price: defaultVariant?.price || 0,
       stock: totalStock,
       available: totalStock > 0,
@@ -340,7 +366,8 @@ export const getProductBySlug = async (req, res) => {
       discount: product.discount,
       insale: product.insale,
 
-      image: product.image || [],
+      image: mainImage,
+      images: product.images || [],
 
       variants: product.variants || [],
     };
@@ -535,7 +562,7 @@ export const adminGetProducts = async (req, res) => {
     const sortDirection = req.query.sort === "asc" ? 1 : -1;
 
     const products = await Product.find()
-      .select("name slug uniqueId variants image available insale createdAt")
+      .select("name slug uniqueId variants images available insale createdAt")
       .sort({ createdAt: sortDirection })
       .skip(startIndex)
       .limit(limit);
@@ -543,16 +570,15 @@ export const adminGetProducts = async (req, res) => {
     const formattedProducts = products.map((product) => {
       const variants = product.variants || [];
 
-      // ✅ total stock (all variants ka sum)
       const totalStock = variants.reduce((acc, v) => acc + (v.stock || 0), 0);
 
-      // ✅ min price
       const prices = variants.map((v) => v.price || 0);
       const minPrice = prices.length > 0 ? Math.min(...prices) : 0;
 
-      // ✅ FIXED: image now from product.image[]
       const firstImage =
-        product.image && product.image.length > 0 ? product.image[0].url : null;
+        product.images && product.images.length > 0 && product.images[0].main
+          ? product.images[0].main.url
+          : null;
 
       return {
         _id: product._id,
@@ -560,7 +586,6 @@ export const adminGetProducts = async (req, res) => {
         slug: product.slug,
         uniqueId: product.uniqueId,
 
-        // ✅ calculated
         stock: totalStock,
         price: minPrice,
 
