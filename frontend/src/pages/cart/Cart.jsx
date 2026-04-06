@@ -208,6 +208,12 @@ const Cart = () => {
                         <p className="text-sm text-gray-400 mt-1 uppercase tracking-wider">
                           Premium Selection
                         </p>
+                        <p className="text-sm text-gray-500 mt-1">
+                          Size:{" "}
+                          <span className="font-medium text-gray-800">
+                            {item?.size}
+                          </span>
+                        </p>
                       </div>
                       <p className="text-lg font-semibold text-gray-900">
                         ₹{item?.price?.toLocaleString()}
