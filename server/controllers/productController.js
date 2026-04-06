@@ -14,7 +14,7 @@ export const userGetProducts = async (req, res) => {
 
     const products = await Product.find()
       .select(
-        "name slug uniqueId description keywords variants image discount insale createdAt",
+        "name slug uniqueId description keywords variants images discount insale createdAt",
       )
       .sort({ createdAt: sortDirection })
       .skip(startIndex)
@@ -30,7 +30,10 @@ export const userGetProducts = async (req, res) => {
         (acc, v) => acc + (v.stock || 0),
         0,
       );
-
+      const firstImage =
+        product.images && product.images.length > 0 && product.images[0].main
+          ? product.images[0].main.url
+          : null;
       return {
         _id: product._id,
         name: product.name,
@@ -46,7 +49,7 @@ export const userGetProducts = async (req, res) => {
         available: totalStock > 0,
         insale: product.insale,
 
-        image: product.image?.length > 0 ? product.image[0].url : null,
+        image: firstImage,
       };
     });
 
