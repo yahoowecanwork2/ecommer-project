@@ -107,7 +107,7 @@ const Create = ({ setShowModal }) => {
   const removeSubImage = (groupIndex, subIndex) => {
     const updated = [...imageGroups];
     updated[groupIndex].subImages = updated[groupIndex].subImages.filter(
-      (_, i) => i !== subIndex
+      (_, i) => i !== subIndex,
     );
     setImageGroups(updated);
   };
@@ -149,8 +149,8 @@ const Create = ({ setShowModal }) => {
 
     // 🔥 MIN 4 IMAGES VALIDATION
     const totalImages = getTotalImages();
-    if (totalImages < 4) {
-      alert("Minimum 4 images required ❌");
+    if (totalImages < 1) {
+      alert("Minimum 1 images required ❌");
       return;
     }
 
