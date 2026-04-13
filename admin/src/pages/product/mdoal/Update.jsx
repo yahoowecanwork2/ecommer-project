@@ -3,9 +3,9 @@ import { productApi } from "../../../apis/product";
 import { FaTimes, FaSave } from "react-icons/fa";
 
 const Update = ({ product, setOpenStock, refresh }) => {
-  const [stock, setStock] = useState(product.stock);
-  const [available, setAvailable] = useState(product.available);
-  const [insale, setInsale] = useState(product.insale);
+  const [stock, setStock] = useState(product?.stock);
+  const [available, setAvailable] = useState(product?.available);
+  const [insale, setInsale] = useState(product?.insale);
   const [loading, setLoading] = useState(false);
 
   const handleUpdate = async () => {
