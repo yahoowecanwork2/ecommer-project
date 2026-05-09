@@ -109,11 +109,11 @@ const Footer = () => {
                   <span className="break-all">support@naviclothing.com</span>
                 </a>
                 <a
-                  href="tel:+919582379974"
+                  href="tel:+918178499959"
                   className="flex items-center gap-3 text-[13px] text-gray-500 hover:text-[#c9a07a] transition-colors"
                 >
                   <IoCallOutline className="text-lg flex-shrink-0" />
-                  <span>+91 95823 79974</span>
+                  <span>+91 8178499959</span>
                 </a>
                 <div className="flex gap-6 pt-4">
                   <IoLogoInstagram className="text-xl text-gray-400 hover:text-[#c9a07a] transition-all cursor-pointer hover:-translate-y-1" />
