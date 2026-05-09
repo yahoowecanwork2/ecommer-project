@@ -401,7 +401,7 @@ const Home = () => {
               >
                 <video
                   src={video.url} // <--- Important Change
-                  className="w-full h-full object-cover"
+                  className="w-full h-full lg:flex hidden object-cover"
                   muted
                   loop
                   playsInline
@@ -410,6 +410,14 @@ const Home = () => {
                     e.currentTarget.pause();
                     e.currentTarget.currentTime = 0;
                   }}
+                />
+                <video
+                  src={video.url}
+                  className="w-full h-full flex lg:hidden object-cover"
+                  muted
+                  loop
+                  playsInline
+                  autoPlay
                 />
 
                 <div className="absolute bottom-4 left-4 text-white z-10 pointer-events-none">
