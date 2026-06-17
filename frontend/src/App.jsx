@@ -1,15 +1,14 @@
-import { useState } from "react";
-import reactLogo from "./assets/react.svg";
-import viteLogo from "/vite.svg";
-import "./App.css";
-import Pagesroutes from "./routes/Pagesroutes";
-import ScrollToTop from "./pages/common/ScrollToTop";
+import Home from "./pages/home/Home";
+import Header from "./pages/common/Header.jsx";
 
 function App() {
   return (
     <>
-      <ScrollToTop />
-      <Pagesroutes />
+      {/* <ScrollToTop />
+      <Pagesroutes /> */}
+      <Header/>
+
+      <Home/>
     </>
   );
 }
