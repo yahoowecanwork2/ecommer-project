@@ -13,7 +13,7 @@ export default function Header(){
         </div>
 
 
-        <ul className="flex justify-center gap-10 text-lg font-medium">
+        <ul className="hidden md:flex justify-center gap-10 text-lg font-medium">
 
           <li>
             <a href="#" className="hover:text-gray-200">
