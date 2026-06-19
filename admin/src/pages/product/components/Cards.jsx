@@ -1,5 +1,11 @@
-import React from "react";
+import React from 'react'
 
-export const Cards = () => {
-  return <div>Cards</div>;
-};
+const Cards = ({id , product}) => {
+  return (
+    <div>
+      
+    </div>
+  )
+}
+
+export default Cards
