@@ -5,23 +5,32 @@ import Create from "./mdoal/Create";
 import Cards from "./components/Cards";
 
 const Product = () => {
-  const[product , setproduct] = useState([]);
-  const[open , setopen] = useState(false);
-  
+  const [product, setproduct] = useState([]);
+  const [open, setopen] = useState(false);
+  const [currentPage, setCurrentPage] = useState(1);
+  const productsPerPage = 8;
 
+  const fetchproduct = async () => {
+    try {
+      const res = await productApi.get();
+      console.log("product data is", res);
 
-  const fetchproduct = async()=>{
-    try{
-      const res = await productApi.create();
-      setproduct(res)
-    } catch(error){
-      console.log("Error is" , error);
+      setproduct(res?.products);
+    } catch (error) {
+      console.log("Error is", error);
     }
-  }
+  };
 
-  useEffect(()=>{
-    fetchproduct()
-  },[])
+  useEffect(() => {
+    fetchproduct();
+  }, []);
+
+  const lastIndex = currentPage * productsPerPage;
+  const firstIndex = lastIndex - productsPerPage;
+
+  const currentProducts = product.slice(firstIndex, lastIndex);
+
+  const totalPages = Math.ceil(product.length / productsPerPage);
 
   return (
     <Layout>
@@ -62,29 +71,51 @@ const Product = () => {
           </div>
           <div>
             <button
-            onClick={()=> Setopen(true)}
-             className="border border-gray-300 px-3 py-2 bg-[#006EFF] text-white font-semibold cursor-pointer  ">
+              onClick={() => setopen(true)}
+              className="border border-gray-300 px-3 py-2 bg-[#006EFF] text-white font-semibold cursor-pointer  "
+            >
               Create product
             </button>
           </div>
-          {/* {open && <Create fetchproduct={fetchproduct} closemodal={()=> Setopen(false)}  />} */}
+          {open && (
+            <Create
+              fetchproduct={fetchproduct}
+              closemodal={() => setopen(false)}
+            />
+          )}
         </div>
 
-        
-          <div className="grid grid-cols-1 md:grid-cols-4  gap-5">
-              {product?.map((product) => (
-                
-                
-                <Cards
-                  key={category?._id}
-                  category={category}
-                  fetchcategory={fetchcategory}
-                />
-              ))}
+        <div className="grid grid-cols-1 md:grid-cols-4  gap-5">
+          {currentProducts?.map((product) => (
+            <Cards
+              key={product?._id}
+              product={product}
+              fetchproduct={fetchproduct}
+            />
+          ))}
+        </div>
 
-              
-            </div>
-        
+        <div className="flex justify-center items-center gap-4 mt-8">
+  <button
+    onClick={() => setCurrentPage((prev) => prev - 1)}
+    disabled={currentPage === 1}
+    className="px-4 py-2 border rounded disabled:opacity-50"
+  >
+    Previous
+  </button>
+
+  <span className="font-semibold">
+    Page {currentPage} of {totalPages}
+  </span>
+
+  <button
+    onClick={() => setCurrentPage((prev) => prev + 1)}
+    disabled={currentPage === totalPages}
+    className="px-4 py-2 border rounded disabled:opacity-50"
+  >
+    Next
+  </button>
+</div>
       </div>
     </Layout>
   );

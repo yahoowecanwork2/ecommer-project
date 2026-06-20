@@ -15,7 +15,7 @@ const CategoryCard = ({ category, fetchcategory }) => {
 
         } catch(error){
             console.log(error);
-            toast.error("Failed to dleete category")
+            toast.error("Failed to delete category")
         }
     }
 
