@@ -1,4 +1,5 @@
 import React from "react";
+import Chairss from "../../img/Chairss.png";
 
 const products = [
   {
@@ -43,13 +44,13 @@ export default function ProductSection() {
   return (
     <section className="relative bg-[#f8f6f2] py-16 overflow-hidden">
       {/* Left Large Image */}
-      {/* <div className="absolute left-0 top-12 hidden lg:block">
+      <div className="absolute left-0 top-12 hidden lg:block">
         <img
-          src="https://images.unsplash.com/photo-1519947486511-46149fa0a254?w=1200"
+          src={Chairss}
           alt="chair"
           className=" w-[280px] object-cover"
         />
-      </div> */}
+      </div>
 
       <div className="max-w-7xl mx-auto px-6">
         {/* Heading */}
