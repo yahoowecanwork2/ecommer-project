@@ -2,8 +2,10 @@ import React from "react";
 import { MdDelete } from "react-icons/md";
 import { productApi } from "../../../apis/product";
 import toast from "react-hot-toast";
+import { useNavigate } from "react-router-dom";
 
 const Cards = ({ id, product, fetchproduct }) => {
+  const navigate = useNavigate();  
   const handleDelete = async () => {
     try {
       const res = await productApi.delete(product._id);
@@ -18,7 +20,8 @@ const Cards = ({ id, product, fetchproduct }) => {
 
   return (
     <div>
-      <div className="border my-5 flex flex-col gap-3">
+      <div
+       className="border my-5 flex flex-col gap-3">
         <div className="relative">
           <img
             src={product?.image}
@@ -50,13 +53,15 @@ const Cards = ({ id, product, fetchproduct }) => {
 
           <div className="flex gap-10">
             <div>
-              <button className="border px-2 bg-[#006EFF] text-white font-semibold py-1">View Details</button>
+              <button
+              onClick={()=> navigate(`/product-detail/${product._id}`)} 
+               className="border px-2 bg-[#006EFF] text-white cursor-pointer font-semibold py-1">View Details</button>
             </div>
 
             <div>
               <button
               onClick={handleDelete}
-               className="px-2 py-1 font-semibold text-white border bg-[#006EFF]">Delete</button>
+               className="px-2 py-1 font-semibold cursor-pointer text-white border bg-[#006EFF]">Delete</button>
             </div>
           </div>
         </div>
