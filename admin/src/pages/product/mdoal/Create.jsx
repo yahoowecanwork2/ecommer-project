@@ -225,7 +225,8 @@ const Create = ({ closemodal, fetchproduct }) => {
             </select>
           </div>
 
-          <div>
+          <div className="flex justify-between">
+            <label>Main Image :</label>
             <input
               type="file"
               onChange={(e) => {
@@ -240,6 +241,7 @@ const Create = ({ closemodal, fetchproduct }) => {
               }}
             />
 
+            <label>Sub Images:</label>
             <input
               type="file"
               multiple

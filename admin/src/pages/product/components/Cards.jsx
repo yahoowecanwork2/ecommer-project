@@ -21,12 +21,12 @@ const Cards = ({ id, product, fetchproduct }) => {
   return (
     <div>
       <div
-       className="border my-5 flex flex-col gap-3">
+       className="border border-gray-400 rounded-lg my-5 flex flex-col gap-3">
         <div className="relative">
           <img
             src={product?.image}
             alt={product?.name}
-            className="w-full object-cover md:h-[290px] "
+            className="w-full object-top md:h-[290px] "
           />
           {/* <span>
             {product.insale =="yes" ? 
