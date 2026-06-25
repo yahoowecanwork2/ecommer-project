@@ -1,6 +1,7 @@
 import { MdShoppingCart } from "react-icons/md";
 import { FaHeart } from "react-icons/fa";
 import { FaRegUserCircle } from "react-icons/fa";
+import {NavLink} from "react-router-dom";
 
 export default function Header(){
   return (
@@ -16,37 +17,37 @@ export default function Header(){
         <ul className="hidden md:flex justify-center gap-10 text-lg font-medium">
 
           <li>
-            <a href="#" className="hover:text-gray-200">
-              Home
-            </a>
+            <NavLink to="/" className="hover : text-black-200">
+            Home
+            </NavLink>
           </li>
 
 
            <li>
-            <a href="#" className="hover:text-gray-200">
-              Product
-            </a>
+             <NavLink to="/products" className="hover : text-black-200">
+            Product
+            </NavLink>
           </li>
 
 
            <li>
-            <a href="#" className="hover:text-gray-200">
-              Categories
-            </a>
+             <NavLink to="/categories" className="hover : text-black-200">
+            Categories
+            </NavLink>
           </li>
 
 
            <li>
-            <a href="#" className="hover:text-gray-200">
-             About
-            </a>
+             <NavLink to="/about" className="hover : text-black-200">
+            About Us
+            </NavLink>
           </li>
 
 
            <li>
-            <a href="#" className="hover:text-gray-200">
-              Contact Us
-            </a>
+            <NavLink to="/contact" className="hover : text-black-200">
+            Contact Us
+            </NavLink>
           </li>
 
         </ul>
