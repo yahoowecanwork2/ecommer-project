@@ -12,6 +12,7 @@ import paymentRoutes from "../routes/paymentRoutes.js";
 import productRoutes from "../routes/productRoutes.js";
 import orderRoutes from "../routes/orderRoutes.js";
 import userRoutes from "../routes/userRoutes.js";
+import inquiryRoutes from "../routes/inquiaryRoutes.js";
 
 dbConnect();
 const app = express();
@@ -20,7 +21,13 @@ export const instance = new Razorpay({
   key_secret: process.env.RAZORPAY_SECRET,
 });
 
-const allowedOrigins = ["http://localhost:5173", "http://localhost:5174","https://ecomuserpanel.arcoders.com","https://ecomadmin.arcoders.com","https://naviclothing.arcoders.com"];
+const allowedOrigins = [
+  "http://localhost:5173",
+  "http://localhost:5174",
+  "https://ecomuserpanel.arcoders.com",
+  "https://ecomadmin.arcoders.com",
+  "https://naviclothing.arcoders.com",
+];
 
 app.use(
   cors({
@@ -34,6 +41,7 @@ app.use(cookieParser());
 app.use(express.json({ limit: "100mb" }));
 app.use(express.urlencoded({ extended: true }));
 app.use("/uploads", express.static("uploads"));
+app.use("/api/v1/inquiry", inquiryRoutes);
 
 app.use("/api/v1/admin", adminRoutes);
 app.use("/api/v1/category", categoryRoutes);
