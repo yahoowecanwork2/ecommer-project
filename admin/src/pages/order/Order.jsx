@@ -5,186 +5,184 @@ import Create from "./modal/Create";
 import Cards from "../product/components/Cards";
 import Card from "./components/Card";
 
-
 const Order = () => {
-const orders = [
-  {
-    orderno: "ORD1001",
-    customername: "Rahul Sharma",
-    phoneno: "9876543210",
-    Date: "26 august 2019",
-    emailid: "rahul@gmail.com",
-    shippingaddress: "Sector 62, Noida",
-    pincode: "201301",
-    alternateno: "9876543211",
-    calculatedamount: 2499,
-    discount: 200,
-    ordertotal: 2299,
-    paymentType: "cod",
-    paymentstatus: "pending",
-    status: "processing",
-    items: [
-      {
-        name: "Men's Shirt",
-        imageurl:
-          "https://images.unsplash.com/photo-1521572163474-6864f9cf17ab?w=400",
-        quantity: 2,
-        size: "M",
-        price: 999,
-      },
-    ],
-  },
+  const orders = [
+    {
+      orderno: "ORD1001",
+      customername: "Rahul Sharma",
+      phoneno: "9876543210",
+      Date: "26 august 2019",
+      emailid: "rahul@gmail.com",
+      shippingaddress: "Sector 62, Noida",
+      pincode: "201301",
+      alternateno: "9876543211",
+      calculatedamount: 2499,
+      discount: 200,
+      ordertotal: 2299,
+      paymentType: "cod",
+      paymentstatus: "pending",
+      status: "processing",
+      items: [
+        {
+          name: "Men's Shirt",
+          imageurl:
+            "https://images.unsplash.com/photo-1521572163474-6864f9cf17ab?w=400",
+          quantity: 2,
+          size: "M",
+          price: 999,
+        },
+      ],
+    },
 
-  {
-    orderno: "ORD1002",
-    customername: "Priya Verma",
-    phoneno: "9123456789",
-    Date: "19 march 2026",
-    emailid: "priya@gmail.com",
-    shippingaddress: "Raj Nagar, Ghaziabad",
-    pincode: "201002",
-    calculatedamount: 1899,
-    discount: 100,
-    ordertotal: 1799,
-    paymentType: "online",
-    paymentstatus: "complete",
-    status: "dispatched",
-    items: [
-      {
-        name: "Women's Kurti",
-        imageurl:
-          "https://images.unsplash.com/photo-1585487000160-6ebcfceb0d03?w=400",
-        quantity: 1,
-        size: "L",
-        price: 1899,
-      },
-    ],
-  },
+    {
+      orderno: "ORD1002",
+      customername: "Priya Verma",
+      phoneno: "9123456789",
+      Date: "19 march 2026",
+      emailid: "priya@gmail.com",
+      shippingaddress: "Raj Nagar, Ghaziabad",
+      pincode: "201002",
+      calculatedamount: 1899,
+      discount: 100,
+      ordertotal: 1799,
+      paymentType: "online",
+      paymentstatus: "complete",
+      status: "dispatched",
+      items: [
+        {
+          name: "Women's Kurti",
+          imageurl:
+            "https://images.unsplash.com/photo-1585487000160-6ebcfceb0d03?w=400",
+          quantity: 1,
+          size: "L",
+          price: 1899,
+        },
+      ],
+    },
 
-  {
-    orderno: "ORD1003",
-    customername: "Amit Singh",
-    phoneno: "9988776655",
-    Date: "01 january 2026",
-    emailid: "amit@gmail.com",
-    shippingaddress: "Indirapuram, Ghaziabad",
-    pincode: "201014",
-    calculatedamount: 3499,
-    discount: 500,
-    ordertotal: 2999,
-    paymentType: "online",
-    paymentstatus: "complete",
-    status: "delivered",
-    delivereddate: "2026-06-20",
-    items: [
-      {
-        name: "Sneakers",
-        imageurl:
-          "https://images.unsplash.com/photo-1542291026-7eec264c27ff?w=400",
-        quantity: 1,
-        size: "9",
-        price: 3499,
-      },
-    ],
-  },
+    {
+      orderno: "ORD1003",
+      customername: "Amit Singh",
+      phoneno: "9988776655",
+      Date: "01 january 2026",
+      emailid: "amit@gmail.com",
+      shippingaddress: "Indirapuram, Ghaziabad",
+      pincode: "201014",
+      calculatedamount: 3499,
+      discount: 500,
+      ordertotal: 2999,
+      paymentType: "online",
+      paymentstatus: "complete",
+      status: "delivered",
+      delivereddate: "2026-06-20",
+      items: [
+        {
+          name: "Sneakers",
+          imageurl:
+            "https://images.unsplash.com/photo-1542291026-7eec264c27ff?w=400",
+          quantity: 1,
+          size: "9",
+          price: 3499,
+        },
+      ],
+    },
 
-  {
-    orderno: "ORD1004",
-    customername: "Neha Joshi",
-    phoneno: "9812345678",
-    Date: "12 april 2026",
-    emailid: "neha@gmail.com",
-    shippingaddress: "Kotdwara, Uttarakhand",
-    pincode: "246149",
-    calculatedamount: 999,
-    discount: 0,
-    ordertotal: 999,
-    paymentType: "cod",
-    paymentstatus: "pending",
-    status: "pending",
-    items: [
-      {
-        name: "Cotton T-Shirt",
-        imageurl:
-          "https://images.unsplash.com/photo-1576566588028-4147f3842f27?w=400",
-        quantity: 1,
-        size: "S",
-        price: 999,
-      },
-    ],
-  },
+    {
+      orderno: "ORD1004",
+      customername: "Neha Joshi",
+      phoneno: "9812345678",
+      Date: "12 april 2026",
+      emailid: "neha@gmail.com",
+      shippingaddress: "Kotdwara, Uttarakhand",
+      pincode: "246149",
+      calculatedamount: 999,
+      discount: 0,
+      ordertotal: 999,
+      paymentType: "cod",
+      paymentstatus: "pending",
+      status: "pending",
+      items: [
+        {
+          name: "Cotton T-Shirt",
+          imageurl:
+            "https://images.unsplash.com/photo-1576566588028-4147f3842f27?w=400",
+          quantity: 1,
+          size: "S",
+          price: 999,
+        },
+      ],
+    },
 
-  {
-    orderno: "ORD1005",
-    customername: "Rohit Kumar",
-    phoneno: "9765432109",
-    Date: "19 march 2025",
-    emailid: "rohit@gmail.com",
-    shippingaddress: "Dehradun, Uttarakhand",
-    pincode: "248001",
-    calculatedamount: 4200,
-    discount: 300,
-    ordertotal: 3900,
-    paymentType: "online",
-    paymentstatus: "complete",
-    status: "intransit",
-    items: [
-      {
-        name: "Denim Jacket",
-        imageurl:
-          "https://images.unsplash.com/photo-1542272604-787c3835535d?w=400",
-        quantity: 1,
-        size: "XL",
-        price: 4200,
-      },
-    ],
-  },
+    {
+      orderno: "ORD1005",
+      customername: "Rohit Kumar",
+      phoneno: "9765432109",
+      Date: "19 march 2025",
+      emailid: "rohit@gmail.com",
+      shippingaddress: "Dehradun, Uttarakhand",
+      pincode: "248001",
+      calculatedamount: 4200,
+      discount: 300,
+      ordertotal: 3900,
+      paymentType: "online",
+      paymentstatus: "complete",
+      status: "intransit",
+      items: [
+        {
+          name: "Denim Jacket",
+          imageurl:
+            "https://images.unsplash.com/photo-1542272604-787c3835535d?w=400",
+          quantity: 1,
+          size: "XL",
+          price: 4200,
+        },
+      ],
+    },
 
-  {
-    orderno: "ORD1006",
-    customername: "Anjali Rawat",
-    phoneno: "9871203456",
-    Date: "10 april 2026",
-    emailid: "anjali@gmail.com",
-    shippingaddress: "Haridwar, Uttarakhand",
-    pincode: "249401",
-    calculatedamount: 1599,
-    discount: 100,
-    ordertotal: 1499,
-    paymentType: "cod",
-    paymentstatus: "pending",
-    status: "canceled",
-    cancelStatus: "yes",
-    items: [
-      {
-        name: "Women's Top",
-        imageurl:
-          "https://images.unsplash.com/photo-1483985988355-763728e1935b?w=400",
-        quantity: 1,
-        size: "M",
-        price: 1599,
-      },
-    ],
-  },
-];
+    {
+      orderno: "ORD1006",
+      customername: "Anjali Rawat",
+      phoneno: "9871203456",
+      Date: "10 april 2026",
+      emailid: "anjali@gmail.com",
+      shippingaddress: "Haridwar, Uttarakhand",
+      pincode: "249401",
+      calculatedamount: 1599,
+      discount: 100,
+      ordertotal: 1499,
+      paymentType: "cod",
+      paymentstatus: "pending",
+      status: "canceled",
+      cancelStatus: "yes",
+      items: [
+        {
+          name: "Women's Top",
+          imageurl:
+            "https://images.unsplash.com/photo-1483985988355-763728e1935b?w=400",
+          quantity: 1,
+          size: "M",
+          price: 1599,
+        },
+      ],
+    },
+  ];
 
-  const[order , setorder] = useState([]);
-  const[open, setopen] = useState(false);
+  const [order, setorder] = useState([]);
+  const [open, setopen] = useState(false);
 
-  const fetchorder = async()=>{
-    try{
+  const fetchorder = async () => {
+    try {
       const res = await orderApis.getAll();
-      console.log("Data is",res);
+      console.log("Data is", res);
       setorder(res.orders);
-    } catch(error){
-      console.log("Error is" , error);
-      
+    } catch (error) {
+      console.log("Error is", error);
     }
-  }
+  };
 
-  useEffect(()=>{
-    fetchorder()
-  },[])
+  useEffect(() => {
+    fetchorder();
+  }, []);
 
   return (
     <Layout>
@@ -232,10 +230,7 @@ const orders = [
             </button>
           </div>
           {open && (
-            <Create
-              fetchorder={fetchorder}
-              closemodal={() => setopen(false)}
-            />
+            <Create fetchorder={fetchorder} closemodal={() => setopen(false)} />
           )}
         </div>
 
@@ -249,10 +244,10 @@ const orders = [
           ))}
         </div> */}
         <div className="grid md:grid-cols-3 sm:grid-cols-2  gap-10 mt-6">
-        {orders.map((order)=>(
-          <Card key={order.orderno} value={order} orders={orders} />
-        ))}
-       </div>
+          {orders.map((order) => (
+            <Card key={order.orderno} value={order} orders={orders} />
+          ))}
+        </div>
       </div>
     </Layout>
   );
