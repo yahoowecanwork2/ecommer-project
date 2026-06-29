@@ -124,22 +124,23 @@
 
 // export default Pagesroutes;
 
-
-
-
 import { Routes, Route } from "react-router-dom";
 
 import Home from "../pages/Home/Home";
 import AboutUs from "../pages/Home/AboutUs";
-import {CategorySection} from "../pages/Home/CategorySection";
+import { CategorySection } from "../pages/Home/CategorySection";
 import ProductSection from "../pages/Home/ProductSection";
 import SpecialPackage from "../pages/Home/SpecialPackage";
 import BenefitsPage from "../pages/Home/BenefitsPage";
 import TestimonialPage from "../pages/Home/TestimonialPage";
 import Newsletter from "../pages/Home/Newsletter";
 import Contact from "../pages/home/Contact";
+<<<<<<< HEAD
 import CategoryPage from "../pages/home/CategoryPage";
 import ProductPage from "../pages/home/ProductPage";
+=======
+import Register from "../pages/auth/Register";
+>>>>>>> 01528baa3e62d9298b6fb76192ddd3a0d6ef1e31
 
 export default function PagesRoutes() {
   return (
@@ -158,27 +159,23 @@ export default function PagesRoutes() {
           </>
         }
       />
+<<<<<<< HEAD
 
        <Route path="/products" element={<ProductPage />} /> 
 
       <Route path="/categories" element={<CategoryPage />} /> 
 
+=======
+      // <Route path="/login" element={<Register />} />
+>>>>>>> 01528baa3e62d9298b6fb76192ddd3a0d6ef1e31
       <Route path="/about" element={<AboutUs />} />
-       {/* <Route path="/products" element={<Products />} />
+      {/* <Route path="/products" element={<Products />} />
      <Route path="/categories" element={<Categories />} /> */}
-      <Route path="/contact" element={<Contact />} /> 
+      <Route path="/contact" element={<Contact />} />
     </Routes>
   );
 }
 
-
-
-
-
-
-
-
-
 // <Route path="/" element={<Home />} />
 //       <Route path="/about" element={<AboutUs />} />
-//      
+//

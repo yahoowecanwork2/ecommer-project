@@ -1,7 +1,6 @@
-import { createTransport } from 'nodemailer';
+import { createTransport } from "nodemailer";
 
-
-// use while registration and use in resend otp 
+// use while registration and use in resend otp
 const sendRegisterAndResendOtpMail = async (email, subject, data) => {
   const transport = createTransport({
     host: "smtp.gmail.com",
@@ -48,10 +47,7 @@ const sendRegisterAndResendOtpMail = async (email, subject, data) => {
   });
 };
 
-
 export default sendRegisterAndResendOtpMail;
-
-
 
 export const sendForgotMail = async (subject, data) => {
   const transport = createTransport({
@@ -62,7 +58,6 @@ export const sendForgotMail = async (subject, data) => {
       pass: process.env.PASSWORD,
     },
   });
-
 
   const html = `<body style="font-family: Arial, sans-serif; line-height: 1.4; margin: 10px; padding: 14px; background-color: #f4f4f4; text-align: left; display: flex; justify-content: center; align-items: center; height: fit-content;">
     <div style="max-width: 600px; margin: auto; background: #ffffff; padding: 15px; border-radius: 6px; box-shadow: 0px 0px 8px rgba(0, 0, 0, 0.1);">        
@@ -98,12 +93,9 @@ export const sendForgotMail = async (subject, data) => {
     subject,
     html,
   });
+};
 
-}
-
-
-
-// send otp on login and resend otp while login 
+// send otp on login and resend otp while login
 export const loginAndresendOtpEmail = async (email, subject, data) => {
   const transport = createTransport({
     host: "smtp.gmail.com",
@@ -150,57 +142,101 @@ export const loginAndresendOtpEmail = async (email, subject, data) => {
   });
 };
 
+export const sendMailtoUser = async (email, subject, name, message) => {
+  // console.log(email,subject,name,message)
+  const transport = createTransport({
+    host: "smtp.hostinger.com",
+    port: 465,
+    auth: {
+      user: process.env.GMAIL,
+      pass: process.env.PASSWORD,
+    },
+  });
 
+  const html = `<h3>Hello ${name} </h3>
+                <p> ${message} </p>`;
 
+  await getTransport().sendMail({
+    from: process.env.GMAIL,
+    to: email,
+    subject,
+    html,
+  });
+};
 
+export const sendInquiryNotificationToAdmin = async (inquiryData) => {
+  const html = emailLayoutArcoders(
+    "🛍️ New Customer Inquiry",
+    `
+    <tr>
+      <td style="padding:30px;">
+        <table width="100%" cellpadding="10" style="border-collapse:collapse;">
 
+          ${[
+            {
+              label: "Customer Name",
+              value: inquiryData.name,
+            },
+            {
+              label: "Email",
+              value: inquiryData.email,
+            },
+            {
+              label: "Phone",
+              value: inquiryData.phone,
+            },
+            {
+              label: "Subject",
+              value: inquiryData.subject,
+            },
+            {
+              label: "Message",
+              value: inquiryData.message,
+            },
+            {
+              label: "Product",
+              value: inquiryData.productName || "General Inquiry",
+            },
+            {
+              label: "Status",
+              value: inquiryData.status || "New",
+            },
+            {
+              label: "Received On",
+              value: new Date(
+                inquiryData.createdAt || Date.now(),
+              ).toLocaleString(),
+            },
+          ]
+            .map(
+              (item) => `
+              <tr style="border-bottom:1px solid #f0f0f0;">
+                <td style="width:35%;font-weight:600;color:#555;">
+                  ${item.label}
+                </td>
+                <td style="color:#222;">
+                  ${item.value}
+                </td>
+              </tr>
+            `,
+            )
+            .join("")}
 
+        </table>
+      </td>
+    </tr>
+    `,
+  );
 
+  await getTransport().sendMail({
+    from: process.env.GMAIL,
+    to: process.env.ADMIN_EMAIL,
+    subject: `🛍️ New Inquiry from ${inquiryData.name}`,
+    html,
+  });
+};
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-// send to user paid amount location and type and show that we will contatct you soon 
+// send to user paid amount location and type and show that we will contatct you soon
 export const orderEmailtoUser = async (subject, data) => {
   const transport = createTransport({
     host: "smtp.gmail.com",
@@ -232,15 +268,14 @@ export const orderEmailtoUser = async (subject, data) => {
 
   await transport.sendMail({
     from: process.env.GMAIL,
-    to:data.email,
+    to: data.email,
     subject,
     html,
   });
 };
 
-
-// quotation email 
-// send email to leehomepackers account 
+// quotation email
+// send email to leehomepackers account
 export const orderEmail = async (subject, data) => {
   const transport = createTransport({
     host: "smtp.gmail.com",
@@ -277,10 +312,3 @@ export const orderEmail = async (subject, data) => {
     html,
   });
 };
-
-
-
-
-
-
-

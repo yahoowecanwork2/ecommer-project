@@ -7,6 +7,7 @@ import { Navigate, Route, Routes } from "react-router-dom";
 import Protectedroutes from "../middleware/Protectedroutes";
 import { lazy } from "react";
 import Categorie from "../pages/category/Categorie";
+import Inquery from "../pages/inquery/Inquery";
 
 const User = lazy(() => import("../pages/users/User"));
 const Product = lazy(() => import("../pages/product/Product"));
@@ -115,6 +116,14 @@ const Pagesroutes = () => {
           element={
             <Protectedroutes>
               <Profile />
+            </Protectedroutes>
+          }
+        />
+        <Route
+          path="/inquery"
+          element={
+            <Protectedroutes>
+              <Inquery />
             </Protectedroutes>
           }
         />
