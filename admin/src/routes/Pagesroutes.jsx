@@ -8,6 +8,7 @@ import Protectedroutes from "../middleware/Protectedroutes";
 import { lazy } from "react";
 import Categorie from "../pages/category/Categorie";
 import Inquery from "../pages/inquery/Inquery";
+import InqueryForm from "../../../frontend/src/pages/inquery/InqueryForm";
 
 const User = lazy(() => import("../pages/users/User"));
 const Product = lazy(() => import("../pages/product/Product"));
@@ -31,6 +32,7 @@ const Pagesroutes = () => {
         {/* <Route path="/" element={<Login />} /> */}
         <Route path="/register" element={<Register />} />
         <Route path="/resetpassword" element={<Resetpassword />} />
+        <Route path="/inquiry-form" element={<InqueryForm />} />
         <Route
           path="/user"
           element={
