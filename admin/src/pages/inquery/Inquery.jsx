@@ -1,9 +1,19 @@
 import React, { useState } from "react";
 import Layout from "../../componets/common/Layout";
+import { inquiryApis } from "../../apis/inquiry";
 
 const Inquery = () => {
+  const[inquery , setinquery] = useState([])
 
-    
+    const fetchInquiry = async()=>{
+      try{
+        const res = await inquiryApis.getAll();
+        console.log("Data is", res);
+      setinquery(res.inquery);
+      } catch(error){
+        console.log("Error is", error);
+      }
+    };
 
 
 
