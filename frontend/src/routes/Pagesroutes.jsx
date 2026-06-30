@@ -135,8 +135,16 @@ import BenefitsPage from "../pages/Home/BenefitsPage";
 import TestimonialPage from "../pages/Home/TestimonialPage";
 import Newsletter from "../pages/Home/Newsletter";
 import Contact from "../pages/home/Contact";
+<<<<<<< HEAD
+import CategoryPage from "../pages/home/CategoryPage";
+import ProductPage from "../pages/home/ProductPage";
+=======
 import Register from "../pages/auth/Register";
+<<<<<<< HEAD
 import InqueryForm from "../pages/inquery/InqueryForm";
+=======
+>>>>>>> 01528baa3e62d9298b6fb76192ddd3a0d6ef1e31
+>>>>>>> 041e5cd4feec95f329ecb17e0196362d7102cce2
 
 export default function PagesRoutes() {
   return (
@@ -155,7 +163,15 @@ export default function PagesRoutes() {
           </>
         }
       />
+<<<<<<< HEAD
+
+       <Route path="/products" element={<ProductPage />} /> 
+
+      <Route path="/categories" element={<CategoryPage />} /> 
+
+=======
       // <Route path="/login" element={<Register />} />
+>>>>>>> 01528baa3e62d9298b6fb76192ddd3a0d6ef1e31
       <Route path="/about" element={<AboutUs />} />
       {/* <Route path="/products" element={<Products />} />
      <Route path="/categories" element={<Categories />} /> */}
