@@ -31,6 +31,7 @@ const Pagesroutes = () => {
         {/* <Route path="/" element={<Login />} /> */}
         <Route path="/register" element={<Register />} />
         <Route path="/resetpassword" element={<Resetpassword />} />
+        
         <Route
           path="/user"
           element={

@@ -137,6 +137,8 @@ import Newsletter from "../pages/Home/Newsletter";
 import Contact from "../pages/home/Contact";
 import CategoryPage from "../pages/home/CategoryPage";
 import ProductPage from "../pages/home/ProductPage";
+import Register from "../pages/auth/Register";
+import InqueryForm from "../pages/inquery/InqueryForm";
 
 export default function PagesRoutes() {
   return (
@@ -155,15 +157,12 @@ export default function PagesRoutes() {
           </>
         }
       />
-
-       <Route path="/products" element={<ProductPage />} /> 
-
-      <Route path="/categories" element={<CategoryPage />} /> 
-
+      <Route path="/login" element={<Register />} />
       <Route path="/about" element={<AboutUs />} />
       {/* <Route path="/products" element={<Products />} />
      <Route path="/categories" element={<Categories />} /> */}
       <Route path="/contact" element={<Contact />} />
+      <Route path="/inquiry" element={<InqueryForm />} />
     </Routes>
   );
 }

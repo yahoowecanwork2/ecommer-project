@@ -57,7 +57,7 @@ const Card = ({ value }) => {
       </div>
 
       <div className="flex justify-between my-2  ">
-        <div>
+        {/* <div>
           <span className="flex justify-start  bg-yellow-100 text-yellow-800  font-semibold ">
             {value.paymentType === "cod" ? (
               <span className="border px-3 py-1 bg-yellow-100 text-yellow-800 rounded-md uppercase">
@@ -69,7 +69,7 @@ const Card = ({ value }) => {
               </span>
             )}
           </span>
-        </div>
+        </div> */}
         <div className="flex item-end">
           <button
             onClick={() =>
